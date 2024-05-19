@@ -1,0 +1,11 @@
+{
+  "configurations": [
+
+    {
+      "name": "C#: GraphQL Debug",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/src/GraphQL/GraphQL.csproj"
+    }
+  ]
+}

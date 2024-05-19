@@ -1,0 +1,11 @@
+{
+    "recommendations": [
+      "aaron-bond.better-comments",
+      "ms-vscode-remote.remote-containers",
+      "ms-vscode-remote.remote-wsl",
+      "sdras.night-owl",
+      "vscode-icons-team.vscode-icons"
+    ],
+    "unwantedRecommendations": []
+  }
+  
