@@ -1,0 +1,12 @@
+namespace GraphQL.Repositories.StarWars;
+
+public class SwapiResponseList<T>
+{
+    public int Count { get; set; } = default!;
+
+    public string Next { get; set; } = default!;
+
+    public string Previous { get; set; } = default!;
+
+    public IEnumerable<T> Results { get; set; } = [];
+}
