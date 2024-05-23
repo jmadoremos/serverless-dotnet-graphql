@@ -2,6 +2,8 @@ namespace GraphQL.Schemas.StarWars.Planets;
 
 using GraphQL.Extensions;
 using GraphQL.Repositories.StarWars.Planets;
+using GraphQL.Schemas.StarWars.Films;
+using GraphQL.Schemas.StarWars.People;
 
 [GraphQLDescription("A planet resource is a large mass, planet or planetoid in the Star Wars Universe, at the time of 0 ABY.")]
 public class PlanetSchema
@@ -27,6 +29,16 @@ public class PlanetSchema
 
     public string Population { get; set; } = default!;
 
+    [GraphQLIgnore]
+    public IEnumerable<int> PersonIds { get; set; } = default!;
+
+    public IEnumerable<PersonSchema> Residents { get; set; } = default!;
+
+    [GraphQLIgnore]
+    public IEnumerable<int> FilmIds { get; set; } = default!;
+
+    public IEnumerable<FilmSchema> Films { get; set; } = default!;
+
     public static PlanetSchema MapFrom(PlanetApiResponse r) => new()
     {
         Id = r.URL.ExtractSwapiId(),
@@ -38,6 +50,8 @@ public class PlanetSchema
         Gravity = r.Gravity,
         Terrain = r.Terrain,
         SurfaceWater = r.SurfaceWater,
-        Population = r.Population
+        Population = r.Population,
+        PersonIds = r.Residents.Select(s => s.ExtractSwapiId()),
+        FilmIds = r.Films.Select(s => s.ExtractSwapiId())
     };
 }
