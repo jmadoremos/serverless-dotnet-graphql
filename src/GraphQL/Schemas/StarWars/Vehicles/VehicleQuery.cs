@@ -5,7 +5,7 @@ using GraphQL.Repositories.StarWars.Vehicles;
 [ExtendObjectType("Query")]
 public class VehicleQuery([Service] IVehicleRepository vehicles)
 {
-    public async Task<IEnumerable<VehicleSchema>?> GetStarshipsAsync(CancellationToken ctx)
+    public async Task<IEnumerable<VehicleSchema>?> GetVehiclesAsync(CancellationToken ctx)
     {
         // Call API to retrieve all data
         var response = await vehicles.GetAllAsync(ctx);
@@ -20,7 +20,7 @@ public class VehicleQuery([Service] IVehicleRepository vehicles)
         return response.Results.Select(VehicleSchema.MapFrom);
     }
 
-    public async Task<VehicleSchema?> GetStarshipAsync(
+    public async Task<VehicleSchema?> GetVehicleAsync(
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)
     {
