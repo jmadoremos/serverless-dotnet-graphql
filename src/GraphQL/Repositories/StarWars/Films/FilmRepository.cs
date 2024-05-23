@@ -1,10 +1,11 @@
 namespace GraphQL.Repositories.StarWars.Films;
 
+using System.Globalization;
 using GraphQL.Services.StarWars;
 
 public class FilmRepository([Service] ISwapiService swapi) : IFilmRepository
 {
-    private readonly string uri = $"https://swapi.dev/api/films/";
+    private readonly Uri baseUri = new("https://swapi.dev/api/films/");
 
     public async Task<SwapiResponseList<FilmApiResponse>> GetAllAsync(CancellationToken ctx)
     {
@@ -15,7 +16,7 @@ public class FilmRepository([Service] ISwapiService swapi) : IFilmRepository
         SwapiResponseList<FilmApiResponse>? response;
 
         // Define API URI to call. Defaults to resource URI.
-        var uri = this.uri;
+        var uri = this.baseUri.ToString();
 
         do
         {
@@ -52,7 +53,7 @@ public class FilmRepository([Service] ISwapiService swapi) : IFilmRepository
         CancellationToken ctx)
     {
         // Define API URI to call
-        var uri = $"{this.uri}/{id}/";
+        var uri = new Uri(this.baseUri, Convert.ToString(id, CultureInfo.InvariantCulture));
 
         // Call API
         var result = await swapi
