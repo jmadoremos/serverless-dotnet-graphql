@@ -2,13 +2,16 @@ namespace GraphQL.Schemas.StarWars.People;
 
 using GraphQL.Repositories.StarWars.Films;
 using GraphQL.Repositories.StarWars.Planets;
+using GraphQL.Repositories.StarWars.Starships;
 using GraphQL.Schemas.StarWars.Films;
 using GraphQL.Schemas.StarWars.Planets;
+using GraphQL.Schemas.StarWars.Starships;
 
 [ExtendObjectType(typeof(PersonSchema))]
 public class PersonExtension(
     [Service] IFilmRepository films,
-    [Service] IPlanetRepository planets)
+    [Service] IPlanetRepository planets,
+    [Service] IStarshipRepository starships)
 {
     public async Task<PlanetSchema?> GetHomeworldAsync(
         [Parent] PersonSchema parent,
@@ -28,19 +31,39 @@ public class PersonExtension(
         [Parent] PersonSchema parent,
         CancellationToken ctx)
     {
-        var filmQueue = parent.FilmIds.Select(id => films.GetByIdAsync(id, ctx));
-        var filmResponses = await Task.WhenAll(filmQueue);
+        var queue = parent.FilmIds.Select(id => films.GetByIdAsync(id, ctx));
+        var responses = await Task.WhenAll(queue);
 
-        var filmList = new List<FilmSchema>();
+        var list = new List<FilmSchema>();
 
-        foreach (var e in filmResponses)
+        foreach (var e in responses)
         {
             if (e is not null)
             {
-                filmList.Add(FilmSchema.MapFrom(e));
+                list.Add(FilmSchema.MapFrom(e));
             }
         }
 
-        return filmList;
+        return list;
+    }
+
+    public async Task<IEnumerable<StarshipSchema>?> GetStarshipsAsync(
+        [Parent] PersonSchema parent,
+        CancellationToken ctx)
+    {
+        var queue = parent.StarshipIds.Select(id => starships.GetByIdAsync(id, ctx));
+        var responses = await Task.WhenAll(queue);
+
+        var list = new List<StarshipSchema>();
+
+        foreach (var e in responses)
+        {
+            if (e is not null)
+            {
+                list.Add(StarshipSchema.MapFrom(e));
+            }
+        }
+
+        return list;
     }
 }
