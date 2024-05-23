@@ -1,4 +1,4 @@
-﻿namespace GraphQL;
+namespace GraphQL;
 
 using GraphQL.Repositories.StarWars.Films;
 using GraphQL.Repositories.StarWars.People;
@@ -30,7 +30,7 @@ public class Startup(IConfiguration configuration)
                 .AddType<PersonQuery>()
                 .AddType<PlanetQuery>()
             // Extensions
-            .AddType<PeopleExtension>();
+            .AddType<PersonExtension>();
 
         // Allow dependency injection of testable custom services
         services.AddSingleton<ISwapiService, SwapiService>();

@@ -6,7 +6,7 @@ using GraphQL.Schemas.StarWars.Films;
 using GraphQL.Schemas.StarWars.Planets;
 
 [ExtendObjectType(typeof(PersonSchema))]
-public class PeopleExtension(
+public class PersonExtension(
     [Service] IFilmRepository films,
     [Service] IPlanetRepository planets)
 {
@@ -33,11 +33,11 @@ public class PeopleExtension(
 
         var filmList = new List<FilmSchema>();
 
-        foreach (var f in filmResponses)
+        foreach (var e in filmResponses)
         {
-            if (f is not null)
+            if (e is not null)
             {
-                filmList.Add(FilmSchema.MapFrom(f));
+                filmList.Add(FilmSchema.MapFrom(e));
             }
         }
 
