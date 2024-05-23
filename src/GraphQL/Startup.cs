@@ -3,11 +3,13 @@
 using GraphQL.Repositories.StarWars.Films;
 using GraphQL.Repositories.StarWars.People;
 using GraphQL.Repositories.StarWars.Planets;
+using GraphQL.Repositories.StarWars.Species;
 using GraphQL.Repositories.StarWars.Starships;
 using GraphQL.Repositories.StarWars.Vehicles;
 using GraphQL.Schemas.StarWars.Films;
 using GraphQL.Schemas.StarWars.People;
 using GraphQL.Schemas.StarWars.Planets;
+using GraphQL.Schemas.StarWars.Species;
 using GraphQL.Schemas.StarWars.Starships;
 using GraphQL.Schemas.StarWars.Vehicles;
 using GraphQL.Services.StarWars;
@@ -33,10 +35,12 @@ public class Startup(IConfiguration configuration)
                 .AddType<FilmQuery>()
                 .AddType<PersonQuery>()
                 .AddType<PlanetQuery>()
+                .AddType<SpeciesQuery>()
                 .AddType<StarshipQuery>()
                 .AddType<VehicleQuery>()
             // Extensions
             .AddType<PersonExtension>()
+            .AddType<SpeciesExtension>()
             .AddType<StarshipExtension>()
             .AddType<VehicleExtension>();
 
@@ -48,6 +52,7 @@ public class Startup(IConfiguration configuration)
             .AddSingleton<IFilmRepository, FilmRepository>()
             .AddSingleton<IPersonRepository, PersonRepository>()
             .AddSingleton<IPlanetRepository, PlanetRepository>()
+            .AddSingleton<ISpeciesRepository, SpeciesRepository>()
             .AddSingleton<IStarshipRepository, StarshipRepository>()
             .AddSingleton<IVehicleRepository, VehicleRepository>();
     }

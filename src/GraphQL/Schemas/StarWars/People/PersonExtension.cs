@@ -2,10 +2,12 @@ namespace GraphQL.Schemas.StarWars.People;
 
 using GraphQL.Repositories.StarWars.Films;
 using GraphQL.Repositories.StarWars.Planets;
+using GraphQL.Repositories.StarWars.Species;
 using GraphQL.Repositories.StarWars.Starships;
 using GraphQL.Repositories.StarWars.Vehicles;
 using GraphQL.Schemas.StarWars.Films;
 using GraphQL.Schemas.StarWars.Planets;
+using GraphQL.Schemas.StarWars.Species;
 using GraphQL.Schemas.StarWars.Starships;
 using GraphQL.Schemas.StarWars.Vehicles;
 
@@ -13,6 +15,7 @@ using GraphQL.Schemas.StarWars.Vehicles;
 public class PersonExtension(
     [Service] IFilmRepository films,
     [Service] IPlanetRepository planets,
+    [Service] ISpeciesRepository species,
     [Service] IStarshipRepository starships,
     [Service] IVehicleRepository vehicles)
 {
@@ -35,7 +38,7 @@ public class PersonExtension(
         return PlanetSchema.MapFrom(response);
     }
 
-    public async Task<IEnumerable<FilmSchema>?> GetFilmsAsync(
+    public async Task<IEnumerable<FilmSchema>> GetFilmsAsync(
         [Parent] PersonSchema parent,
         CancellationToken ctx)
     {
@@ -55,7 +58,27 @@ public class PersonExtension(
         return list;
     }
 
-    public async Task<IEnumerable<StarshipSchema>?> GetStarshipsAsync(
+    public async Task<IEnumerable<SpeciesSchema>> GetSpeciesAsync(
+        [Parent] PersonSchema parent,
+        CancellationToken ctx)
+    {
+        var queue = parent.SpeciesIds.Select(id => species.GetByIdAsync(id, ctx));
+        var responses = await Task.WhenAll(queue);
+
+        var list = new List<SpeciesSchema>();
+
+        foreach (var e in responses)
+        {
+            if (e is not null)
+            {
+                list.Add(SpeciesSchema.MapFrom(e));
+            }
+        }
+
+        return list;
+    }
+
+    public async Task<IEnumerable<StarshipSchema>> GetStarshipsAsync(
         [Parent] PersonSchema parent,
         CancellationToken ctx)
     {
@@ -75,7 +98,7 @@ public class PersonExtension(
         return list;
     }
 
-    public async Task<IEnumerable<VehicleSchema>?> GetVehiclesAsync(
+    public async Task<IEnumerable<VehicleSchema>> GetVehiclesAsync(
         [Parent] PersonSchema parent,
         CancellationToken ctx)
     {

@@ -4,6 +4,7 @@ using GraphQL.Extensions;
 using GraphQL.Repositories.StarWars.People;
 using GraphQL.Schemas.StarWars.Films;
 using GraphQL.Schemas.StarWars.Planets;
+using GraphQL.Schemas.StarWars.Species;
 using GraphQL.Schemas.StarWars.Starships;
 using GraphQL.Schemas.StarWars.Vehicles;
 
@@ -30,14 +31,19 @@ public class PersonSchema
     public string Gender { get; set; } = default!;
 
     [GraphQLIgnore]
-    public int HomeworldId { get; set; } = default!;
+    public int? HomeworldId { get; set; } = default!;
 
-    public PlanetSchema Homeworld { get; set; } = default!;
+    public PlanetSchema? Homeworld { get; set; } = default!;
 
     [GraphQLIgnore]
     public IEnumerable<int> FilmIds { get; set; } = default!;
 
     public IEnumerable<FilmSchema> Films { get; set; } = default!;
+
+    [GraphQLIgnore]
+    public IEnumerable<int> SpeciesIds { get; set; } = default!;
+
+    public IEnumerable<SpeciesSchema> Species { get; set; } = default!;
 
     [GraphQLIgnore]
     public IEnumerable<int> StarshipIds { get; set; } = default!;
@@ -60,8 +66,9 @@ public class PersonSchema
         EyeColor = r.EyeColor,
         BirthYear = r.BirthYear,
         Gender = r.Gender,
-        HomeworldId = r.Homeworld.ExtractSwapiId(),
+        HomeworldId = r.Homeworld?.ExtractSwapiId(),
         FilmIds = r.Films.Select(s => s.ExtractSwapiId()),
+        SpeciesIds = r.Species.Select(s => s.ExtractSwapiId()),
         StarshipIds = r.Starships.Select(s => s.ExtractSwapiId()),
         VehicleIds = r.Vehicles.Select(s => s.ExtractSwapiId())
     };
