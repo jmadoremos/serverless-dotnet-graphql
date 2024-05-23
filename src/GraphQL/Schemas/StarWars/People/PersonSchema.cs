@@ -29,10 +29,6 @@ public class PersonSchema
 
     public string Gender { get; set; } = default!;
 
-    public string Created { get; set; } = default!;
-
-    public string Edited { get; set; } = default!;
-
     [GraphQLIgnore]
     public int HomeworldId { get; set; } = default!;
 
@@ -64,8 +60,6 @@ public class PersonSchema
         EyeColor = r.EyeColor,
         BirthYear = r.BirthYear,
         Gender = r.Gender,
-        Created = r.Created,
-        Edited = r.Edited,
         HomeworldId = r.Homeworld.ExtractSwapiId(),
         FilmIds = r.Films.Select(s => s.ExtractSwapiId()),
         StarshipIds = r.Starships.Select(s => s.ExtractSwapiId()),
