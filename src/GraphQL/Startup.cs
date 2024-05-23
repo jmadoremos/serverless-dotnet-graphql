@@ -24,10 +24,13 @@ public class Startup(IConfiguration configuration)
         // Define GraphQL server parameters
         services
             .AddGraphQLServer()
+            // Queries
             .AddQueryType(d => d.Name("Query"))
-                .AddTypeExtension<FilmQuery>()
-                .AddTypeExtension<PersonQuery>()
-                .AddTypeExtension<PlanetQuery>();
+                .AddType<FilmQuery>()
+                .AddType<PersonQuery>()
+                .AddType<PlanetQuery>()
+            // Extensions
+            .AddType<PeopleExtension>();
 
         // Allow dependency injection of testable custom services
         services.AddSingleton<ISwapiService, SwapiService>();

@@ -31,9 +31,15 @@ public class PersonSchema
 
     public string Edited { get; set; } = default!;
 
-    public PlanetSchema? Homeworld { get; set; } = default!;
+    [GraphQLIgnore]
+    public int HomeworldId { get; set; } = default!;
 
-    public IEnumerable<FilmSchema>? Films { get; set; } = default!;
+    public PlanetSchema Homeworld { get; set; } = default!;
+
+    [GraphQLIgnore]
+    public IEnumerable<int> FilmIds { get; set; } = default!;
+
+    public IEnumerable<FilmSchema> Films { get; set; } = default!;
 
     public static PersonSchema MapFrom(PersonApiResponse r) => new()
     {
@@ -48,7 +54,7 @@ public class PersonSchema
         Gender = r.Gender,
         Created = r.Created,
         Edited = r.Edited,
-        Homeworld = null,
-        Films = null
+        HomeworldId = r.Homeworld.ExtractSwapiId(),
+        FilmIds = r.Films.Select(s => s.ExtractSwapiId())
     };
 }
