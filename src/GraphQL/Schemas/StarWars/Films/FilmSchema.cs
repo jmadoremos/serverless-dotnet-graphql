@@ -14,42 +14,53 @@ public class FilmSchema
     [GraphQLType(typeof(IdType))]
     public int Id { get; set; }
 
+    [GraphQLDescription("The title of this film.")]
     public string Title { get; set; } = default!;
 
+    [GraphQLDescription("The episode number of this film.")]
     public int EpisodeId { get; set; } = default!;
 
+    [GraphQLDescription("The opening paragraphs at the beginning of this film.")]
     public string OpeningCrawl { get; set; } = default!;
 
+    [GraphQLDescription("The name of the director of this film.")]
     public string Director { get; set; } = default!;
 
+    [GraphQLDescription(" The name(s) of the producer(s) of this film. Comma separated.")]
     public string Producer { get; set; } = default!;
 
+    [GraphQLDescription("The ISO 8601 date format of film release at original creator country.")]
     public string ReleaseDate { get; set; } = default!;
 
     [GraphQLIgnore]
-    public IEnumerable<int> PersonIds { get; set; } = default!;
+    public IEnumerable<int> SpeciesIds { get; set; } = default!;
 
-    public IEnumerable<PersonSchema> Characters { get; set; } = default!;
-
-    [GraphQLIgnore]
-    public IEnumerable<int> PlanetIds { get; set; } = default!;
-
-    public IEnumerable<PlanetSchema> Planets { get; set; } = default!;
+    [GraphQLDescription("A list of species that are in this film.")]
+    public IEnumerable<SpeciesSchema> Species { get; set; } = default!;
 
     [GraphQLIgnore]
     public IEnumerable<int> StarshipIds { get; set; } = default!;
 
+    [GraphQLDescription("A list of starships that are in this film.")]
     public IEnumerable<StarshipSchema> Starships { get; set; } = default!;
 
     [GraphQLIgnore]
     public IEnumerable<int> VehicleIds { get; set; } = default!;
 
+    [GraphQLDescription("A list of vehicles that are in this film.")]
     public IEnumerable<VehicleSchema> Vehicles { get; set; } = default!;
 
     [GraphQLIgnore]
-    public IEnumerable<int> SpeciesIds { get; set; } = default!;
+    public IEnumerable<int> PersonIds { get; set; } = default!;
 
-    public IEnumerable<SpeciesSchema> Species { get; set; } = default!;
+    [GraphQLDescription("A list of characters that are in this film.")]
+    public IEnumerable<PersonSchema> Characters { get; set; } = default!;
+
+    [GraphQLIgnore]
+    public IEnumerable<int> PlanetIds { get; set; } = default!;
+
+    [GraphQLDescription("A list of planets that are in this film.")]
+    public IEnumerable<PlanetSchema> Planets { get; set; } = default!;
 
     public static FilmSchema MapFrom(FilmApiResponse r) => new()
     {

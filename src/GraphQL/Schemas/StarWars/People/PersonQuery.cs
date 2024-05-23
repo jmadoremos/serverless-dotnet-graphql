@@ -6,6 +6,7 @@ using System.Collections.Generic;
 [ExtendObjectType("Query")]
 public class PersonQuery([Service] IPersonRepository people)
 {
+    [GraphQLDescription("A list of people in Star Wars Universe.")]
     public async Task<IEnumerable<PersonSchema>?> GetPeopleAsync(CancellationToken ctx)
     {
         // Call API to retrieve all data
@@ -21,6 +22,7 @@ public class PersonQuery([Service] IPersonRepository people)
         return response.Results.Select(PersonSchema.MapFrom);
     }
 
+    [GraphQLDescription("A person or character in Star Wars Universe identified by the Star Wars API identifier.")]
     public async Task<PersonSchema?> GetPersonAsync(
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)

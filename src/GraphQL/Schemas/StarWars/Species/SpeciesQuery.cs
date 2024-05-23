@@ -6,6 +6,7 @@ using System.Collections.Generic;
 [ExtendObjectType("Query")]
 public class SpeciesQuery([Service] ISpeciesRepository species)
 {
+    [GraphQLDescription("A list of species in Star Wars Universe.")]
     public async Task<IEnumerable<SpeciesSchema>?> GetSpeciesAsync(CancellationToken ctx)
     {
         // Call API to retrieve all data
@@ -21,6 +22,7 @@ public class SpeciesQuery([Service] ISpeciesRepository species)
         return response.Results.Select(SpeciesSchema.MapFrom);
     }
 
+    [GraphQLDescription("A species in Star Wars Universe identified by the Star Wars API identifier.")]
     public async Task<SpeciesSchema?> GetSpeciesByIdAsync(
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)

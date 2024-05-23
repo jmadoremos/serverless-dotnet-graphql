@@ -5,6 +5,7 @@ using GraphQL.Repositories.StarWars.Planets;
 [ExtendObjectType("Query")]
 public class PlanetQuery([Service] IPlanetRepository planets)
 {
+    [GraphQLDescription("A list of planets in Star Wars Universe.")]
     public async Task<IEnumerable<PlanetSchema>?> GetPlanetsAsync(CancellationToken ctx)
     {
         // Call API to retrieve all data
@@ -20,6 +21,7 @@ public class PlanetQuery([Service] IPlanetRepository planets)
         return response.Results.Select(PlanetSchema.MapFrom);
     }
 
+    [GraphQLDescription("A planet in Star Wars Universe identified by the Star Wars API identifier.")]
     public async Task<PlanetSchema?> GetPlanetAsync(
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)

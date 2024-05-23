@@ -5,6 +5,7 @@ using GraphQL.Repositories.StarWars.Films;
 [ExtendObjectType("Query")]
 public class FilmQuery([Service] IFilmRepository films)
 {
+    [GraphQLDescription("A list of films in Star Wars Universe.")]
     public async Task<IEnumerable<FilmSchema>?> GetFilmsAsync(CancellationToken ctx)
     {
         // Call API to retrieve all data
@@ -20,6 +21,7 @@ public class FilmQuery([Service] IFilmRepository films)
         return response.Results.Select(FilmSchema.MapFrom);
     }
 
+    [GraphQLDescription("A film in Star Wars Universe identified by the Star Wars API identifier.")]
     public async Task<FilmSchema?> GetFilmAsync(
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)
