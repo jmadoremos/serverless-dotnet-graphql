@@ -4,10 +4,12 @@ using GraphQL.Repositories.StarWars.Films;
 using GraphQL.Repositories.StarWars.People;
 using GraphQL.Repositories.StarWars.Planets;
 using GraphQL.Repositories.StarWars.Starships;
+using GraphQL.Repositories.StarWars.Vehicles;
 using GraphQL.Schemas.StarWars.Films;
 using GraphQL.Schemas.StarWars.People;
 using GraphQL.Schemas.StarWars.Planets;
 using GraphQL.Schemas.StarWars.Starships;
+using GraphQL.Schemas.StarWars.Vehicles;
 using GraphQL.Services.StarWars;
 
 public class Startup(IConfiguration configuration)
@@ -32,9 +34,11 @@ public class Startup(IConfiguration configuration)
                 .AddType<PersonQuery>()
                 .AddType<PlanetQuery>()
                 .AddType<StarshipQuery>()
+                .AddType<VehicleQuery>()
             // Extensions
             .AddType<PersonExtension>()
-            .AddType<StarshipExtension>();
+            .AddType<StarshipExtension>()
+            .AddType<VehicleExtension>();
 
         // Allow dependency injection of testable custom services
         services.AddSingleton<ISwapiService, SwapiService>();
@@ -44,7 +48,8 @@ public class Startup(IConfiguration configuration)
             .AddSingleton<IFilmRepository, FilmRepository>()
             .AddSingleton<IPersonRepository, PersonRepository>()
             .AddSingleton<IPlanetRepository, PlanetRepository>()
-            .AddSingleton<IStarshipRepository, StarshipRepository>();
+            .AddSingleton<IStarshipRepository, StarshipRepository>()
+            .AddSingleton<IVehicleRepository, VehicleRepository>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline

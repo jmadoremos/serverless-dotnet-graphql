@@ -5,6 +5,7 @@ using GraphQL.Repositories.StarWars.People;
 using GraphQL.Schemas.StarWars.Films;
 using GraphQL.Schemas.StarWars.Planets;
 using GraphQL.Schemas.StarWars.Starships;
+using GraphQL.Schemas.StarWars.Vehicles;
 
 [GraphQLDescription("A people resource is an individual person or character within the Star Wars universe.")]
 public class PersonSchema
@@ -47,6 +48,11 @@ public class PersonSchema
 
     public IEnumerable<StarshipSchema> Starships { get; set; } = default!;
 
+    [GraphQLIgnore]
+    public IEnumerable<int> VehicleIds { get; set; } = default!;
+
+    public IEnumerable<VehicleSchema> Vehicles { get; set; } = default!;
+
     public static PersonSchema MapFrom(PersonApiResponse r) => new()
     {
         Id = r.URL.ExtractSwapiId(),
@@ -62,6 +68,7 @@ public class PersonSchema
         Edited = r.Edited,
         HomeworldId = r.Homeworld.ExtractSwapiId(),
         FilmIds = r.Films.Select(s => s.ExtractSwapiId()),
-        StarshipIds = r.Starships.Select(s => s.ExtractSwapiId())
+        StarshipIds = r.Starships.Select(s => s.ExtractSwapiId()),
+        VehicleIds = r.Vehicles.Select(s => s.ExtractSwapiId())
     };
 }
