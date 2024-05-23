@@ -24,7 +24,7 @@ public class PersonApiResponse : SwapiResponse
 
     public string Gender { get; set; } = default!;
 
-    public Uri Homeworld { get; set; } = default!;
+    public Uri? Homeworld { get; set; } = default!;
 
     public IEnumerable<Uri> Films { get; set; } = default!;
 

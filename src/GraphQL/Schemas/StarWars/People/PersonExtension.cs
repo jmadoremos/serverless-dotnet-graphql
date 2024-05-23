@@ -20,7 +20,12 @@ public class PersonExtension(
         [Parent] PersonSchema parent,
         CancellationToken ctx)
     {
-        var response = await planets.GetByIdAsync(parent.HomeworldId, ctx);
+        if (parent.HomeworldId is null)
+        {
+            return null;
+        }
+
+        var response = await planets.GetByIdAsync((int)parent.HomeworldId, ctx);
 
         if (response is null)
         {
