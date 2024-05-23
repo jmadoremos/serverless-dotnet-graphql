@@ -21,7 +21,7 @@ public class SpeciesQuery([Service] ISpeciesRepository species)
         return response.Results.Select(SpeciesSchema.MapFrom);
     }
 
-    public async Task<SpeciesSchema?> GetSpeciesAsync(
+    public async Task<SpeciesSchema?> GetSpeciesByIdAsync(
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)
     {
