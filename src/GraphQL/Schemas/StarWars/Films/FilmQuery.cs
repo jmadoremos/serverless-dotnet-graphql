@@ -36,5 +36,4 @@ public class FilmQuery([Service] IFilmRepository films)
         // Map and resolve
         return FilmSchema.MapFrom(response);
     }
-
 }
