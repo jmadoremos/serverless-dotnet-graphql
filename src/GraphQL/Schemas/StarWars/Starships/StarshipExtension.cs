@@ -10,7 +10,7 @@ public class StarshipExtension(
     [Service] IFilmRepository films,
     [Service] IPersonRepository people)
 {
-    public async Task<IEnumerable<FilmSchema>?> GetFilmsAsync(
+    public async Task<IEnumerable<FilmSchema>> GetFilmsAsync(
         [Parent] StarshipSchema parent,
         CancellationToken ctx)
     {
@@ -30,7 +30,7 @@ public class StarshipExtension(
         return filmList;
     }
 
-    public async Task<IEnumerable<PersonSchema>?> GetPilotsAsync(
+    public async Task<IEnumerable<PersonSchema>> GetPilotsAsync(
         [Parent] StarshipSchema parent,
         CancellationToken ctx)
     {
