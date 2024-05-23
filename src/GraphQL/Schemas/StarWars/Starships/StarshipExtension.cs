@@ -1,9 +1,9 @@
-namespace GraphQL.Schemas.StarWars.People;
+namespace GraphQL.Schemas.StarWars.Starships;
 
 using GraphQL.Repositories.StarWars.Films;
 using GraphQL.Repositories.StarWars.People;
 using GraphQL.Schemas.StarWars.Films;
-using GraphQL.Schemas.StarWars.Starships;
+using GraphQL.Schemas.StarWars.People;
 
 [ExtendObjectType(typeof(StarshipSchema))]
 public class StarshipExtension(
