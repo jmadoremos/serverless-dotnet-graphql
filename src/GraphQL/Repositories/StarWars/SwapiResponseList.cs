@@ -1,6 +1,7 @@
 namespace GraphQL.Repositories.StarWars;
 
 public class SwapiResponseList<T>
+    where T : SwapiResponse
 {
     public int Count { get; set; } = default!;
 
