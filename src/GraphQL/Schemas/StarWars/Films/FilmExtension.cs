@@ -1,11 +1,11 @@
 namespace GraphQL.Schemas.StarWars.Films;
 
-using GraphQL.Repositories.StarWars.People;
+using GraphQL.Repositories.StarWars.Characters;
 using GraphQL.Repositories.StarWars.Planets;
 using GraphQL.Repositories.StarWars.Species;
 using GraphQL.Repositories.StarWars.Starships;
 using GraphQL.Repositories.StarWars.Vehicles;
-using GraphQL.Schemas.StarWars.People;
+using GraphQL.Schemas.StarWars.Characters;
 using GraphQL.Schemas.StarWars.Planets;
 using GraphQL.Schemas.StarWars.Species;
 using GraphQL.Schemas.StarWars.Starships;
@@ -13,26 +13,26 @@ using GraphQL.Schemas.StarWars.Vehicles;
 
 [ExtendObjectType(typeof(FilmSchema))]
 public class FilmExtension(
-    [Service] IPersonRepository people,
+    [Service] ICharacterRepository people,
     [Service] IPlanetRepository planets,
     [Service] ISpeciesRepository species,
     [Service] IStarshipRepository starships,
     [Service] IVehicleRepository vehicles)
 {
-    public async Task<IEnumerable<PersonSchema>> GetCharactersAsync(
+    public async Task<IEnumerable<CharacterSchema>> GetCharactersAsync(
         [Parent] FilmSchema parent,
         CancellationToken ctx)
     {
         var queue = parent.PersonIds.Select(id => people.GetByIdAsync(id, ctx));
         var responses = await Task.WhenAll(queue);
 
-        var list = new List<PersonSchema>();
+        var list = new List<CharacterSchema>();
 
         foreach (var e in responses)
         {
             if (e is not null)
             {
-                list.Add(PersonSchema.MapFrom(e));
+                list.Add(CharacterSchema.MapFrom(e));
             }
         }
 

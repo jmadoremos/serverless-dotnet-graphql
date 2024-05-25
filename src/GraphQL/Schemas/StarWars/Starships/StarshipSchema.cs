@@ -3,7 +3,7 @@ namespace GraphQL.Schemas.StarWars.Starships;
 using GraphQL.Extensions;
 using GraphQL.Repositories.StarWars.Starships;
 using GraphQL.Schemas.StarWars.Films;
-using GraphQL.Schemas.StarWars.People;
+using GraphQL.Schemas.StarWars.Characters;
 
 [GraphQLDescription("A starship resource is a single transport craft that has hyperdrive capability.")]
 public class StarshipSchema
@@ -60,7 +60,7 @@ public class StarshipSchema
     public IEnumerable<int> PilotIds { get; set; } = default!;
 
     [GraphQLDescription("A list of films that this starship has been piloted by.")]
-    public IEnumerable<PersonSchema> Pilots { get; set; } = default!;
+    public IEnumerable<CharacterSchema> Pilots { get; set; } = default!;
 
     public static StarshipSchema MapFrom(StarshipApiResponse r) => new()
     {

@@ -2,7 +2,7 @@ namespace GraphQL.Schemas.StarWars.Films;
 
 using GraphQL.Extensions;
 using GraphQL.Repositories.StarWars.Films;
-using GraphQL.Schemas.StarWars.People;
+using GraphQL.Schemas.StarWars.Characters;
 using GraphQL.Schemas.StarWars.Planets;
 using GraphQL.Schemas.StarWars.Species;
 using GraphQL.Schemas.StarWars.Starships;
@@ -54,7 +54,7 @@ public class FilmSchema
     public IEnumerable<int> PersonIds { get; set; } = default!;
 
     [GraphQLDescription("A list of characters that are in this film.")]
-    public IEnumerable<PersonSchema> Characters { get; set; } = default!;
+    public IEnumerable<CharacterSchema> Characters { get; set; } = default!;
 
     [GraphQLIgnore]
     public IEnumerable<int> PlanetIds { get; set; } = default!;

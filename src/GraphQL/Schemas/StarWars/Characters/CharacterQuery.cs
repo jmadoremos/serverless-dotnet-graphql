@@ -1,13 +1,13 @@
-namespace GraphQL.Schemas.StarWars.People;
+namespace GraphQL.Schemas.StarWars.Characters;
 
-using GraphQL.Repositories.StarWars.People;
+using GraphQL.Repositories.StarWars.Characters;
 using System.Collections.Generic;
 
 [ExtendObjectType("Query")]
-public class PersonQuery([Service] IPersonRepository people)
+public class CharacterQuery([Service] ICharacterRepository people)
 {
     [GraphQLDescription("A list of people in Star Wars Universe.")]
-    public async Task<IEnumerable<PersonSchema>?> GetPeopleAsync(CancellationToken ctx)
+    public async Task<IEnumerable<CharacterSchema>?> GetPeopleAsync(CancellationToken ctx)
     {
         // Call API to retrieve all data
         var response = await people.GetAllAsync(ctx);
@@ -19,11 +19,11 @@ public class PersonQuery([Service] IPersonRepository people)
         }
 
         // Map to schema and resolve
-        return response.Results.Select(PersonSchema.MapFrom);
+        return response.Results.Select(CharacterSchema.MapFrom);
     }
 
     [GraphQLDescription("A person or character in Star Wars Universe identified by the Star Wars API identifier.")]
-    public async Task<PersonSchema?> GetPersonAsync(
+    public async Task<CharacterSchema?> GetPersonAsync(
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)
     {
@@ -37,6 +37,6 @@ public class PersonQuery([Service] IPersonRepository people)
         }
 
         // Map and resolve
-        return PersonSchema.MapFrom(response);
+        return CharacterSchema.MapFrom(response);
     }
 }

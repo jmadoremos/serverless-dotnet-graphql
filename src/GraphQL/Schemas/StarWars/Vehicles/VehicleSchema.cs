@@ -3,7 +3,7 @@ namespace GraphQL.Schemas.StarWars.Vehicles;
 using GraphQL.Extensions;
 using GraphQL.Repositories.StarWars.Vehicles;
 using GraphQL.Schemas.StarWars.Films;
-using GraphQL.Schemas.StarWars.People;
+using GraphQL.Schemas.StarWars.Characters;
 
 [GraphQLDescription("A vehicle resource is a single transport craft that does not have hyperdrive capability.")]
 public class VehicleSchema
@@ -54,7 +54,7 @@ public class VehicleSchema
     public IEnumerable<int> PilotIds { get; set; } = default!;
 
     [GraphQLDescription("A list of pilots that this vehicle has been piloted by.")]
-    public IEnumerable<PersonSchema> Pilots { get; set; } = default!;
+    public IEnumerable<CharacterSchema> Pilots { get; set; } = default!;
 
     public static VehicleSchema MapFrom(VehicleApiResponse r) => new()
     {

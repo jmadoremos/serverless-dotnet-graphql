@@ -1,8 +1,8 @@
-namespace GraphQL.Repositories.StarWars.People;
+namespace GraphQL.Repositories.StarWars.Characters;
 
 using Newtonsoft.Json;
 
-public class PersonApiResponse : SwapiResponse
+public class CharacterApiResponse : SwapiResponse
 {
     public string Name { get; set; } = default!;
 

@@ -3,7 +3,7 @@ namespace GraphQL.Schemas.StarWars.Planets;
 using GraphQL.Extensions;
 using GraphQL.Repositories.StarWars.Planets;
 using GraphQL.Schemas.StarWars.Films;
-using GraphQL.Schemas.StarWars.People;
+using GraphQL.Schemas.StarWars.Characters;
 
 [GraphQLDescription("A planet resource is a large mass, planet or planetoid in the Star Wars Universe, at the time of 0 ABY.")]
 public class PlanetSchema
@@ -42,7 +42,7 @@ public class PlanetSchema
     public IEnumerable<int> PersonIds { get; set; } = default!;
 
     [GraphQLDescription("A list of residents that live on this planet.")]
-    public IEnumerable<PersonSchema> Residents { get; set; } = default!;
+    public IEnumerable<CharacterSchema> Residents { get; set; } = default!;
 
     [GraphQLIgnore]
     public IEnumerable<int> FilmIds { get; set; } = default!;

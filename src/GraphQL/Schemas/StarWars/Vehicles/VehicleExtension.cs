@@ -1,14 +1,14 @@
 namespace GraphQL.Schemas.StarWars.Vehicles;
 
 using GraphQL.Repositories.StarWars.Films;
-using GraphQL.Repositories.StarWars.People;
+using GraphQL.Repositories.StarWars.Characters;
 using GraphQL.Schemas.StarWars.Films;
-using GraphQL.Schemas.StarWars.People;
+using GraphQL.Schemas.StarWars.Characters;
 
 [ExtendObjectType(typeof(VehicleSchema))]
 public class VehicleExtension(
     [Service] IFilmRepository films,
-    [Service] IPersonRepository people)
+    [Service] ICharacterRepository people)
 {
     public async Task<IEnumerable<FilmSchema>> GetFilmsAsync(
         [Parent] VehicleSchema parent,
@@ -30,20 +30,20 @@ public class VehicleExtension(
         return filmList;
     }
 
-    public async Task<IEnumerable<PersonSchema>> GetPilotsAsync(
+    public async Task<IEnumerable<CharacterSchema>> GetPilotsAsync(
         [Parent] VehicleSchema parent,
         CancellationToken ctx)
     {
         var pilotQueue = parent.PilotIds.Select(id => people.GetByIdAsync(id, ctx));
         var pilotResponses = await Task.WhenAll(pilotQueue);
 
-        var pilotList = new List<PersonSchema>();
+        var pilotList = new List<CharacterSchema>();
 
         foreach (var e in pilotResponses)
         {
             if (e is not null)
             {
-                pilotList.Add(PersonSchema.MapFrom(e));
+                pilotList.Add(CharacterSchema.MapFrom(e));
             }
         }
 

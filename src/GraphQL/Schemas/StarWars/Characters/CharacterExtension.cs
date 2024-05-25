@@ -1,4 +1,4 @@
-namespace GraphQL.Schemas.StarWars.People;
+namespace GraphQL.Schemas.StarWars.Characters;
 
 using GraphQL.Repositories.StarWars.Films;
 using GraphQL.Repositories.StarWars.Planets;
@@ -11,8 +11,8 @@ using GraphQL.Schemas.StarWars.Species;
 using GraphQL.Schemas.StarWars.Starships;
 using GraphQL.Schemas.StarWars.Vehicles;
 
-[ExtendObjectType(typeof(PersonSchema))]
-public class PersonExtension(
+[ExtendObjectType(typeof(CharacterSchema))]
+public class CharacterExtension(
     [Service] IFilmRepository films,
     [Service] IPlanetRepository planets,
     [Service] ISpeciesRepository species,
@@ -20,7 +20,7 @@ public class PersonExtension(
     [Service] IVehicleRepository vehicles)
 {
     public async Task<PlanetSchema?> GetHomeworldAsync(
-        [Parent] PersonSchema parent,
+        [Parent] CharacterSchema parent,
         CancellationToken ctx)
     {
         if (parent.HomeworldId is null)
@@ -39,7 +39,7 @@ public class PersonExtension(
     }
 
     public async Task<IEnumerable<FilmSchema>> GetFilmsAsync(
-        [Parent] PersonSchema parent,
+        [Parent] CharacterSchema parent,
         CancellationToken ctx)
     {
         var queue = parent.FilmIds.Select(id => films.GetByIdAsync(id, ctx));
@@ -59,7 +59,7 @@ public class PersonExtension(
     }
 
     public async Task<IEnumerable<SpeciesSchema>> GetSpeciesAsync(
-        [Parent] PersonSchema parent,
+        [Parent] CharacterSchema parent,
         CancellationToken ctx)
     {
         var queue = parent.SpeciesIds.Select(id => species.GetByIdAsync(id, ctx));
@@ -79,7 +79,7 @@ public class PersonExtension(
     }
 
     public async Task<IEnumerable<StarshipSchema>> GetStarshipsAsync(
-        [Parent] PersonSchema parent,
+        [Parent] CharacterSchema parent,
         CancellationToken ctx)
     {
         var queue = parent.StarshipIds.Select(id => starships.GetByIdAsync(id, ctx));
@@ -99,7 +99,7 @@ public class PersonExtension(
     }
 
     public async Task<IEnumerable<VehicleSchema>> GetVehiclesAsync(
-        [Parent] PersonSchema parent,
+        [Parent] CharacterSchema parent,
         CancellationToken ctx)
     {
         var queue = parent.VehicleIds.Select(id => vehicles.GetByIdAsync(id, ctx));

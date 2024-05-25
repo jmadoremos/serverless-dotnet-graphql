@@ -1,19 +1,19 @@
-namespace GraphQL.Repositories.StarWars.People;
+namespace GraphQL.Repositories.StarWars.Characters;
 
 using System.Globalization;
 using GraphQL.Services.StarWars;
 
-public class PersonRepository([Service] ISwapiService swapi) : IPersonRepository
+public class CharacterRepository([Service] ISwapiService swapi) : ICharacterRepository
 {
     private readonly Uri baseUri = new("https://swapi.dev/api/people/");
 
-    public async Task<SwapiResponseList<PersonApiResponse>> GetAllAsync(CancellationToken ctx)
+    public async Task<SwapiResponseList<CharacterApiResponse>> GetAllAsync(CancellationToken ctx)
     {
         // Define placeholder of results
-        var result = new SwapiResponseList<PersonApiResponse>();
+        var result = new SwapiResponseList<CharacterApiResponse>();
 
         // Define placeholder for the API response
-        SwapiResponseList<PersonApiResponse>? response;
+        SwapiResponseList<CharacterApiResponse>? response;
 
         // Define API URI to call. Defaults to resource URI.
         var uri = this.baseUri.ToString();
@@ -22,7 +22,7 @@ public class PersonRepository([Service] ISwapiService swapi) : IPersonRepository
         {
             // Call API
             response = await swapi
-                .GetAsync<SwapiResponseList<PersonApiResponse>>(uri, ctx);
+                .GetAsync<SwapiResponseList<CharacterApiResponse>>(uri, ctx);
 
             // If the response does not have a data, return the result
             if (response == null || response.Count == 0)
@@ -48,7 +48,7 @@ public class PersonRepository([Service] ISwapiService swapi) : IPersonRepository
         return result;
     }
 
-    public async Task<PersonApiResponse?> GetByIdAsync(
+    public async Task<CharacterApiResponse?> GetByIdAsync(
         int id,
         CancellationToken ctx)
     {
@@ -57,7 +57,7 @@ public class PersonRepository([Service] ISwapiService swapi) : IPersonRepository
 
         // Call API
         var result = await swapi
-            .GetAsync<PersonApiResponse>(uri, ctx);
+            .GetAsync<CharacterApiResponse>(uri, ctx);
 
         // Resolve
         return result;

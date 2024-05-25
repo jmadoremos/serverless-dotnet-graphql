@@ -1,15 +1,15 @@
-namespace GraphQL.Schemas.StarWars.People;
+namespace GraphQL.Schemas.StarWars.Characters;
 
 using GraphQL.Extensions;
-using GraphQL.Repositories.StarWars.People;
+using GraphQL.Repositories.StarWars.Characters;
 using GraphQL.Schemas.StarWars.Films;
 using GraphQL.Schemas.StarWars.Planets;
 using GraphQL.Schemas.StarWars.Species;
 using GraphQL.Schemas.StarWars.Starships;
 using GraphQL.Schemas.StarWars.Vehicles;
 
-[GraphQLDescription("A people resource is an individual person or character within the Star Wars universe.")]
-public class PersonSchema
+[GraphQLDescription("A character resource is an individual person or character within the Star Wars universe.")]
+public class CharacterSchema
 {
     [GraphQLType(typeof(IdType))]
     public int Id { get; set; }
@@ -68,7 +68,7 @@ public class PersonSchema
     [GraphQLDescription("A list of vehicles that this person has piloted.")]
     public IEnumerable<VehicleSchema> Vehicles { get; set; } = default!;
 
-    public static PersonSchema MapFrom(PersonApiResponse r) => new()
+    public static CharacterSchema MapFrom(CharacterApiResponse r) => new()
     {
         Id = r.URL.ExtractSwapiId(),
         Name = r.Name,

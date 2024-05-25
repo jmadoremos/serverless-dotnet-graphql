@@ -1,13 +1,13 @@
 ﻿namespace GraphQL;
 
+using GraphQL.Repositories.StarWars.Characters;
 using GraphQL.Repositories.StarWars.Films;
-using GraphQL.Repositories.StarWars.People;
 using GraphQL.Repositories.StarWars.Planets;
 using GraphQL.Repositories.StarWars.Species;
 using GraphQL.Repositories.StarWars.Starships;
 using GraphQL.Repositories.StarWars.Vehicles;
+using GraphQL.Schemas.StarWars.Characters;
 using GraphQL.Schemas.StarWars.Films;
-using GraphQL.Schemas.StarWars.People;
 using GraphQL.Schemas.StarWars.Planets;
 using GraphQL.Schemas.StarWars.Species;
 using GraphQL.Schemas.StarWars.Starships;
@@ -28,31 +28,30 @@ public class Startup(IConfiguration configuration)
         services.AddHttpContextAccessor();
 
         // Define GraphQL server parameters
-        services
-            .AddGraphQLServer()
+        services.AddGraphQLServer()
             // Queries
             .AddQueryType(d => d.Name("Query"))
+                .AddType<CharacterQuery>()
                 .AddType<FilmQuery>()
-                .AddType<PersonQuery>()
                 .AddType<PlanetQuery>()
                 .AddType<SpeciesQuery>()
                 .AddType<StarshipQuery>()
                 .AddType<VehicleQuery>()
             // Extensions
-            .AddType<FilmExtension>()
-            .AddType<PersonExtension>()
-            .AddType<PlanetExtension>()
-            .AddType<SpeciesExtension>()
-            .AddType<StarshipExtension>()
-            .AddType<VehicleExtension>();
+            .AddTypeExtension<CharacterExtension>()
+            .AddTypeExtension<FilmExtension>()
+            .AddTypeExtension<PlanetExtension>()
+            .AddTypeExtension<SpeciesExtension>()
+            .AddTypeExtension<StarshipExtension>()
+            .AddTypeExtension<VehicleExtension>();
 
         // Allow dependency injection of testable custom services
         services.AddSingleton<ISwapiService, SwapiService>();
 
         // Allow dependency injection of testable custom repositories
         services
+            .AddSingleton<ICharacterRepository, CharacterRepository>()
             .AddSingleton<IFilmRepository, FilmRepository>()
-            .AddSingleton<IPersonRepository, PersonRepository>()
             .AddSingleton<IPlanetRepository, PlanetRepository>()
             .AddSingleton<ISpeciesRepository, SpeciesRepository>()
             .AddSingleton<IStarshipRepository, StarshipRepository>()

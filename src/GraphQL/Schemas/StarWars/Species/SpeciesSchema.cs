@@ -3,7 +3,7 @@ namespace GraphQL.Schemas.StarWars.Species;
 using GraphQL.Extensions;
 using GraphQL.Repositories.StarWars.Species;
 using GraphQL.Schemas.StarWars.Films;
-using GraphQL.Schemas.StarWars.People;
+using GraphQL.Schemas.StarWars.Characters;
 using GraphQL.Schemas.StarWars.Planets;
 
 [GraphQLDescription("A species resource is a type of person or character within the Star Wars Universe.")]
@@ -49,7 +49,7 @@ public class SpeciesSchema
     public IEnumerable<int> PersonIds { get; set; } = default!;
 
     [GraphQLDescription("A list of people that are a part of this species.")]
-    public IEnumerable<PersonSchema> People { get; set; } = default!;
+    public IEnumerable<CharacterSchema> People { get; set; } = default!;
 
     [GraphQLIgnore]
     public IEnumerable<int> FilmIds { get; set; } = default!;

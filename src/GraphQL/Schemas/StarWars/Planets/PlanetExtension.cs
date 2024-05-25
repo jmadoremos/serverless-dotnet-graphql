@@ -1,29 +1,29 @@
 namespace GraphQL.Schemas.StarWars.Planets;
 
 using GraphQL.Repositories.StarWars.Films;
-using GraphQL.Repositories.StarWars.People;
+using GraphQL.Repositories.StarWars.Characters;
 using GraphQL.Schemas.StarWars.Films;
-using GraphQL.Schemas.StarWars.People;
+using GraphQL.Schemas.StarWars.Characters;
 
 [ExtendObjectType(typeof(PlanetSchema))]
 public class PlanetExtension(
-    [Service] IPersonRepository people,
+    [Service] ICharacterRepository people,
     [Service] IFilmRepository films)
 {
-    public async Task<IEnumerable<PersonSchema>> GetResidentsAsync(
+    public async Task<IEnumerable<CharacterSchema>> GetResidentsAsync(
         [Parent] PlanetSchema parent,
         CancellationToken ctx)
     {
         var queue = parent.PersonIds.Select(id => people.GetByIdAsync(id, ctx));
         var responses = await Task.WhenAll(queue);
 
-        var list = new List<PersonSchema>();
+        var list = new List<CharacterSchema>();
 
         foreach (var e in responses)
         {
             if (e is not null)
             {
-                list.Add(PersonSchema.MapFrom(e));
+                list.Add(CharacterSchema.MapFrom(e));
             }
         }
 
