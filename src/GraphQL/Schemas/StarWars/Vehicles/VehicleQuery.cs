@@ -22,7 +22,7 @@ public class VehicleQuery([Service] IVehicleRepository vehicles)
     }
 
     [GraphQLDescription("A vehicle in Star Wars Universe identified by the Star Wars API identifier.")]
-    public async Task<VehicleSchema?> GetVehicleAsync(
+    public async Task<VehicleSchema?> GetVehicleByIdAsync(
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)
     {

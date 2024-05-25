@@ -22,7 +22,7 @@ public class StarshipQuery([Service] IStarshipRepository starships)
     }
 
     [GraphQLDescription("A starship in Star Wars Universe identified by the Star Wars API identifier.")]
-    public async Task<StarshipSchema?> GetStarshipAsync(
+    public async Task<StarshipSchema?> GetStarshipByIdAsync(
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)
     {

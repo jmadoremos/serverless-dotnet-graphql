@@ -22,7 +22,7 @@ public class PlanetQuery([Service] IPlanetRepository planets)
     }
 
     [GraphQLDescription("A planet in Star Wars Universe identified by the Star Wars API identifier.")]
-    public async Task<PlanetSchema?> GetPlanetAsync(
+    public async Task<PlanetSchema?> GetPlanetByIdAsync(
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)
     {

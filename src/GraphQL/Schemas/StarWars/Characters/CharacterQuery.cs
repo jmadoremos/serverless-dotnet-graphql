@@ -7,7 +7,7 @@ using System.Collections.Generic;
 public class CharacterQuery([Service] ICharacterRepository people)
 {
     [GraphQLDescription("A list of people in Star Wars Universe.")]
-    public async Task<IEnumerable<CharacterSchema>?> GetPeopleAsync(CancellationToken ctx)
+    public async Task<IEnumerable<CharacterSchema>?> GetCharactersAsync(CancellationToken ctx)
     {
         // Call API to retrieve all data
         var response = await people.GetAllAsync(ctx);
@@ -23,7 +23,7 @@ public class CharacterQuery([Service] ICharacterRepository people)
     }
 
     [GraphQLDescription("A person or character in Star Wars Universe identified by the Star Wars API identifier.")]
-    public async Task<CharacterSchema?> GetPersonAsync(
+    public async Task<CharacterSchema?> GetCharacterByIdAsync(
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)
     {

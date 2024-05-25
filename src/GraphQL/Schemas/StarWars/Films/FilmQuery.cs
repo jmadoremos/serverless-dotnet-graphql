@@ -22,7 +22,7 @@ public class FilmQuery([Service] IFilmRepository films)
     }
 
     [GraphQLDescription("A film in Star Wars Universe identified by the Star Wars API identifier.")]
-    public async Task<FilmSchema?> GetFilmAsync(
+    public async Task<FilmSchema?> GetFilmByIdAsync(
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)
     {
