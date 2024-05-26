@@ -1,11 +1,16 @@
 ﻿namespace GraphQL;
 
+using GraphQL.Data;
+using GraphQL.Repositories.Database.Attendees;
+using GraphQL.Repositories.Database.Speakers;
 using GraphQL.Repositories.StarWars.Characters;
 using GraphQL.Repositories.StarWars.Films;
 using GraphQL.Repositories.StarWars.Planets;
 using GraphQL.Repositories.StarWars.Species;
 using GraphQL.Repositories.StarWars.Starships;
 using GraphQL.Repositories.StarWars.Vehicles;
+using GraphQL.Schemas.Database.Attendees;
+using GraphQL.Schemas.Database.Speakers;
 using GraphQL.Schemas.StarWars.Characters;
 using GraphQL.Schemas.StarWars.Films;
 using GraphQL.Schemas.StarWars.Planets;
@@ -13,6 +18,7 @@ using GraphQL.Schemas.StarWars.Species;
 using GraphQL.Schemas.StarWars.Starships;
 using GraphQL.Schemas.StarWars.Vehicles;
 using GraphQL.Services.StarWars;
+using Microsoft.EntityFrameworkCore;
 
 public class Startup(IConfiguration configuration)
 {
@@ -27,10 +33,29 @@ public class Startup(IConfiguration configuration)
         // Allow access to the HttpContext of the current request
         services.AddHttpContextAccessor();
 
+        // Allow access to DbContext of Entity Framework
+        const string dbHost = "localhost";
+        const string dbPort = "5432";
+        const string dbName = "GraphQL";
+        const string dbUser = "postgre";
+        const string dbPass = "postgre";
+        const string dbconn = $"User ID={dbUser};Password={dbPass};Host={dbHost};Port={dbPort};Database={dbName};Pooling=true;Connection Lifetime=0;";
+        services.AddPooledDbContextFactory<ApplicationDbContext>(options =>
+            options.UseNpgsql(dbconn));
+
         // Define GraphQL server parameters
         services.AddGraphQLServer()
+            // DbContext
+            .RegisterDbContext<ApplicationDbContext>(DbContextKind.Pooled)
+            // Custom services using DbContext
+            .RegisterService<AttendeeRepository>()
+            .RegisterService<SpeakerRepository>()
             // Queries
             .AddQueryType(d => d.Name("Query"))
+                // Database
+                .AddType<AttendeeQuery>()
+                .AddType<SpeakerQuery>()
+                // Web API
                 .AddType<CharacterQuery>()
                 .AddType<FilmQuery>()
                 .AddType<PlanetQuery>()
@@ -43,13 +68,21 @@ public class Startup(IConfiguration configuration)
             .AddTypeExtension<PlanetExtension>()
             .AddTypeExtension<SpeciesExtension>()
             .AddTypeExtension<StarshipExtension>()
-            .AddTypeExtension<VehicleExtension>();
+            .AddTypeExtension<VehicleExtension>()
+            // Mutations
+            .AddMutationType(d => d.Name("Mutation"))
+                .AddType<AttendeeMutation>()
+                .AddType<SpeakerMutation>();
 
         // Allow dependency injection of testable custom services
         services.AddSingleton<ISwapiService, SwapiService>();
 
         // Allow dependency injection of testable custom repositories
         services
+            // Database
+            .AddTransient<IAttendeeRepository, AttendeeRepository>()
+            .AddTransient<ISpeakerRepository, SpeakerRepository>()
+            // Web API
             .AddSingleton<ICharacterRepository, CharacterRepository>()
             .AddSingleton<IFilmRepository, FilmRepository>()
             .AddSingleton<IPlanetRepository, PlanetRepository>()
