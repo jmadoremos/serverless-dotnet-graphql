@@ -25,9 +25,9 @@ dotnet sln src/ServerlessDotNetGraphQL.sln add src/GraphQL
 4. Install package dependencies.
 
 ```sh
-dotnet add src/GraphQL package Microsoft.EntityFrameworkCore.Sqlite
-
 dotnet add src/GraphQL package Microsoft.EntityFrameworkCore.Tools
+
+dotnet add src/GraphQL package Aspire.Npgsql.EntityFrameworkCore.PostgreSQL
 
 dotnet add src/GraphQL package HotChocolate.AspNetCore
 

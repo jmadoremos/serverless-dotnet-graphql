@@ -8,7 +8,7 @@
       "serverReadyAction": {
         "action": "openExternally",
         "pattern": "\\bNow listening on:\\s+https?://\\S",
-        "uriFormat": "https://127.0.0.1:5001/graphql/",
+        "uriFormat": "http://localhost:5000/graphql/",
         "killOnServerStop": true
       }
     }

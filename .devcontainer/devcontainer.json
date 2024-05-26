@@ -3,33 +3,37 @@
 {
   "name": "serverless-dotnet-graphql",
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "devcontainer",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "shutdownAction": "stopCompose",
   // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {
-    "ghcr.io/devcontainers-contrib/features/zsh-plugins:0": {},
-    "ghcr.io/itsmechlark/features/postgresql:1": {
-      "version": "16"
-    },
-    "ghcr.io/warrenbuckley/codespace-features/sqlite:1": {}
+    "ghcr.io/devcontainers-contrib/features/zsh-plugins:0": {}
   },
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  // "forwardPorts": [5000, 5001],
-  // "portsAttributes": {
-  //		"5001": {
-  //			"protocol": "https"
-  //		}
-  // }
+  "forwardPorts": [
+    5000,
+    5001,
+    5432,
+    5050
+  ],
+  "portsAttributes": {
+    "5001": {
+      "protocol": "https"
+    }
+  },
   // Use 'postCreateCommand' to run commands after the container is created.
-  //"postCreateCommand": ".devcontainer/scripts/container-postcreate.sh",
+  "postCreateCommand": "bash -i .devcontainer/scripts/container-postcreate.sh",
   // Configure tool-specific properties.
   "customizations": {
     "vscode": {
       "extensions": [
         "EditorConfig.EditorConfig",
         "eamodio.gitlens",
-        "ms-dotnettools.csdevkit"
+        "ms-dotnettools.csdevkit",
+        "mtxr.sqltools",
+        "mtxr.sqltools-driver-pg"
       ]
     }
   }
