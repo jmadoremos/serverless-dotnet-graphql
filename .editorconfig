@@ -63,6 +63,11 @@ end_of_line = lf
 [Makefile]
 indent_style = tab
 
+# Migration Files
+[**/Migrations/*.cs]
+generated_code = true
+dotnet_analyzer_diagnostic.category-Style.severity = none
+
 ##########################################
 # Default .NET Code Style Severities
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/configuration-options#scope
