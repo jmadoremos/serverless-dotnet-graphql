@@ -1,5 +1,6 @@
 namespace GraphQL.Schemas.Database.Attendees;
 
+using GraphQL.Exceptions.Database;
 using GraphQL.Repositories.Database.Attendees;
 using System.Linq;
 
@@ -18,7 +19,9 @@ public class AttendeeQuery([Service] IAttendeeRepository attendees)
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)
     {
-        var result = await attendees.GetByIdAsync(id, ctx);
+        var result = await attendees.GetByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(Attendee.Id));
+
         return AttendeeSchema.MapFrom(result);
     }
 }

@@ -15,21 +15,19 @@ public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContex
         return result.AsQueryable();
     }
 
-    public async Task<Attendee> GetByIdAsync(
+    public async Task<Attendee?> GetByIdAsync(
         int id,
         CancellationToken ctx) =>
         await this.dbContext.Attendees
             .Where(w => w.Id == id)
-            .FirstOrDefaultAsync(ctx)
-            ?? throw new UserNotFoundException(nameof(Attendee.Id));
+            .FirstOrDefaultAsync(ctx);
 
-    public async Task<Attendee> GetByUserNameAsync(
+    public async Task<Attendee?> GetByUserNameAsync(
         string userName,
         CancellationToken ctx) =>
         await this.dbContext.Attendees
             .Where(w => w.UserName == userName)
-            .FirstOrDefaultAsync(ctx)
-            ?? throw new UserNotFoundException(nameof(Attendee.UserName));
+            .FirstOrDefaultAsync(ctx);
 
     public async Task<int> CreateAsync(
         AttendeeInput input,
@@ -39,7 +37,7 @@ public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContex
 
         if (existing is not null)
         {
-            throw new UsernameTakenException();
+            throw new UsernameTakenException(nameof(Attendee.UserName));
         }
 
         var entity = Attendee.MapFrom(input);

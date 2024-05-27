@@ -1,5 +1,6 @@
 namespace GraphQL.Schemas.Database.Speakers;
 
+using GraphQL.Exceptions.Database;
 using GraphQL.Repositories.Database.Speakers;
 
 [ExtendObjectType("Mutation")]
@@ -14,7 +15,8 @@ public class SpeakerMutation([Service] ISpeakerRepository speakers)
 
         var id = await speakers.CreateAsync(attendee, ctx);
 
-        var entity = await speakers.GetByIdAsync(id, ctx);
+        var entity = await speakers.GetByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(Speaker.Id));
 
         return SpeakerSchema.MapFrom(entity);
     }
@@ -25,13 +27,15 @@ public class SpeakerMutation([Service] ISpeakerRepository speakers)
         UpdateSpeakerSchema input,
         CancellationToken ctx)
     {
-        var entity = await speakers.GetByIdAsync(id, ctx);
+        var entity = await speakers.GetByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(Speaker.Id));
 
         var attendee = SpeakerInput.MapFrom(entity, input);
 
         await speakers.UpdateAsync(id, attendee, ctx);
 
-        entity = await speakers.GetByIdAsync(id, ctx);
+        entity = await speakers.GetByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(Speaker.Id));
 
         return SpeakerSchema.MapFrom(entity);
     }
@@ -41,7 +45,8 @@ public class SpeakerMutation([Service] ISpeakerRepository speakers)
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)
     {
-        var entity = await speakers.GetByIdAsync(id, ctx);
+        var entity = await speakers.GetByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(Speaker.Id));
 
         await speakers.DeleteAsync(id, ctx);
 

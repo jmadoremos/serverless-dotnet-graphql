@@ -1,7 +1,7 @@
 namespace GraphQL.Repositories.Database.Speakers;
 
-using System.ComponentModel.DataAnnotations;
 using GraphQL.Schemas.Database.Speakers;
+using System.ComponentModel.DataAnnotations;
 
 public class SpeakerInput
 {

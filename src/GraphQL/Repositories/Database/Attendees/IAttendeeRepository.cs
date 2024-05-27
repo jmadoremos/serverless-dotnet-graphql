@@ -4,9 +4,9 @@ public interface IAttendeeRepository
 {
     Task<IQueryable<Attendee>> GetAllAsync(CancellationToken ctx);
 
-    Task<Attendee> GetByIdAsync(int id, CancellationToken ctx);
+    Task<Attendee?> GetByIdAsync(int id, CancellationToken ctx);
 
-    Task<Attendee> GetByUserNameAsync(string userName, CancellationToken ctx);
+    Task<Attendee?> GetByUserNameAsync(string userName, CancellationToken ctx);
 
     Task<int> CreateAsync(AttendeeInput input, CancellationToken ctx);
 

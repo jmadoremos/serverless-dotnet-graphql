@@ -1,5 +1,6 @@
 namespace GraphQL.Schemas.Database.Speakers;
 
+using GraphQL.Exceptions.Database;
 using GraphQL.Repositories.Database.Speakers;
 using System.Linq;
 
@@ -18,7 +19,9 @@ public class SpeakerQuery([Service] ISpeakerRepository speakers)
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)
     {
-        var result = await speakers.GetByIdAsync(id, ctx);
+        var result = await speakers.GetByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(Speaker.Id));
+
         return SpeakerSchema.MapFrom(result);
     }
 }

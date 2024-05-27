@@ -20,5 +20,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .Entity<Attendee>()
             .HasIndex(a => a.UserName)
             .IsUnique();
+
+        modelBuilder.Entity<Speaker>()
+            .HasIndex(a => a.Name)
+            .IsUnique();
     }
 }

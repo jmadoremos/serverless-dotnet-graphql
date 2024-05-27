@@ -15,18 +15,31 @@ public class SpeakerRepository(IDbContextFactory<ApplicationDbContext> dbContext
         return result.AsQueryable();
     }
 
-    public async Task<Speaker> GetByIdAsync(
+    public async Task<Speaker?> GetByIdAsync(
         int id,
         CancellationToken ctx) =>
         await this.dbContext.Speakers
             .Where(w => w.Id == id)
-            .FirstOrDefaultAsync(ctx)
-            ?? throw new UserNotFoundException(nameof(Speaker.Id));
+            .FirstOrDefaultAsync(ctx);
+
+    public async Task<Speaker?> GetByNameAsync(
+        string name,
+        CancellationToken ctx) =>
+        await this.dbContext.Speakers
+            .Where(w => w.Name == name)
+            .FirstOrDefaultAsync(ctx);
 
     public async Task<int> CreateAsync(
         SpeakerInput input,
         CancellationToken ctx)
     {
+        var existing = await this.GetByNameAsync(input.Name, ctx);
+
+        if (existing is not null)
+        {
+            throw new UsernameTakenException(nameof(Speaker.Name));
+        }
+
         var entity = Speaker.MapFrom(input);
         this.dbContext.Speakers.Add(entity);
 
@@ -40,7 +53,8 @@ public class SpeakerRepository(IDbContextFactory<ApplicationDbContext> dbContext
         SpeakerInput input,
         CancellationToken ctx)
     {
-        var _ = await this.GetByIdAsync(id, ctx);
+        var _ = await this.GetByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(Speaker.Id));
 
         this.dbContext.Speakers
             .Where(w => w.Id == id)
@@ -56,7 +70,8 @@ public class SpeakerRepository(IDbContextFactory<ApplicationDbContext> dbContext
         int id,
         CancellationToken ctx)
     {
-        var _ = await this.GetByIdAsync(id, ctx);
+        var _ = await this.GetByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(Speaker.Id));
 
         this.dbContext.Speakers
             .Where(w => w.Id == id)

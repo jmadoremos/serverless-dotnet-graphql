@@ -4,7 +4,9 @@ public interface ISpeakerRepository
 {
     Task<IQueryable<Speaker>> GetAllAsync(CancellationToken ctx);
 
-    Task<Speaker> GetByIdAsync(int id, CancellationToken ctx);
+    Task<Speaker?> GetByIdAsync(int id, CancellationToken ctx);
+
+    Task<Speaker?> GetByNameAsync(string name, CancellationToken ctx);
 
     Task<int> CreateAsync(SpeakerInput input, CancellationToken ctx);
 

@@ -1,5 +1,6 @@
 namespace GraphQL.Schemas.Database.Attendees;
 
+using GraphQL.Exceptions.Database;
 using GraphQL.Repositories.Database.Attendees;
 
 [ExtendObjectType("Mutation")]
@@ -14,7 +15,8 @@ public class AttendeeMutation([Service] IAttendeeRepository attendees)
 
         var id = await attendees.CreateAsync(attendee, ctx);
 
-        var entity = await attendees.GetByIdAsync(id, ctx);
+        var entity = await attendees.GetByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(Attendee.Id));
 
         return AttendeeSchema.MapFrom(entity);
     }
@@ -25,13 +27,15 @@ public class AttendeeMutation([Service] IAttendeeRepository attendees)
         UpdateAttendeeSchema input,
         CancellationToken ctx)
     {
-        var entity = await attendees.GetByIdAsync(id, ctx);
+        var entity = await attendees.GetByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(Attendee.Id));
 
         var attendee = AttendeeInput.MapFrom(entity, input);
 
         await attendees.UpdateAsync(id, attendee, ctx);
 
-        entity = await attendees.GetByIdAsync(id, ctx);
+        entity = await attendees.GetByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(Attendee.Id));
 
         return AttendeeSchema.MapFrom(entity);
     }
@@ -41,7 +45,8 @@ public class AttendeeMutation([Service] IAttendeeRepository attendees)
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)
     {
-        var entity = await attendees.GetByIdAsync(id, ctx);
+        var entity = await attendees.GetByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(Attendee.Id));
 
         await attendees.DeleteAsync(id, ctx);
 
