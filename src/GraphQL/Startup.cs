@@ -2,7 +2,9 @@
 
 using GraphQL.Data;
 using GraphQL.Repositories.Database.Attendees;
+using GraphQL.Repositories.Database.Sessions;
 using GraphQL.Repositories.Database.Speakers;
+using GraphQL.Repositories.Database.Tracks;
 using GraphQL.Repositories.StarWars.Characters;
 using GraphQL.Repositories.StarWars.Films;
 using GraphQL.Repositories.StarWars.Planets;
@@ -10,7 +12,9 @@ using GraphQL.Repositories.StarWars.Species;
 using GraphQL.Repositories.StarWars.Starships;
 using GraphQL.Repositories.StarWars.Vehicles;
 using GraphQL.Schemas.Database.Attendees;
+using GraphQL.Schemas.Database.Sessions;
 using GraphQL.Schemas.Database.Speakers;
+using GraphQL.Schemas.Database.Tracks;
 using GraphQL.Schemas.StarWars.Characters;
 using GraphQL.Schemas.StarWars.Films;
 using GraphQL.Schemas.StarWars.Planets;
@@ -49,12 +53,16 @@ public class Startup(IConfiguration configuration)
             .RegisterDbContext<ApplicationDbContext>(DbContextKind.Pooled)
             // Custom services using DbContext
             .RegisterService<AttendeeRepository>()
+            .RegisterService<SessionRepository>()
             .RegisterService<SpeakerRepository>()
+            .RegisterService<TrackRepository>()
             // Queries
             .AddQueryType(d => d.Name("Query"))
                 // Database
                 .AddType<AttendeeQuery>()
+                .AddType<SessionQuery>()
                 .AddType<SpeakerQuery>()
+                .AddType<TrackQuery>()
                 // Web API
                 .AddType<CharacterQuery>()
                 .AddType<FilmQuery>()
@@ -72,7 +80,9 @@ public class Startup(IConfiguration configuration)
             // Mutations
             .AddMutationType(d => d.Name("Mutation"))
                 .AddType<AttendeeMutation>()
-                .AddType<SpeakerMutation>();
+                .AddType<SessionMutation>()
+                .AddType<SpeakerMutation>()
+                .AddType<TrackMutation>();
 
         // Allow dependency injection of testable custom services
         services.AddSingleton<ISwapiService, SwapiService>();
@@ -81,7 +91,9 @@ public class Startup(IConfiguration configuration)
         services
             // Database
             .AddTransient<IAttendeeRepository, AttendeeRepository>()
+            .AddTransient<ISessionRepository, SessionRepository>()
             .AddTransient<ISpeakerRepository, SpeakerRepository>()
+            .AddTransient<ITrackRepository, TrackRepository>()
             // Web API
             .AddSingleton<ICharacterRepository, CharacterRepository>()
             .AddSingleton<IFilmRepository, FilmRepository>()
