@@ -26,10 +26,10 @@ public class SessionSchema
         this.EndTime?.Subtract(this.StartTime ?? this.EndTime ?? DateTimeOffset.MinValue) ?? TimeSpan.Zero;
 
     [GraphQLDescription("The track Id of this session.")]
-    public int? TrackId { get; set; } = default!;
+    public int TrackId { get; set; } = default!;
 
     [GraphQLDescription("The track this sessions belongs to.")]
-    public Track Track { get; set; } = default!;
+    public Track? Track { get; set; } = default!;
 
     public static SessionSchema MapFrom(Session r) => new()
     {

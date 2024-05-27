@@ -16,7 +16,7 @@ public class SessionInput
 
     public DateTimeOffset? EndTime { get; set; } = default!;
 
-    public int? TrackId { get; set; } = default!;
+    public int TrackId { get; set; } = default!;
 
     public static SessionInput MapFrom(AddSessionSchema s) => new()
     {

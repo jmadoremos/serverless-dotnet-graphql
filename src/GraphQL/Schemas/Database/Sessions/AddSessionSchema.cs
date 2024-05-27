@@ -16,5 +16,5 @@ public class AddSessionSchema
     public DateTimeOffset? EndTime { get; set; } = default!;
 
     [GraphQLDescription("The track Id of this session.")]
-    public int? TrackId { get; set; } = default!;
+    public int TrackId { get; set; } = default!;
 }

@@ -71,6 +71,7 @@ public class Startup(IConfiguration configuration)
                 .AddType<StarshipQuery>()
                 .AddType<VehicleQuery>()
             // Extensions
+            .AddTypeExtension<SessionExtension>()
             .AddTypeExtension<CharacterExtension>()
             .AddTypeExtension<FilmExtension>()
             .AddTypeExtension<PlanetExtension>()
