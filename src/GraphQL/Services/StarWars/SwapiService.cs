@@ -4,13 +4,11 @@ using Newtonsoft.Json;
 
 public class SwapiService(HttpClient client) : ISwapiService
 {
-    private readonly HttpClient client = client;
-
     public async Task<T?> GetAsync<T>(
         string url,
         CancellationToken ctx)
     {
-        var response = await this.client.GetAsync(url, ctx);
+        var response = await client.GetAsync(url, ctx);
         response.EnsureSuccessStatusCode();
 
         var content = await response.Content.ReadAsStringAsync(ctx);
@@ -21,7 +19,7 @@ public class SwapiService(HttpClient client) : ISwapiService
         Uri url,
         CancellationToken ctx)
     {
-        var response = await this.client.GetAsync(url, ctx);
+        var response = await client.GetAsync(url, ctx);
         response.EnsureSuccessStatusCode();
 
         var content = await response.Content.ReadAsStringAsync(ctx);
