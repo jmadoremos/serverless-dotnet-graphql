@@ -7,32 +7,41 @@ using Microsoft.EntityFrameworkCore;
 public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContextFactory)
     : IAttendeeRepository
 {
-    private readonly ApplicationDbContext dbContext = dbContextFactory.CreateDbContext();
-
     public async Task<IQueryable<Attendee>> GetAllAsync(CancellationToken ctx)
     {
-        var result = await this.dbContext.Attendees.ToListAsync(ctx);
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+        var result = await dbContext.Attendees.ToListAsync(ctx);
         return result.AsQueryable();
     }
 
     public async Task<Attendee?> GetByIdAsync(
         int id,
-        CancellationToken ctx) =>
-        await this.dbContext.Attendees
-            .Where(w => w.Id == id)
+        CancellationToken ctx)
+    {
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+        var result = await dbContext.Attendees
+            .Where(e => e.Id == id)
             .FirstOrDefaultAsync(ctx);
+        return result;
+    }
 
     public async Task<Attendee?> GetByUserNameAsync(
         string userName,
-        CancellationToken ctx) =>
-        await this.dbContext.Attendees
-            .Where(w => w.UserName == userName)
+        CancellationToken ctx)
+    {
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+        var result = await dbContext.Attendees
+            .Where(e => e.UserName == userName)
             .FirstOrDefaultAsync(ctx);
+        return result;
+    }
 
     public async Task<int> CreateAsync(
         AttendeeInput input,
         CancellationToken ctx)
     {
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
         var existing = await this.GetByUserNameAsync(input.UserName, ctx);
 
         if (existing is not null)
@@ -41,9 +50,10 @@ public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContex
         }
 
         var entity = Attendee.MapFrom(input);
-        this.dbContext.Attendees.Add(entity);
 
-        await this.dbContext.SaveChangesAsync(ctx);
+        dbContext.Attendees.Add(entity);
+
+        await dbContext.SaveChangesAsync(ctx);
 
         return entity.Id;
     }
@@ -53,28 +63,32 @@ public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContex
         AttendeeInput input,
         CancellationToken ctx)
     {
-        var _ = await this.GetByIdAsync(id, ctx);
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+        var _ = await this.GetByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(Attendee.Id));
 
-        this.dbContext.Attendees
+        dbContext.Attendees
             .Where(w => w.Id == id)
             .ExecuteUpdate(e => e
                 .SetProperty(s => s.FirstName, input.FirstName)
                 .SetProperty(s => s.LastName, input.LastName)
                 .SetProperty(s => s.EmailAddress, input.EmailAddress));
 
-        await this.dbContext.SaveChangesAsync(ctx);
+        await dbContext.SaveChangesAsync(ctx);
     }
 
     public async Task DeleteAsync(
         int id,
         CancellationToken ctx)
     {
-        var _ = await this.GetByIdAsync(id, ctx);
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+        var _ = await this.GetByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(Attendee.Id));
 
-        this.dbContext.Attendees
+        dbContext.Attendees
             .Where(w => w.Id == id)
             .ExecuteDelete();
 
-        await this.dbContext.SaveChangesAsync(ctx);
+        await dbContext.SaveChangesAsync(ctx);
     }
 }

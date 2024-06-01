@@ -1,9 +1,9 @@
 namespace GraphQL.Data;
 
 using GraphQL.Repositories.Database.Attendees;
-using GraphQL.Repositories.Database.SessionAttendeeMapping;
+using GraphQL.Repositories.Database.SessionAttendees;
 using GraphQL.Repositories.Database.Sessions;
-using GraphQL.Repositories.Database.SessionSpeakerMapping;
+using GraphQL.Repositories.Database.SessionSpeakers;
 using GraphQL.Repositories.Database.Speakers;
 using GraphQL.Repositories.Database.Tracks;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +14,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
     public DbSet<Session> Sessions { get; set; } = default!;
 
+    public DbSet<SessionAttendee> SessionAttendees { get; set; } = default!;
+
+    public DbSet<SessionSpeaker> SessionSpeakers { get; set; } = default!;
+
     public DbSet<Speaker> Speakers { get; set; } = default!;
 
     public DbSet<Track> Tracks { get; set; } = default!;
@@ -21,27 +25,42 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Attendee>()
-            .HasIndex(a => a.UserName)
+            .HasIndex(e => e.UserName)
             .IsUnique();
 
         modelBuilder.Entity<Session>()
-            .HasIndex(a => new { a.Title, a.StartTime, a.EndTime })
+            .HasIndex(e => e.Title)
             .IsUnique();
 
         modelBuilder.Entity<Speaker>()
-            .HasIndex(a => a.Name)
+            .HasIndex(e => e.Name)
             .IsUnique();
 
         modelBuilder.Entity<Track>()
-            .HasIndex(a => a.Name)
+            .HasIndex(e => e.Name)
             .IsUnique();
 
+        // One-to-one: Session <-> Track
+        modelBuilder.Entity<Track>()
+            .HasMany(e => e.Sessions)
+            .WithOne(e => e.Track);
+
         // Many-to-many: Session <-> Attendee
-        modelBuilder.Entity<SessionAttendeeMapping>()
-            .HasKey(ca => new { ca.SessionId, ca.AttendeeId });
+        modelBuilder.Entity<SessionAttendee>()
+            .HasKey(e => new { e.SessionId, e.AttendeeId });
+
+        modelBuilder.Entity<Session>()
+            .HasMany(e => e.Attendees)
+            .WithMany(e => e.Sessions)
+            .UsingEntity<SessionAttendee>();
 
         // Many-to-many: Speaker <-> Session
-        modelBuilder.Entity<SessionSpeakerMapping>()
-            .HasKey(ss => new { ss.SessionId, ss.SpeakerId });
+        modelBuilder.Entity<SessionSpeaker>()
+            .HasKey(e => new { e.SessionId, e.SpeakerId });
+
+        modelBuilder.Entity<Session>()
+            .HasMany(e => e.Speakers)
+            .WithMany(e => e.Sessions)
+            .UsingEntity<SessionSpeaker>();
     }
 }

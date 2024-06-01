@@ -1,12 +1,12 @@
 namespace GraphQL.Repositories.Database.Attendees;
 
-using GraphQL.Repositories.Database.SessionAttendeeMapping;
+using GraphQL.Repositories.Database.Sessions;
 
 public class Attendee : AttendeeInput
 {
     public int Id { get; set; }
 
-    public ICollection<SessionAttendeeMapping> SessionsAttendees { get; set; } = [];
+    public ICollection<Session> Sessions { get; set; } = [];
 
     public static Attendee MapFrom(AttendeeInput i) => new()
     {

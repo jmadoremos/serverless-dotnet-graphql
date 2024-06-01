@@ -1,6 +1,7 @@
 namespace GraphQL.Schemas.Database.Speakers;
 
 using GraphQL.Repositories.Database.Speakers;
+using GraphQL.Schemas.Database.Sessions;
 
 [GraphQLDescription("A speaker resource of sessions.")]
 public class SpeakerSchema
@@ -16,6 +17,9 @@ public class SpeakerSchema
 
     [GraphQLDescription("The website of this speaker.")]
     public string? Website { get; set; } = default!;
+
+    [GraphQLDescription("The sessions where this speaker will be speaking, is speaking, or has spoken at.")]
+    public IEnumerable<SessionSchema> Sessions { get; set; } = [];
 
     public static SpeakerSchema MapFrom(Speaker r) => new()
     {

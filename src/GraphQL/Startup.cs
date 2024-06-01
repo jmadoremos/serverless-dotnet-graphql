@@ -2,7 +2,9 @@
 
 using GraphQL.Data;
 using GraphQL.Repositories.Database.Attendees;
+using GraphQL.Repositories.Database.SessionAttendees;
 using GraphQL.Repositories.Database.Sessions;
+using GraphQL.Repositories.Database.SessionSpeakers;
 using GraphQL.Repositories.Database.Speakers;
 using GraphQL.Repositories.Database.Tracks;
 using GraphQL.Repositories.StarWars.Characters;
@@ -54,6 +56,8 @@ public class Startup(IConfiguration configuration)
             // Custom services using DbContext
             .RegisterService<AttendeeRepository>()
             .RegisterService<SessionRepository>()
+            .RegisterService<SessionAttendeeRepository>()
+            .RegisterService<SessionSpeakerRepository>()
             .RegisterService<SpeakerRepository>()
             .RegisterService<TrackRepository>()
             // Queries
@@ -70,8 +74,12 @@ public class Startup(IConfiguration configuration)
                 .AddType<SpeciesQuery>()
                 .AddType<StarshipQuery>()
                 .AddType<VehicleQuery>()
-            // Extensions
+            // Extensions for database
+            .AddTypeExtension<AttendeeExtension>()
             .AddTypeExtension<SessionExtension>()
+            .AddTypeExtension<SpeakerExtension>()
+            .AddTypeExtension<TrackExtension>()
+            // Extensions for web API
             .AddTypeExtension<CharacterExtension>()
             .AddTypeExtension<FilmExtension>()
             .AddTypeExtension<PlanetExtension>()
@@ -93,6 +101,8 @@ public class Startup(IConfiguration configuration)
             // Database
             .AddTransient<IAttendeeRepository, AttendeeRepository>()
             .AddTransient<ISessionRepository, SessionRepository>()
+            .AddTransient<ISessionAttendeeRepository, SessionAttendeeRepository>()
+            .AddTransient<ISessionSpeakerRepository, SessionSpeakerRepository>()
             .AddTransient<ISpeakerRepository, SpeakerRepository>()
             .AddTransient<ITrackRepository, TrackRepository>()
             // Web API

@@ -2,6 +2,8 @@ namespace GraphQL.Schemas.Database.Sessions;
 
 using GraphQL.Repositories.Database.Sessions;
 using GraphQL.Repositories.Database.Tracks;
+using GraphQL.Schemas.Database.Attendees;
+using GraphQL.Schemas.Database.Speakers;
 
 [GraphQLDescription("A session resource of tracks.")]
 public class SessionSchema
@@ -29,7 +31,13 @@ public class SessionSchema
     public int TrackId { get; set; } = default!;
 
     [GraphQLDescription("The track this sessions belongs to.")]
-    public Track? Track { get; set; } = default!;
+    public Track Track { get; set; } = default!;
+
+    [GraphQLDescription("A list of speaker resources of this session.")]
+    public IEnumerable<SpeakerSchema> Speakers { get; set; } = [];
+
+    [GraphQLDescription("A list of attendee resources of this session.")]
+    public IEnumerable<AttendeeSchema> Attendees { get; set; } = [];
 
     public static SessionSchema MapFrom(Session r) => new()
     {

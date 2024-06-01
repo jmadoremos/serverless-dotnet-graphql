@@ -2,37 +2,69 @@ namespace GraphQL.Repositories.Database.Tracks;
 
 using GraphQL.Data;
 using GraphQL.Exceptions.Database;
+using GraphQL.Repositories.Database.Sessions;
 using Microsoft.EntityFrameworkCore;
 
 public class TrackRepository(IDbContextFactory<ApplicationDbContext> dbContextFactory)
     : ITrackRepository
 {
-    private readonly ApplicationDbContext dbContext = dbContextFactory.CreateDbContext();
-
     public async Task<IQueryable<Track>> GetAllAsync(CancellationToken ctx)
     {
-        var result = await this.dbContext.Tracks.ToListAsync(ctx);
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
+        var result = await dbContext.Tracks
+            .ToListAsync(ctx);
+
         return result.AsQueryable();
     }
 
     public async Task<Track?> GetByIdAsync(
         int id,
-        CancellationToken ctx) =>
-        await this.dbContext.Tracks
+        CancellationToken ctx)
+    {
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
+        var result = await dbContext.Tracks
             .Where(w => w.Id == id)
             .FirstOrDefaultAsync(ctx);
 
+        return result;
+    }
+
     public async Task<Track?> GetByNameAsync(
         string name,
-        CancellationToken ctx) =>
-        await this.dbContext.Tracks
+        CancellationToken ctx)
+    {
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
+        var result = await dbContext.Tracks
             .Where(w => w.Name == name)
             .FirstOrDefaultAsync(ctx);
+
+        return result;
+    }
+
+    public async Task<IQueryable<Session>> GetSessionsAsync(
+        int id,
+        CancellationToken ctx)
+    {
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
+        var result = await dbContext.Tracks
+            .Where(e => e.Id == id)
+            .Include(e => e.Sessions)
+            .SelectMany(e => e.Sessions)
+            .ToListAsync(ctx);
+
+        return result.AsQueryable();
+    }
 
     public async Task<int> CreateAsync(
         TrackInput input,
         CancellationToken ctx)
     {
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
         var existing = await this.GetByNameAsync(input.Name, ctx);
 
         if (existing is not null)
@@ -41,9 +73,9 @@ public class TrackRepository(IDbContextFactory<ApplicationDbContext> dbContextFa
         }
 
         var entity = Track.MapFrom(input);
-        this.dbContext.Tracks.Add(entity);
+        dbContext.Tracks.Add(entity);
 
-        await this.dbContext.SaveChangesAsync(ctx);
+        await dbContext.SaveChangesAsync(ctx);
 
         return entity.Id;
     }
@@ -53,28 +85,32 @@ public class TrackRepository(IDbContextFactory<ApplicationDbContext> dbContextFa
         TrackInput input,
         CancellationToken ctx)
     {
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
         var _ = await this.GetByIdAsync(id, ctx)
             ?? throw new TrackNotFoundException();
 
-        this.dbContext.Tracks
+        dbContext.Tracks
             .Where(w => w.Id == id)
             .ExecuteUpdate(e => e
                 .SetProperty(s => s.Name, input.Name));
 
-        await this.dbContext.SaveChangesAsync(ctx);
+        await dbContext.SaveChangesAsync(ctx);
     }
 
     public async Task DeleteAsync(
         int id,
         CancellationToken ctx)
     {
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
         var _ = await this.GetByIdAsync(id, ctx)
             ?? throw new TrackNotFoundException();
 
-        this.dbContext.Tracks
+        dbContext.Tracks
             .Where(w => w.Id == id)
             .ExecuteDelete();
 
-        await this.dbContext.SaveChangesAsync(ctx);
+        await dbContext.SaveChangesAsync(ctx);
     }
 }

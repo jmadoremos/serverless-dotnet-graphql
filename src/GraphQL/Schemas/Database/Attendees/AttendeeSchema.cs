@@ -1,6 +1,7 @@
 namespace GraphQL.Schemas.Database.Attendees;
 
 using GraphQL.Repositories.Database.Attendees;
+using GraphQL.Schemas.Database.Sessions;
 
 [GraphQLDescription("An attendee resource of sessions.")]
 public class AttendeeSchema
@@ -19,6 +20,9 @@ public class AttendeeSchema
 
     [GraphQLDescription("The email address of this attendee.")]
     public string? Email { get; set; } = default!;
+
+    [GraphQLDescription("The sessions where this attendee will be attending, is attending, or has attended to.")]
+    public IEnumerable<SessionSchema> Sessions { get; set; } = [];
 
     public static AttendeeSchema MapFrom(Attendee r) => new()
     {

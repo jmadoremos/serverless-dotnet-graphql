@@ -1,12 +1,12 @@
 namespace GraphQL.Repositories.Database.Speakers;
 
-using GraphQL.Repositories.Database.SessionSpeakerMapping;
+using GraphQL.Repositories.Database.Sessions;
 
 public class Speaker : SpeakerInput
 {
     public int Id { get; set; }
 
-    public ICollection<SessionSpeakerMapping> SessionSpeakers { get; set; } = [];
+    public ICollection<Session> Sessions { get; set; } = [];
 
     public static Speaker MapFrom(SpeakerInput i) => new()
     {
