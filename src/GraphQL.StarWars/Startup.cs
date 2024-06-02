@@ -53,7 +53,9 @@ public class Startup(IConfiguration configuration)
             .AddTypeExtension<PlanetExtension>()
             .AddTypeExtension<SpeciesExtension>()
             .AddTypeExtension<StarshipExtension>()
-            .AddTypeExtension<VehicleExtension>();
+            .AddTypeExtension<VehicleExtension>()
+            // Initialize schema on startup without waiting for the first request
+            .InitializeOnStartup();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline

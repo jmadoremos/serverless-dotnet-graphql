@@ -79,7 +79,9 @@ public class Startup(IConfiguration configuration)
                 .AddType<AttendeeMutation>()
                 .AddType<SessionMutation>()
                 .AddType<SpeakerMutation>()
-                .AddType<TrackMutation>();
+                .AddType<TrackMutation>()
+            // Initialize schema on startup without waiting for the first request
+            .InitializeOnStartup();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline

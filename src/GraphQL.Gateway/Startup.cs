@@ -14,7 +14,9 @@ public class Startup(IConfiguration configuration)
         services.AddGraphQLServer()
             // Define remote schemas
             .AddRemoteSchema(WellKnownSchemaNames.StarWars)
-            .AddRemoteSchema(WellKnownSchemaNames.Database);
+            .AddRemoteSchema(WellKnownSchemaNames.Database)
+            // Initialize schema on startup without waiting for the first request
+            .InitializeOnStartup();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
