@@ -1,0 +1,72 @@
+POST http://localhost:5002/graphql HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetAllRecords {
+    characters {
+        totalCount
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+        }
+        nodes {
+            id
+            name
+        }
+    }
+    films {
+        totalCount
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+        }
+        nodes {
+            id
+            title
+        }
+    }
+    planets {
+        totalCount
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+        }
+        nodes {
+            id
+            name
+        }
+    }
+    species {
+        totalCount
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+        }
+        nodes {
+            id
+            name
+        }
+    }
+    starships {
+        totalCount
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+        }
+        nodes {
+            id
+            name
+        }
+    }
+    vehicles {
+        totalCount
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+        }
+        nodes {
+            id
+            name
+        }
+    }
+}

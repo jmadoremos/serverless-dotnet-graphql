@@ -1,0 +1,149 @@
+POST http://localhost:5000/graphql HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetAllRecords {
+    attendees {
+        totalCount
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+        }
+        nodes {
+            id
+            username
+            lastname
+            firstname
+            email
+            sessions {
+                id
+                title
+            }
+        }
+    }
+    sessions {
+        totalCount
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+        }
+        nodes {
+            id
+            title
+            abstract
+            startTime
+            endTime
+            duration
+            track {
+                id
+                name
+            }
+            speakers {
+                id
+                name
+            }
+            attendees {
+                id
+                username
+            }
+        }
+    }
+    speakers {
+        totalCount
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+        }
+        nodes {
+            id
+            name
+            bio
+            website
+            sessions {
+                id
+                title
+            }
+        }
+    }
+    tracks {
+        totalCount
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+        }
+        nodes {
+            id
+            name
+            sessions {
+                id
+                title
+            }
+        }
+    }
+    characters {
+        totalCount
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+        }
+        nodes {
+            id
+            name
+        }
+    }
+    films {
+        totalCount
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+        }
+        nodes {
+            id
+            title
+        }
+    }
+    planets {
+        totalCount
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+        }
+        nodes {
+            id
+            name
+        }
+    }
+    species {
+        totalCount
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+        }
+        nodes {
+            id
+            name
+        }
+    }
+    starships {
+        totalCount
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+        }
+        nodes {
+            id
+            name
+        }
+    }
+    vehicles {
+        totalCount
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+        }
+        nodes {
+            id
+            name
+        }
+    }
+}

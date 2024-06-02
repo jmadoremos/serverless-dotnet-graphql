@@ -1,0 +1,39 @@
+POST http://localhost:5004/graphql HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+mutation PostEntityRecords {
+    addTrack(input: { name: "GraphQL" }) {
+        id
+    }
+    addSession(
+        input: {
+            title: "Welcome to GraphQL"
+            abstract: "Getting started with using GraphQL"
+            startTime: "2024-01-01 08:00:00"
+            endTime: "2024-01-01 10:00:00"
+            trackId: 1
+        }
+    ) {
+        id
+    }
+    addSpeaker(
+        input: {
+            bio: "Biography",
+            name: "Jane Doe",
+            website: null
+        }
+    ) {
+        id
+    }
+    addAttendee(
+        input: {
+            firstname: "John"
+            lastname: "Doe"
+            username: "john.doe"
+            email: "john.doe@email.com"
+        }
+    ) {
+        id
+    }
+}
