@@ -10,6 +10,8 @@ A Serverless Framework boilerplate for .NET that serves a GraphQL server
 
 [3. Create the database project](docs/database/01-create-graphql-database-project.md)
 
+[4. Create the gateway project](docs/gateway/01-create-graphql-gateway-project.md)
+
 ## Initial setup
 
 1. Create a new solution inside *src* folder.
@@ -52,18 +54,6 @@ dotnet new sln --name ServerlessDotNetGraphQL --output src
     {
         "configurations": [
             {
-                "name": "C#: GraphQL Debug",
-                "type": "dotnet",
-                "request": "launch",
-                "projectPath": "${workspaceFolder}/src/GraphQL/GraphQL.csproj",
-                "serverReadyAction": {
-                    "action": "openExternally",
-                    "pattern": "\\bNow listening on:\\s+https?://\\S",
-                    "uriFormat": "http://localhost:5000/graphql/",
-                    "killOnServerStop": true
-                }
-            },
-            {
                 "name": "C#: GraphQL.WebAPI Debug",
                 "type": "dotnet",
                 "request": "launch",
@@ -72,6 +62,18 @@ dotnet new sln --name ServerlessDotNetGraphQL --output src
                     "action": "openExternally",
                     "pattern": "\\bNow listening on:\\s+https?://\\S",
                     "uriFormat": "http://localhost:5002/graphql/",
+                    "killOnServerStop": true
+                }
+            },
+            {
+                "name": "C#: GraphQL.Gateway Debug",
+                "type": "dotnet",
+                "request": "launch",
+                "projectPath": "${workspaceFolder}/src/GraphQL.Gateway/GraphQL.Gateway.csproj",
+                "serverReadyAction": {
+                    "action": "openExternally",
+                    "pattern": "\\bNow listening on:\\s+https?://\\S",
+                    "uriFormat": "http://localhost:5000/graphql/",
                     "killOnServerStop": true
                 }
             },
