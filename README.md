@@ -8,6 +8,8 @@ A Serverless Framework boilerplate for .NET that serves a GraphQL server
 
 [2. Create the web API project](docs/webAPI/01-create-graphql-webapi-project.md)
 
+[3. Create the database project](docs/database/01-create-graphql-database-project.md)
+
 ## Initial setup
 
 1. Create a new solution inside *src* folder.
