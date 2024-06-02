@@ -23,7 +23,7 @@ public class AttendeeMutation([Service] IAttendeeRepository attendees)
 
     [GraphQLDescription("Updates an attendee resource.")]
     public async Task<Attendee> UpdateAttendeeAsync(
-        [GraphQLType(typeof(IdType))] int id,
+        [ID(nameof(Attendee))] int id,
         UpdateAttendeeInput input,
         CancellationToken ctx)
     {
@@ -42,7 +42,7 @@ public class AttendeeMutation([Service] IAttendeeRepository attendees)
 
     [GraphQLDescription("Deletes an attendee resource.")]
     public async Task<Attendee> DeleteAttendeeAsync(
-        [GraphQLType(typeof(IdType))] int id,
+        [ID(nameof(Attendee))] int id,
         CancellationToken ctx)
     {
         var entity = await attendees.GetAttendeeByIdAsync(id, ctx)

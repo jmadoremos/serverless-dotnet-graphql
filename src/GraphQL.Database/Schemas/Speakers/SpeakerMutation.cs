@@ -23,7 +23,7 @@ public class SpeakerMutation([Service] ISpeakerRepository speakers)
 
     [GraphQLDescription("Updates a speaker resource.")]
     public async Task<Speaker> UpdateSpeakerAsync(
-        [GraphQLType(typeof(IdType))] int id,
+        [ID(nameof(Speaker))] int id,
         UpdateSpeakerInput input,
         CancellationToken ctx)
     {
@@ -42,7 +42,7 @@ public class SpeakerMutation([Service] ISpeakerRepository speakers)
 
     [GraphQLDescription("Deletes a speaker resource.")]
     public async Task<Speaker> DeleteSpeakerAsync(
-        [GraphQLType(typeof(IdType))] int id,
+        [ID(nameof(Speaker))] int id,
         CancellationToken ctx)
     {
         var entity = await speakers.GetSpeakerByIdAsync(id, ctx)

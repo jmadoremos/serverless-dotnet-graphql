@@ -28,7 +28,7 @@ public class SessionMutation(
 
     [GraphQLDescription("Updates a session resource.")]
     public async Task<Session> UpdateSessionAsync(
-        [GraphQLType(typeof(IdType))] int id,
+        [ID(nameof(Session))] int id,
         UpdateSessionInput input,
         CancellationToken ctx)
     {
@@ -47,7 +47,7 @@ public class SessionMutation(
 
     [GraphQLDescription("Deletes a session resource.")]
     public async Task<Session> DeleteSessionAsync(
-        [GraphQLType(typeof(IdType))] int id,
+        [ID(nameof(Session))] int id,
         CancellationToken ctx)
     {
         var entity = await sessions.GetSessionByIdAsync(id, ctx)

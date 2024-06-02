@@ -23,7 +23,7 @@ public class TrackMutation([Service] ITrackRepository tracks)
 
     [GraphQLDescription("Updates a track resource.")]
     public async Task<Track> UpdateTrackAsync(
-        [GraphQLType(typeof(IdType))] int id,
+        [ID(nameof(Track))] int id,
         UpdateTrackInput input,
         CancellationToken ctx)
     {
@@ -42,7 +42,7 @@ public class TrackMutation([Service] ITrackRepository tracks)
 
     [GraphQLDescription("Deletes a track resource.")]
     public async Task<Track> DeleteTrackAsync(
-        [GraphQLType(typeof(IdType))] int id,
+        [ID(nameof(Track))] int id,
         CancellationToken ctx)
     {
         var entity = await tracks.GetTrackByIdAsync(id, ctx)
