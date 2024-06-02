@@ -1,13 +1,12 @@
 ﻿namespace GraphQL.WebAPI;
 
-using GraphQL.WebAPI.Repositories.StarWars;
-using GraphQL.WebAPI.Schemas.StarWars;
-using GraphQL.WebAPI.Schemas.StarWars.Characters;
-using GraphQL.WebAPI.Schemas.StarWars.Films;
-using GraphQL.WebAPI.Schemas.StarWars.Planets;
-using GraphQL.WebAPI.Schemas.StarWars.Species;
-using GraphQL.WebAPI.Schemas.StarWars.Starships;
-using GraphQL.WebAPI.Schemas.StarWars.Vehicles;
+using GraphQL.WebAPI.Repositories;
+using GraphQL.WebAPI.Schemas.Characters;
+using GraphQL.WebAPI.Schemas.Films;
+using GraphQL.WebAPI.Schemas.Planets;
+using GraphQL.WebAPI.Schemas.Species;
+using GraphQL.WebAPI.Schemas.Starships;
+using GraphQL.WebAPI.Schemas.Vehicles;
 using GraphQL.WebAPI.Services;
 using HotChocolate.Types.Pagination;
 
@@ -42,13 +41,17 @@ public class Startup(IConfiguration configuration)
             })
             // Queries
             .AddQueryType(d => d.Name("Query"))
-                .AddType<StarWarsQuery>()
+                .AddType<CharacterQuery>()
+                .AddType<FilmQuery>()
+                .AddType<PlanetQuery>()
+                .AddType<SpeciesQuery>()
+                .AddType<StarshipQuery>()
+                .AddType<VehicleQuery>()
             // Extensions
             .AddTypeExtension<CharacterExtension>()
             .AddTypeExtension<FilmExtension>()
             .AddTypeExtension<PlanetExtension>()
             .AddTypeExtension<SpeciesExtension>()
-            .AddTypeExtension<StarWarsExtension>()
             .AddTypeExtension<StarshipExtension>()
             .AddTypeExtension<VehicleExtension>();
     }
