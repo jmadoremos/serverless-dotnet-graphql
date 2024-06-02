@@ -4,17 +4,19 @@ using GraphQL.Repositories.Database.Sessions;
 
 public interface ITrackRepository
 {
-    Task<IQueryable<Track>> GetAllAsync(CancellationToken ctx);
+    Task<IQueryable<TrackModel>> GetAllTracksAsync(CancellationToken ctx);
 
-    Task<Track?> GetByIdAsync(int id, CancellationToken ctx);
+    Task<TrackModel?> GetTrackByIdAsync(int id, CancellationToken ctx);
 
-    Task<Track?> GetByNameAsync(string name, CancellationToken ctx);
+    Task<IQueryable<TrackModel>> GetTracksByIdsAsync(IEnumerable<int> ids, CancellationToken ctx);
 
-    Task<IQueryable<Session>> GetSessionsAsync(int id, CancellationToken ctx);
+    Task<TrackModel?> GetTrackByNameAsync(string name, CancellationToken ctx);
 
-    Task<int> CreateAsync(TrackInput input, CancellationToken ctx);
+    Task<IQueryable<SessionModel>> GetSessionsAsync(int id, CancellationToken ctx);
 
-    Task UpdateAsync(int id, TrackInput input, CancellationToken ctx);
+    Task<int> CreateTrackAsync(TrackModelInput input, CancellationToken ctx);
 
-    Task DeleteAsync(int id, CancellationToken ctx);
+    Task UpdateTrackAsync(int id, TrackModelInput input, CancellationToken ctx);
+
+    Task DeleteTrackAsync(int id, CancellationToken ctx);
 }

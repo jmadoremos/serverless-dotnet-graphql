@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 public class TrackRepository(IDbContextFactory<ApplicationDbContext> dbContextFactory)
     : ITrackRepository
 {
-    public async Task<IQueryable<Track>> GetAllAsync(CancellationToken ctx)
+    public async Task<IQueryable<TrackModel>> GetAllTracksAsync(CancellationToken ctx)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
@@ -18,33 +18,46 @@ public class TrackRepository(IDbContextFactory<ApplicationDbContext> dbContextFa
         return result.AsQueryable();
     }
 
-    public async Task<Track?> GetByIdAsync(
+    public async Task<TrackModel?> GetTrackByIdAsync(
         int id,
         CancellationToken ctx)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
         var result = await dbContext.Tracks
-            .Where(w => w.Id == id)
+            .Where(e => e.Id == id)
             .FirstOrDefaultAsync(ctx);
 
         return result;
     }
 
-    public async Task<Track?> GetByNameAsync(
+    public async Task<IQueryable<TrackModel>> GetTracksByIdsAsync(
+        IEnumerable<int> ids,
+        CancellationToken ctx)
+    {
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
+        var result = await dbContext.Tracks
+            .Where(e => ids.Contains(e.Id))
+            .ToListAsync(ctx);
+
+        return result.AsQueryable();
+    }
+
+    public async Task<TrackModel?> GetTrackByNameAsync(
         string name,
         CancellationToken ctx)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
         var result = await dbContext.Tracks
-            .Where(w => w.Name == name)
+            .Where(e => e.Name == name)
             .FirstOrDefaultAsync(ctx);
 
         return result;
     }
 
-    public async Task<IQueryable<Session>> GetSessionsAsync(
+    public async Task<IQueryable<SessionModel>> GetSessionsAsync(
         int id,
         CancellationToken ctx)
     {
@@ -59,56 +72,58 @@ public class TrackRepository(IDbContextFactory<ApplicationDbContext> dbContextFa
         return result.AsQueryable();
     }
 
-    public async Task<int> CreateAsync(
-        TrackInput input,
+    public async Task<int> CreateTrackAsync(
+        TrackModelInput input,
         CancellationToken ctx)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
-        var existing = await this.GetByNameAsync(input.Name, ctx);
+        var existing = await this.GetTrackByNameAsync(input.Name, ctx);
 
         if (existing is not null)
         {
             throw new TrackNameTakenException();
         }
 
-        var entity = Track.MapFrom(input);
-        dbContext.Tracks.Add(entity);
+        var entity = TrackModel.MapFrom(input);
+
+        dbContext.Tracks
+            .Add(entity);
 
         await dbContext.SaveChangesAsync(ctx);
 
         return entity.Id;
     }
 
-    public async Task UpdateAsync(
+    public async Task UpdateTrackAsync(
         int id,
-        TrackInput input,
+        TrackModelInput input,
         CancellationToken ctx)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
-        var _ = await this.GetByIdAsync(id, ctx)
+        var _ = await this.GetTrackByIdAsync(id, ctx)
             ?? throw new TrackNotFoundException();
 
         dbContext.Tracks
-            .Where(w => w.Id == id)
+            .Where(e => e.Id == id)
             .ExecuteUpdate(e => e
-                .SetProperty(s => s.Name, input.Name));
+                .SetProperty(ee => ee.Name, input.Name));
 
         await dbContext.SaveChangesAsync(ctx);
     }
 
-    public async Task DeleteAsync(
+    public async Task DeleteTrackAsync(
         int id,
         CancellationToken ctx)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
-        var _ = await this.GetByIdAsync(id, ctx)
+        var _ = await this.GetTrackByIdAsync(id, ctx)
             ?? throw new TrackNotFoundException();
 
         dbContext.Tracks
-            .Where(w => w.Id == id)
+            .Where(e => e.Id == id)
             .ExecuteDelete();
 
         await dbContext.SaveChangesAsync(ctx);

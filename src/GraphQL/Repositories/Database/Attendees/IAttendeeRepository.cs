@@ -2,15 +2,17 @@ namespace GraphQL.Repositories.Database.Attendees;
 
 public interface IAttendeeRepository
 {
-    Task<IQueryable<Attendee>> GetAllAsync(CancellationToken ctx);
+    Task<IQueryable<AttendeeModel>> GetAllAttendeesAsync(CancellationToken ctx);
 
-    Task<Attendee?> GetByIdAsync(int id, CancellationToken ctx);
+    Task<AttendeeModel?> GetAttendeeByIdAsync(int id, CancellationToken ctx);
 
-    Task<Attendee?> GetByUserNameAsync(string userName, CancellationToken ctx);
+    Task<IQueryable<AttendeeModel>> GetAttendeesByIdsAsync(IEnumerable<int> ids, CancellationToken ctx);
 
-    Task<int> CreateAsync(AttendeeInput input, CancellationToken ctx);
+    Task<AttendeeModel?> GetAttendeeByUserNameAsync(string userName, CancellationToken ctx);
 
-    Task UpdateAsync(int id, AttendeeInput input, CancellationToken ctx);
+    Task<int> CreateAttendeeAsync(AttendeeModelInput input, CancellationToken ctx);
 
-    Task DeleteAsync(int id, CancellationToken ctx);
+    Task UpdateAttendeeAsync(int id, AttendeeModelInput input, CancellationToken ctx);
+
+    Task DeleteAttendeeAsync(int id, CancellationToken ctx);
 }

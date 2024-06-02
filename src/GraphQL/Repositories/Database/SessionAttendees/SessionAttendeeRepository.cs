@@ -6,9 +6,10 @@ using GraphQL.Repositories.Database.Attendees;
 using GraphQL.Repositories.Database.Sessions;
 using Microsoft.EntityFrameworkCore;
 
-public class SessionAttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContextFactory) : ISessionAttendeeRepository
+public class SessionAttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContextFactory)
+    : ISessionAttendeeRepository
 {
-    public async Task<IQueryable<Attendee>> GetAttendeesBySessionAsync(
+    public async Task<IQueryable<AttendeeModel>> GetAttendeesBySessionAsync(
         int sessionId,
         CancellationToken ctx)
     {
@@ -23,7 +24,7 @@ public class SessionAttendeeRepository(IDbContextFactory<ApplicationDbContext> d
         return result.AsQueryable();
     }
 
-    public async Task<IQueryable<Session>> GetSessionsByAttendeeAsync(
+    public async Task<IQueryable<SessionModel>> GetSessionsByAttendeeAsync(
         int attendeeId,
         CancellationToken ctx)
     {
@@ -39,7 +40,7 @@ public class SessionAttendeeRepository(IDbContextFactory<ApplicationDbContext> d
     }
 
     public async Task CreateSessionAttendeeAsync(
-        SessionAttendeeInput input,
+        SessionAttendeeModelInput input,
         CancellationToken ctx)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
@@ -55,14 +56,15 @@ public class SessionAttendeeRepository(IDbContextFactory<ApplicationDbContext> d
             throw new SessionSpeakerExistsException();
         }
 
-        var entity = SessionAttendee.MapFrom(input);
+        var entity = SessionAttendeeModel.MapFrom(input);
 
         dbContext.SessionAttendees.Add(entity);
+
         await dbContext.SaveChangesAsync(ctx);
     }
 
     public async Task DeleteSessionAttendeeAsync(
-        SessionAttendeeInput input,
+        SessionAttendeeModelInput input,
         CancellationToken ctx)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
@@ -78,9 +80,11 @@ public class SessionAttendeeRepository(IDbContextFactory<ApplicationDbContext> d
             throw new SessionSpeakerNotFoundException();
         }
 
-        var entity = SessionAttendee.MapFrom(input);
+        var entity = SessionAttendeeModel.MapFrom(input);
 
-        dbContext.SessionAttendees.Remove(entity);
+        dbContext.SessionAttendees
+            .Remove(entity);
+
         await dbContext.SaveChangesAsync(ctx);
     }
 }

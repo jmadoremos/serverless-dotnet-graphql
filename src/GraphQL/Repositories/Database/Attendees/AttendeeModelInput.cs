@@ -1,9 +1,9 @@
 namespace GraphQL.Repositories.Database.Attendees;
 
-using System.ComponentModel.DataAnnotations;
 using GraphQL.Schemas.Database.Attendees;
+using System.ComponentModel.DataAnnotations;
 
-public class AttendeeInput
+public class AttendeeModelInput
 {
     [Required]
     [StringLength(200)]
@@ -20,7 +20,7 @@ public class AttendeeInput
     [StringLength(256)]
     public string? EmailAddress { get; set; } = default!;
 
-    public static AttendeeInput MapFrom(AddAttendeeSchema s) => new()
+    public static AttendeeModelInput MapFrom(AddAttendeeInput s) => new()
     {
         FirstName = s.Firstname,
         LastName = s.Lastname,
@@ -28,7 +28,7 @@ public class AttendeeInput
         EmailAddress = s.Email
     };
 
-    public static AttendeeInput MapFrom(Attendee o, UpdateAttendeeSchema s) => new()
+    public static AttendeeModelInput MapFrom(AttendeeModel o, UpdateAttendeeInput s) => new()
     {
         FirstName = s.Firstname ?? o.FirstName,
         LastName = s.Lastname ?? o.LastName,

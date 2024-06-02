@@ -2,15 +2,17 @@ namespace GraphQL.Repositories.Database.Speakers;
 
 public interface ISpeakerRepository
 {
-    Task<IQueryable<Speaker>> GetAllAsync(CancellationToken ctx);
+    Task<IQueryable<SpeakerModel>> GetAllSpeakersAsync(CancellationToken ctx);
 
-    Task<Speaker?> GetByIdAsync(int id, CancellationToken ctx);
+    Task<SpeakerModel?> GetSpeakerByIdAsync(int id, CancellationToken ctx);
 
-    Task<Speaker?> GetByNameAsync(string name, CancellationToken ctx);
+    Task<IQueryable<SpeakerModel>> GetSpeakersByIdsAsync(IEnumerable<int> ids, CancellationToken ctx);
 
-    Task<int> CreateAsync(SpeakerInput input, CancellationToken ctx);
+    Task<SpeakerModel?> GetSpeakerByNameAsync(string name, CancellationToken ctx);
 
-    Task UpdateAsync(int id, SpeakerInput input, CancellationToken ctx);
+    Task<int> CreateSpeakerAsync(SpeakerModelInput input, CancellationToken ctx);
 
-    Task DeleteAsync(int id, CancellationToken ctx);
+    Task UpdateSpeakerAsync(int id, SpeakerModelInput input, CancellationToken ctx);
+
+    Task DeleteSpeakerAsync(int id, CancellationToken ctx);
 }

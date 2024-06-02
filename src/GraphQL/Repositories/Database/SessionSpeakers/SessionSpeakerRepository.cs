@@ -6,9 +6,10 @@ using GraphQL.Repositories.Database.Sessions;
 using GraphQL.Repositories.Database.Speakers;
 using Microsoft.EntityFrameworkCore;
 
-public class SessionSpeakerRepository(IDbContextFactory<ApplicationDbContext> dbContextFactory) : ISessionSpeakerRepository
+public class SessionSpeakerRepository(IDbContextFactory<ApplicationDbContext> dbContextFactory)
+    : ISessionSpeakerRepository
 {
-    public async Task<IQueryable<Speaker>> GetSpeakersBySessionAsync(
+    public async Task<IQueryable<SpeakerModel>> GetSpeakersBySessionAsync(
         int sessionId,
         CancellationToken ctx)
     {
@@ -23,7 +24,7 @@ public class SessionSpeakerRepository(IDbContextFactory<ApplicationDbContext> db
         return result.AsQueryable();
     }
 
-    public async Task<IQueryable<Session>> GetSessionsBySpeakerAsync(
+    public async Task<IQueryable<SessionModel>> GetSessionsBySpeakerAsync(
         int speakerId,
         CancellationToken ctx)
     {
@@ -39,7 +40,7 @@ public class SessionSpeakerRepository(IDbContextFactory<ApplicationDbContext> db
     }
 
     public async Task CreateSessionSpeakerAsync(
-        SessionSpeakerInput input,
+        SessionSpeakerModelInput input,
         CancellationToken ctx)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
@@ -55,14 +56,16 @@ public class SessionSpeakerRepository(IDbContextFactory<ApplicationDbContext> db
             throw new SessionSpeakerExistsException();
         }
 
-        var entity = SessionSpeaker.MapFrom(input);
+        var entity = SessionSpeakerModel.MapFrom(input);
 
-        dbContext.SessionSpeakers.Add(entity);
+        dbContext.SessionSpeakers
+            .Add(entity);
+
         await dbContext.SaveChangesAsync(ctx);
     }
 
     public async Task DeleteSessionSpeakerAsync(
-        SessionSpeakerInput input,
+        SessionSpeakerModelInput input,
         CancellationToken ctx)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
@@ -78,9 +81,11 @@ public class SessionSpeakerRepository(IDbContextFactory<ApplicationDbContext> db
             throw new SessionSpeakerNotFoundException();
         }
 
-        var entity = SessionSpeaker.MapFrom(input);
+        var entity = SessionSpeakerModel.MapFrom(input);
 
-        dbContext.SessionSpeakers.Remove(entity);
+        dbContext.SessionSpeakers
+            .Remove(entity);
+
         await dbContext.SaveChangesAsync(ctx);
     }
 }

@@ -7,65 +7,87 @@ using Microsoft.EntityFrameworkCore;
 public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContextFactory)
     : IAttendeeRepository
 {
-    public async Task<IQueryable<Attendee>> GetAllAsync(CancellationToken ctx)
+    public async Task<IQueryable<AttendeeModel>> GetAllAttendeesAsync(CancellationToken ctx)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
-        var result = await dbContext.Attendees.ToListAsync(ctx);
+
+        var result = await dbContext.Attendees
+            .ToListAsync(ctx);
+
         return result.AsQueryable();
     }
 
-    public async Task<Attendee?> GetByIdAsync(
+    public async Task<AttendeeModel?> GetAttendeeByIdAsync(
         int id,
         CancellationToken ctx)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
         var result = await dbContext.Attendees
             .Where(e => e.Id == id)
             .FirstOrDefaultAsync(ctx);
+
         return result;
     }
 
-    public async Task<Attendee?> GetByUserNameAsync(
+    public async Task<IQueryable<AttendeeModel>> GetAttendeesByIdsAsync(
+        IEnumerable<int> ids,
+        CancellationToken ctx)
+    {
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
+        var result = await dbContext.Attendees
+            .Where(e => ids.Contains(e.Id))
+            .ToListAsync(ctx);
+
+        return result.AsQueryable();
+    }
+
+    public async Task<AttendeeModel?> GetAttendeeByUserNameAsync(
         string userName,
         CancellationToken ctx)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
         var result = await dbContext.Attendees
             .Where(e => e.UserName == userName)
             .FirstOrDefaultAsync(ctx);
+
         return result;
     }
 
-    public async Task<int> CreateAsync(
-        AttendeeInput input,
+    public async Task<int> CreateAttendeeAsync(
+        AttendeeModelInput input,
         CancellationToken ctx)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
-        var existing = await this.GetByUserNameAsync(input.UserName, ctx);
+        var existing = await this.GetAttendeeByUserNameAsync(input.UserName, ctx);
 
         if (existing is not null)
         {
-            throw new UsernameTakenException(nameof(Attendee.UserName));
+            throw new UsernameTakenException(nameof(AttendeeModel.UserName));
         }
 
-        var entity = Attendee.MapFrom(input);
+        var entity = AttendeeModel.MapFrom(input);
 
-        dbContext.Attendees.Add(entity);
+        dbContext.Attendees
+            .Add(entity);
 
         await dbContext.SaveChangesAsync(ctx);
 
         return entity.Id;
     }
 
-    public async Task UpdateAsync(
+    public async Task UpdateAttendeeAsync(
         int id,
-        AttendeeInput input,
+        AttendeeModelInput input,
         CancellationToken ctx)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
-        var _ = await this.GetByIdAsync(id, ctx)
-            ?? throw new UserNotFoundException(nameof(Attendee.Id));
+
+        var _ = await this.GetAttendeeByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(AttendeeModel.Id));
 
         dbContext.Attendees
             .Where(w => w.Id == id)
@@ -77,13 +99,14 @@ public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContex
         await dbContext.SaveChangesAsync(ctx);
     }
 
-    public async Task DeleteAsync(
+    public async Task DeleteAttendeeAsync(
         int id,
         CancellationToken ctx)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
-        var _ = await this.GetByIdAsync(id, ctx)
-            ?? throw new UserNotFoundException(nameof(Attendee.Id));
+
+        var _ = await this.GetAttendeeByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(AttendeeModel.Id));
 
         dbContext.Attendees
             .Where(w => w.Id == id)

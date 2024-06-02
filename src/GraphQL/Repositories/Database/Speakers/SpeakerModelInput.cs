@@ -3,7 +3,7 @@ namespace GraphQL.Repositories.Database.Speakers;
 using GraphQL.Schemas.Database.Speakers;
 using System.ComponentModel.DataAnnotations;
 
-public class SpeakerInput
+public class SpeakerModelInput
 {
     [Required]
     [StringLength(200)]
@@ -15,14 +15,14 @@ public class SpeakerInput
     [StringLength(1000)]
     public string? WebSite { get; set; } = default!;
 
-    public static SpeakerInput MapFrom(AddSpeakerSchema s) => new()
+    public static SpeakerModelInput MapFrom(AddSpeakerInput s) => new()
     {
         Name = s.Name,
         Bio = s.Name,
         WebSite = s.Website
     };
 
-    public static SpeakerInput MapFrom(Speaker o, UpdateSpeakerSchema s) => new()
+    public static SpeakerModelInput MapFrom(SpeakerModel o, UpdateSpeakerInput s) => new()
     {
         Name = s.Name ?? o.Name,
         Bio = s.Name ?? o.Bio,

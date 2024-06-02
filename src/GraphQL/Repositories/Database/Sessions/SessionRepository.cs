@@ -7,78 +7,113 @@ using Microsoft.EntityFrameworkCore;
 public class SessionRepository(IDbContextFactory<ApplicationDbContext> dbContextFactory)
     : ISessionRepository
 {
-    private readonly ApplicationDbContext dbContext = dbContextFactory.CreateDbContext();
-
-    public async Task<IQueryable<Session>> GetAllAsync(CancellationToken ctx)
+    public async Task<IQueryable<SessionModel>> GetAllSessionsAsync(CancellationToken ctx)
     {
-        var result = await this.dbContext.Sessions.ToListAsync(ctx);
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
+        var result = await dbContext.Sessions
+            .ToListAsync(ctx);
+
         return result.AsQueryable();
     }
 
-    public async Task<Session?> GetByIdAsync(
+    public async Task<SessionModel?> GetSessionByIdAsync(
         int id,
-        CancellationToken ctx) =>
-        await this.dbContext.Sessions
-            .Where(w => w.Id == id)
-            .FirstOrDefaultAsync(ctx);
-
-    public async Task<Session?> GetByTitleAsync(
-        string title,
-        CancellationToken ctx) =>
-        await this.dbContext.Sessions
-            .Where(w => w.Title == title)
-            .FirstOrDefaultAsync(ctx);
-
-    public async Task<int> CreateAsync(
-        SessionInput input,
         CancellationToken ctx)
     {
-        var existing = await this.GetByTitleAsync(input.Title, ctx);
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
+        var result = await dbContext.Sessions
+            .Where(e => e.Id == id)
+            .FirstOrDefaultAsync(ctx);
+
+        return result;
+    }
+
+    public async Task<IQueryable<SessionModel>> GetSessionsByIdsAsync(
+        IEnumerable<int> ids,
+        CancellationToken ctx)
+    {
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
+        var result = await dbContext.Sessions
+            .Where(e => ids.Contains(e.Id))
+            .ToListAsync(ctx);
+
+        return result.AsQueryable();
+    }
+
+    public async Task<SessionModel?> GetSessionByTitleAsync(
+        string title,
+        CancellationToken ctx)
+    {
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
+        var result = await dbContext.Sessions
+            .Where(e => e.Title == title)
+            .FirstOrDefaultAsync(ctx);
+
+        return result;
+    }
+
+    public async Task<int> CreateSessionAsync(
+        SessionModelInput input,
+        CancellationToken ctx)
+    {
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
+        var existing = await this.GetSessionByTitleAsync(input.Title, ctx);
 
         if (existing is not null)
         {
             throw new SessionTitleTakenException();
         }
 
-        var entity = Session.MapFrom(input);
-        this.dbContext.Sessions.Add(entity);
+        var entity = SessionModel.MapFrom(input);
 
-        await this.dbContext.SaveChangesAsync(ctx);
+        dbContext.Sessions
+            .Add(entity);
+
+        await dbContext.SaveChangesAsync(ctx);
 
         return entity.Id;
     }
 
-    public async Task UpdateAsync(
+    public async Task UpdateSessionAsync(
         int id,
-        SessionInput input,
+        SessionModelInput input,
         CancellationToken ctx)
     {
-        var _ = await this.GetByIdAsync(id, ctx)
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
+        var _ = await this.GetSessionByIdAsync(id, ctx)
             ?? throw new SessionNotFoundException();
 
-        this.dbContext.Sessions
+        dbContext.Sessions
             .Where(w => w.Id == id)
             .ExecuteUpdate(e => e
-                .SetProperty(s => s.Title, input.Title)
-                .SetProperty(s => s.Abstract, input.Abstract)
-                .SetProperty(s => s.StartTime, input.StartTime)
-                .SetProperty(s => s.EndTime, input.EndTime)
-                .SetProperty(s => s.TrackId, input.TrackId));
+                .SetProperty(ee => ee.Title, input.Title)
+                .SetProperty(ee => ee.Abstract, input.Abstract)
+                .SetProperty(ee => ee.StartTime, input.StartTime)
+                .SetProperty(ee => ee.EndTime, input.EndTime)
+                .SetProperty(ee => ee.TrackId, input.TrackId));
 
-        await this.dbContext.SaveChangesAsync(ctx);
+        await dbContext.SaveChangesAsync(ctx);
     }
 
-    public async Task DeleteAsync(
+    public async Task DeleteSessionAsync(
         int id,
         CancellationToken ctx)
     {
-        var _ = await this.GetByIdAsync(id, ctx)
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
+        var _ = await this.GetSessionByIdAsync(id, ctx)
             ?? throw new SessionNotFoundException();
 
-        this.dbContext.Sessions
-            .Where(w => w.Id == id)
+        dbContext.Sessions
+            .Where(e => e.Id == id)
             .ExecuteDelete();
 
-        await this.dbContext.SaveChangesAsync(ctx);
+        await dbContext.SaveChangesAsync(ctx);
     }
 }

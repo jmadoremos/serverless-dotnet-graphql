@@ -10,57 +10,57 @@ using Microsoft.EntityFrameworkCore;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
-    public DbSet<Attendee> Attendees { get; set; } = default!;
+    public DbSet<AttendeeModel> Attendees { get; set; } = default!;
 
-    public DbSet<Session> Sessions { get; set; } = default!;
+    public DbSet<SessionModel> Sessions { get; set; } = default!;
 
-    public DbSet<SessionAttendee> SessionAttendees { get; set; } = default!;
+    public DbSet<SessionAttendeeModel> SessionAttendees { get; set; } = default!;
 
-    public DbSet<SessionSpeaker> SessionSpeakers { get; set; } = default!;
+    public DbSet<SessionSpeakerModel> SessionSpeakers { get; set; } = default!;
 
-    public DbSet<Speaker> Speakers { get; set; } = default!;
+    public DbSet<SpeakerModel> Speakers { get; set; } = default!;
 
-    public DbSet<Track> Tracks { get; set; } = default!;
+    public DbSet<TrackModel> Tracks { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Attendee>()
+        modelBuilder.Entity<AttendeeModel>()
             .HasIndex(e => e.UserName)
             .IsUnique();
 
-        modelBuilder.Entity<Session>()
+        modelBuilder.Entity<SessionModel>()
             .HasIndex(e => e.Title)
             .IsUnique();
 
-        modelBuilder.Entity<Speaker>()
+        modelBuilder.Entity<SpeakerModel>()
             .HasIndex(e => e.Name)
             .IsUnique();
 
-        modelBuilder.Entity<Track>()
+        modelBuilder.Entity<TrackModel>()
             .HasIndex(e => e.Name)
             .IsUnique();
 
         // One-to-one: Session <-> Track
-        modelBuilder.Entity<Track>()
+        modelBuilder.Entity<TrackModel>()
             .HasMany(e => e.Sessions)
             .WithOne(e => e.Track);
 
         // Many-to-many: Session <-> Attendee
-        modelBuilder.Entity<SessionAttendee>()
+        modelBuilder.Entity<SessionAttendeeModel>()
             .HasKey(e => new { e.SessionId, e.AttendeeId });
 
-        modelBuilder.Entity<Session>()
+        modelBuilder.Entity<SessionModel>()
             .HasMany(e => e.Attendees)
             .WithMany(e => e.Sessions)
-            .UsingEntity<SessionAttendee>();
+            .UsingEntity<SessionAttendeeModel>();
 
         // Many-to-many: Speaker <-> Session
-        modelBuilder.Entity<SessionSpeaker>()
+        modelBuilder.Entity<SessionSpeakerModel>()
             .HasKey(e => new { e.SessionId, e.SpeakerId });
 
-        modelBuilder.Entity<Session>()
+        modelBuilder.Entity<SessionModel>()
             .HasMany(e => e.Speakers)
             .WithMany(e => e.Sessions)
-            .UsingEntity<SessionSpeaker>();
+            .UsingEntity<SessionSpeakerModel>();
     }
 }

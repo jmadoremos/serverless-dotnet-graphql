@@ -5,11 +5,11 @@ using GraphQL.Repositories.Database.Sessions;
 
 public interface ISessionAttendeeRepository
 {
-    Task<IQueryable<Attendee>> GetAttendeesBySessionAsync(int sessionId, CancellationToken ctx);
+    Task<IQueryable<AttendeeModel>> GetAttendeesBySessionAsync(int sessionId, CancellationToken ctx);
 
-    Task<IQueryable<Session>> GetSessionsByAttendeeAsync(int attendeeId, CancellationToken ctx);
+    Task<IQueryable<SessionModel>> GetSessionsByAttendeeAsync(int attendeeId, CancellationToken ctx);
 
-    Task CreateSessionAttendeeAsync(SessionAttendeeInput input, CancellationToken ctx);
+    Task CreateSessionAttendeeAsync(SessionAttendeeModelInput input, CancellationToken ctx);
 
-    Task DeleteSessionAttendeeAsync(SessionAttendeeInput input, CancellationToken ctx);
+    Task DeleteSessionAttendeeAsync(SessionAttendeeModelInput input, CancellationToken ctx);
 }

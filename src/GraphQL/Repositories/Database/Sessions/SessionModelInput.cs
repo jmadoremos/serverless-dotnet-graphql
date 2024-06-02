@@ -3,7 +3,7 @@ namespace GraphQL.Repositories.Database.Sessions;
 using GraphQL.Schemas.Database.Sessions;
 using System.ComponentModel.DataAnnotations;
 
-public class SessionInput
+public class SessionModelInput
 {
     [Required]
     [StringLength(200)]
@@ -18,7 +18,7 @@ public class SessionInput
 
     public int TrackId { get; set; } = default!;
 
-    public static SessionInput MapFrom(AddSessionSchema s) => new()
+    public static SessionModelInput MapFrom(AddSessionInput s) => new()
     {
         Title = s.Title,
         Abstract = s.Abstract,
@@ -27,7 +27,7 @@ public class SessionInput
         TrackId = s.TrackId
     };
 
-    public static SessionInput MapFrom(Session o, UpdateSessionSchema s) => new()
+    public static SessionModelInput MapFrom(SessionModel o, UpdateSessionInput s) => new()
     {
         Title = s.Title ?? o.Title,
         Abstract = s.Abstract ?? o.Abstract,

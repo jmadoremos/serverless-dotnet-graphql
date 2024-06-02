@@ -2,15 +2,17 @@ namespace GraphQL.Repositories.Database.Sessions;
 
 public interface ISessionRepository
 {
-    Task<IQueryable<Session>> GetAllAsync(CancellationToken ctx);
+    Task<IQueryable<SessionModel>> GetAllSessionsAsync(CancellationToken ctx);
 
-    Task<Session?> GetByIdAsync(int id, CancellationToken ctx);
+    Task<SessionModel?> GetSessionByIdAsync(int id, CancellationToken ctx);
 
-    Task<Session?> GetByTitleAsync(string title, CancellationToken ctx);
+    Task<IQueryable<SessionModel>> GetSessionsByIdsAsync(IEnumerable<int> ids, CancellationToken ctx);
 
-    Task<int> CreateAsync(SessionInput input, CancellationToken ctx);
+    Task<SessionModel?> GetSessionByTitleAsync(string title, CancellationToken ctx);
 
-    Task UpdateAsync(int id, SessionInput input, CancellationToken ctx);
+    Task<int> CreateSessionAsync(SessionModelInput input, CancellationToken ctx);
 
-    Task DeleteAsync(int id, CancellationToken ctx);
+    Task UpdateSessionAsync(int id, SessionModelInput input, CancellationToken ctx);
+
+    Task DeleteSessionAsync(int id, CancellationToken ctx);
 }
