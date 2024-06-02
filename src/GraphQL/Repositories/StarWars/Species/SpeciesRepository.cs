@@ -1,7 +1,8 @@
 namespace GraphQL.Repositories.StarWars.Species;
 
-using System.Globalization;
 using GraphQL.Services.StarWars;
+using System.Collections.Concurrent;
+using System.Globalization;
 
 public class SpeciesRepository([Service] ISwapiService swapi) : ISpeciesRepository
 {
@@ -12,36 +13,53 @@ public class SpeciesRepository([Service] ISwapiService swapi) : ISpeciesReposito
         // Define placeholder of results
         var result = new SwapiResponseList<SpeciesApiResponse>();
 
-        // Define placeholder for the API response
-        SwapiResponseList<SpeciesApiResponse>? response;
+        // Define placeholder of pages
+        var pageResults = new ConcurrentDictionary<int, IEnumerable<SpeciesApiResponse>>();
 
-        // Define API URI to call. Defaults to resource URI.
-        var uri = this.baseUri.ToString();
+        // Call first page to determine total count
+        var page1 = await this.GetPageAsync(1, ctx);
+        pageResults.TryAdd(1, page1.Results);
 
-        do
+        // Calculate page size
+        var pageTotalCount = page1.Count / page1.Results.Count();
+        if (page1.Count % page1.Results.Count() > 0)
         {
-            // Call API
-            response = await swapi
-                .GetAsync<SwapiResponseList<SpeciesApiResponse>>(uri, ctx);
+            pageTotalCount += 1;
+        }
 
-            // If the response does not have a data, return the result
-            if (response == null || response.Count == 0)
+        // Calculate remaining pages to parse
+        var pageRemainingCount = pageTotalCount - 1;
+
+        // Call the remaining pages in parallel
+        await Parallel.ForEachAsync(
+            Enumerable.Range(2, pageRemainingCount),
+            new ParallelOptions
             {
-                break;
-            }
-
-            // Since the response has data, merge it to result
-            foreach (var e in response.Results)
+                CancellationToken = ctx,
+                MaxDegreeOfParallelism = 10
+            },
+            async (page, ct) =>
             {
-                result.Results = result.Results.Append(e);
+                var pageN = await this.GetPageAsync(page, ct);
+                pageResults.TryAdd(page, pageN.Results);
+            });
+
+        // Combine all results
+        var pageCompleteResult = new List<SpeciesApiResponse>();
+        foreach (var page in Enumerable.Range(1, pageTotalCount))
+        {
+            var pageResultOrNull = pageResults.GetValueOrDefault(page, default!);
+
+            if (pageResultOrNull is not null)
+            {
+                pageCompleteResult.AddRange(pageResultOrNull);
             }
+        }
 
-            // Define the next URI to call based on the "next" property of the response
-            result.Previous = uri;
-            uri = response.Next;
-        } while (uri is not null);
-
-        result.Count = response?.Count ?? 0;
+        // Update the remaining metadata
+        result.Count = page1.Count;
+        result.Results = pageCompleteResult;
+        result.Previous = $"{this.baseUri}?page={pageTotalCount}";
         result.Next = null;
 
         // Resolve
@@ -61,5 +79,17 @@ public class SpeciesRepository([Service] ISwapiService swapi) : ISpeciesReposito
 
         // Resolve
         return result;
+    }
+
+    private async Task<SwapiResponseList<SpeciesApiResponse>> GetPageAsync(
+        int page,
+        CancellationToken ctx)
+    {
+        var uri = $"{this.baseUri}?page={page}";
+
+        var response = await swapi.GetAsync<SwapiResponseList<SpeciesApiResponse>>(uri, ctx)
+            ?? new SwapiResponseList<SpeciesApiResponse>();
+
+        return response;
     }
 }
