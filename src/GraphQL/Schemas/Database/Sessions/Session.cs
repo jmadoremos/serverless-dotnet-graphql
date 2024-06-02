@@ -1,14 +1,16 @@
 namespace GraphQL.Schemas.Database.Sessions;
 
+using GraphQL.DataLoaders.Database;
 using GraphQL.Repositories.Database.Sessions;
-using GraphQL.Repositories.Database.Tracks;
 using GraphQL.Schemas.Database.Attendees;
 using GraphQL.Schemas.Database.Speakers;
 
+[Node]
 [GraphQLDescription("A session resource of tracks.")]
-public class SessionSchema
+public class Session
 {
-    [GraphQLType(typeof(IdType))]
+    [ID]
+    [GraphQLDescription("The unique identifier of this session.")]
     public int Id { get; set; } = default!;
 
     [GraphQLDescription("The title of this session.")]
@@ -30,16 +32,19 @@ public class SessionSchema
     [GraphQLDescription("The track Id of this session.")]
     public int TrackId { get; set; } = default!;
 
-    [GraphQLDescription("The track this sessions belongs to.")]
-    public Track Track { get; set; } = default!;
-
     [GraphQLDescription("A list of speaker resources of this session.")]
-    public IEnumerable<SpeakerSchema> Speakers { get; set; } = [];
+    public IEnumerable<Speaker> Speakers { get; set; } = [];
 
     [GraphQLDescription("A list of attendee resources of this session.")]
-    public IEnumerable<AttendeeSchema> Attendees { get; set; } = [];
+    public IEnumerable<Attendee> Attendees { get; set; } = [];
 
-    public static SessionSchema MapFrom(Session r) => new()
+    [NodeResolver]
+    public static Task<Session> GetNodeAsync(
+        [ID(nameof(Session))] int id,
+        [Service] SessionByIdBatchDataLoader dataLoader,
+        CancellationToken ctx) => dataLoader.LoadAsync(id, ctx);
+
+    public static Session MapFrom(SessionModel r) => new()
     {
         Id = r.Id,
         Title = r.Title,

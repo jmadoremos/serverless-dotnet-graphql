@@ -1,12 +1,15 @@
 namespace GraphQL.Schemas.Database.Speakers;
 
+using GraphQL.DataLoaders.Database;
 using GraphQL.Repositories.Database.Speakers;
 using GraphQL.Schemas.Database.Sessions;
 
+[Node]
 [GraphQLDescription("A speaker resource of sessions.")]
-public class SpeakerSchema
+public class Speaker
 {
-    [GraphQLType(typeof(IdType))]
+    [ID]
+    [GraphQLDescription("The unique identifier of this speaker.")]
     public int Id { get; set; } = default!;
 
     [GraphQLDescription("The name of this speaker.")]
@@ -19,9 +22,15 @@ public class SpeakerSchema
     public string? Website { get; set; } = default!;
 
     [GraphQLDescription("The sessions where this speaker will be speaking, is speaking, or has spoken at.")]
-    public IEnumerable<SessionSchema> Sessions { get; set; } = [];
+    public IEnumerable<Session> Sessions { get; set; } = [];
 
-    public static SpeakerSchema MapFrom(Speaker r) => new()
+    [NodeResolver]
+    public static Task<Speaker> GetNodeAsync(
+        [ID(nameof(Speaker))] int id,
+        [Service] SpeakerByIdBatchDataLoader dataLoader,
+        CancellationToken ctx) => dataLoader.LoadAsync(id, ctx);
+
+    public static Speaker MapFrom(SpeakerModel r) => new()
     {
         Id = r.Id,
         Name = r.Name,

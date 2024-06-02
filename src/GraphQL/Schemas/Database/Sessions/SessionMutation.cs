@@ -12,58 +12,58 @@ public class SessionMutation(
     [Service] ISessionSpeakerRepository sessionSpeakers)
 {
     [GraphQLDescription("Adds a session resource.")]
-    public async Task<SessionSchema> AddSessionAsync(
-        AddSessionSchema input,
+    public async Task<Session> AddSessionAsync(
+        AddSessionInput input,
         CancellationToken ctx)
     {
-        var attendee = SessionInput.MapFrom(input);
+        var attendee = SessionModelInput.MapFrom(input);
 
-        var id = await sessions.CreateAsync(attendee, ctx);
+        var id = await sessions.CreateSessionAsync(attendee, ctx);
 
-        var entity = await sessions.GetByIdAsync(id, ctx)
+        var entity = await sessions.GetSessionByIdAsync(id, ctx)
             ?? throw new SessionNotFoundException();
 
-        return SessionSchema.MapFrom(entity);
+        return Session.MapFrom(entity);
     }
 
     [GraphQLDescription("Updates a session resource.")]
-    public async Task<SessionSchema> UpdateSessionAsync(
+    public async Task<Session> UpdateSessionAsync(
         [GraphQLType(typeof(IdType))] int id,
-        UpdateSessionSchema input,
+        UpdateSessionInput input,
         CancellationToken ctx)
     {
-        var entity = await sessions.GetByIdAsync(id, ctx)
+        var entity = await sessions.GetSessionByIdAsync(id, ctx)
             ?? throw new SessionNotFoundException();
 
-        var attendee = SessionInput.MapFrom(entity, input);
+        var attendee = SessionModelInput.MapFrom(entity, input);
 
-        await sessions.UpdateAsync(id, attendee, ctx);
+        await sessions.UpdateSessionAsync(id, attendee, ctx);
 
-        entity = await sessions.GetByIdAsync(id, ctx)
+        entity = await sessions.GetSessionByIdAsync(id, ctx)
             ?? throw new SessionNotFoundException();
 
-        return SessionSchema.MapFrom(entity);
+        return Session.MapFrom(entity);
     }
 
     [GraphQLDescription("Deletes a session resource.")]
-    public async Task<SessionSchema> DeleteSessionAsync(
+    public async Task<Session> DeleteSessionAsync(
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)
     {
-        var entity = await sessions.GetByIdAsync(id, ctx)
+        var entity = await sessions.GetSessionByIdAsync(id, ctx)
             ?? throw new SessionNotFoundException();
 
-        await sessions.DeleteAsync(id, ctx);
+        await sessions.DeleteSessionAsync(id, ctx);
 
-        return SessionSchema.MapFrom(entity);
+        return Session.MapFrom(entity);
     }
 
     [GraphQLDescription("Adds a speaker resource to a session.")]
-    public async Task<SessionSpeakerSchema> AddSessionSpeakerAsync(
-        SessionSpeakerSchema input,
+    public async Task<AddRemoveSessionSpeaker> AddSessionSpeakerAsync(
+        AddRemoveSessionSpeaker input,
         CancellationToken ctx)
     {
-        var sessionSpeaker = SessionSpeakerInput.MapFrom(input);
+        var sessionSpeaker = SessionSpeakerModelInput.MapFrom(input);
 
         await sessionSpeakers.CreateSessionSpeakerAsync(sessionSpeaker, ctx);
 
@@ -71,11 +71,11 @@ public class SessionMutation(
     }
 
     [GraphQLDescription("Adds an attendee resource to a session.")]
-    public async Task<SessionAttendeeSchema> AddSessionAttendeeAsync(
-        SessionAttendeeSchema input,
+    public async Task<AddRemoveSessionAttendee> AddSessionAttendeeAsync(
+        AddRemoveSessionAttendee input,
         CancellationToken ctx)
     {
-        var sessionAttendee = SessionAttendeeInput.MapFrom(input);
+        var sessionAttendee = SessionAttendeeModelInput.MapFrom(input);
 
         await sessionAttendees.CreateSessionAttendeeAsync(sessionAttendee, ctx);
 
@@ -83,11 +83,11 @@ public class SessionMutation(
     }
 
     [GraphQLDescription("Removes a speaker resource from a session.")]
-    public async Task<SessionSpeakerSchema> RemoveSessionSpeakerAsync(
-        SessionSpeakerSchema input,
+    public async Task<AddRemoveSessionSpeaker> RemoveSessionSpeakerAsync(
+        AddRemoveSessionSpeaker input,
         CancellationToken ctx)
     {
-        var sessionSpeaker = SessionSpeakerInput.MapFrom(input);
+        var sessionSpeaker = SessionSpeakerModelInput.MapFrom(input);
 
         await sessionSpeakers.DeleteSessionSpeakerAsync(sessionSpeaker, ctx);
 
@@ -95,11 +95,11 @@ public class SessionMutation(
     }
 
     [GraphQLDescription("Removes an attendee resource from a session.")]
-    public async Task<SessionAttendeeSchema> RemoveSessionAttendeeAsync(
-        SessionAttendeeSchema input,
+    public async Task<AddRemoveSessionAttendee> RemoveSessionAttendeeAsync(
+        AddRemoveSessionAttendee input,
         CancellationToken ctx)
     {
-        var sessionAttendee = SessionAttendeeInput.MapFrom(input);
+        var sessionAttendee = SessionAttendeeModelInput.MapFrom(input);
 
         await sessionAttendees.DeleteSessionAttendeeAsync(sessionAttendee, ctx);
 

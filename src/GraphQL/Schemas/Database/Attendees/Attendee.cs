@@ -1,12 +1,15 @@
 namespace GraphQL.Schemas.Database.Attendees;
 
+using GraphQL.DataLoaders.Database;
 using GraphQL.Repositories.Database.Attendees;
 using GraphQL.Schemas.Database.Sessions;
 
+[Node]
 [GraphQLDescription("An attendee resource of sessions.")]
-public class AttendeeSchema
+public class Attendee
 {
-    [GraphQLType(typeof(IdType))]
+    [ID]
+    [GraphQLDescription("The unique identifier of this attendee.")]
     public int Id { get; set; } = default!;
 
     [GraphQLDescription("The firstnames of this attendee.")]
@@ -22,9 +25,15 @@ public class AttendeeSchema
     public string? Email { get; set; } = default!;
 
     [GraphQLDescription("The sessions where this attendee will be attending, is attending, or has attended to.")]
-    public IEnumerable<SessionSchema> Sessions { get; set; } = [];
+    public IEnumerable<Session> Sessions { get; set; } = [];
 
-    public static AttendeeSchema MapFrom(Attendee r) => new()
+    [NodeResolver]
+    public static Task<Attendee> GetNodeAsync(
+        [ID(nameof(Attendee))] int id,
+        AttendeeByIdBatchDataLoader dataLoader,
+        CancellationToken ctx) => dataLoader.LoadAsync(id, ctx);
+
+    public static Attendee MapFrom(AttendeeModel r) => new()
     {
         Id = r.Id,
         Firstname = r.FirstName,

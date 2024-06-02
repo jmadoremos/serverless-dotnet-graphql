@@ -8,20 +8,20 @@ using System.Linq;
 public class AttendeeQuery([Service] IAttendeeRepository attendees)
 {
     [GraphQLDescription("A list of attendees from all sessions.")]
-    public async Task<IEnumerable<AttendeeSchema>> GetAttendeesAsync(CancellationToken ctx)
+    public async Task<IEnumerable<Attendee>> GetAttendeesAsync(CancellationToken ctx)
     {
-        var result = await attendees.GetAllAsync(ctx);
-        return result.Select(AttendeeSchema.MapFrom);
+        var result = await attendees.GetAllAttendeesAsync(ctx);
+        return result.Select(Attendee.MapFrom);
     }
 
     [GraphQLDescription("An attendee of any session.")]
-    public async Task<AttendeeSchema> GetAttendeeAsync(
-        [GraphQLType(typeof(IdType))] int id,
+    public async Task<Attendee> GetAttendeeAsync(
+        [ID(nameof(Attendee))] int id,
         CancellationToken ctx)
     {
-        var result = await attendees.GetByIdAsync(id, ctx)
+        var result = await attendees.GetAttendeeByIdAsync(id, ctx)
             ?? throw new UserNotFoundException(nameof(Attendee.Id));
 
-        return AttendeeSchema.MapFrom(result);
+        return Attendee.MapFrom(result);
     }
 }

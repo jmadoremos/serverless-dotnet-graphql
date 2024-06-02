@@ -1,4 +1,4 @@
-namespace GraphQL;
+﻿namespace GraphQL;
 
 using GraphQL.Data;
 using GraphQL.DataLoaders.Database;
@@ -73,6 +73,10 @@ public class Startup(IConfiguration configuration)
         services.AddGraphQLServer()
             // DbContext
             .RegisterDbContext<ApplicationDbContext>(DbContextKind.Pooled)
+            // Enable global object identification
+            .AddGlobalObjectIdentification()
+            // Set execution timeout
+            //.ModifyRequestOptions(options => options.ExecutionTimeout = TimeSpan.FromSeconds(60))
             // Custom services using DbContext
             .RegisterService<IAttendeeRepository>()
             .RegisterService<ISessionRepository>()

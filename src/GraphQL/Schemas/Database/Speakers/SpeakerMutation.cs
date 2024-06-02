@@ -7,49 +7,49 @@ using GraphQL.Repositories.Database.Speakers;
 public class SpeakerMutation([Service] ISpeakerRepository speakers)
 {
     [GraphQLDescription("Adds a speaker resource.")]
-    public async Task<SpeakerSchema> AddSpeakerAsync(
-        AddSpeakerSchema input,
+    public async Task<Speaker> AddSpeakerAsync(
+        AddSpeakerInput input,
         CancellationToken ctx)
     {
-        var attendee = SpeakerInput.MapFrom(input);
+        var attendee = SpeakerModelInput.MapFrom(input);
 
-        var id = await speakers.CreateAsync(attendee, ctx);
+        var id = await speakers.CreateSpeakerAsync(attendee, ctx);
 
-        var entity = await speakers.GetByIdAsync(id, ctx)
-            ?? throw new UserNotFoundException(nameof(Speaker.Id));
+        var entity = await speakers.GetSpeakerByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(SpeakerModel.Id));
 
-        return SpeakerSchema.MapFrom(entity);
+        return Speaker.MapFrom(entity);
     }
 
     [GraphQLDescription("Updates a speaker resource.")]
-    public async Task<SpeakerSchema> UpdateSpeakerAsync(
+    public async Task<Speaker> UpdateSpeakerAsync(
         [GraphQLType(typeof(IdType))] int id,
-        UpdateSpeakerSchema input,
+        UpdateSpeakerInput input,
         CancellationToken ctx)
     {
-        var entity = await speakers.GetByIdAsync(id, ctx)
-            ?? throw new UserNotFoundException(nameof(Speaker.Id));
+        var entity = await speakers.GetSpeakerByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(SpeakerModel.Id));
 
-        var attendee = SpeakerInput.MapFrom(entity, input);
+        var attendee = SpeakerModelInput.MapFrom(entity, input);
 
-        await speakers.UpdateAsync(id, attendee, ctx);
+        await speakers.UpdateSpeakerAsync(id, attendee, ctx);
 
-        entity = await speakers.GetByIdAsync(id, ctx)
-            ?? throw new UserNotFoundException(nameof(Speaker.Id));
+        entity = await speakers.GetSpeakerByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(SpeakerModel.Id));
 
-        return SpeakerSchema.MapFrom(entity);
+        return Speaker.MapFrom(entity);
     }
 
     [GraphQLDescription("Deletes a speaker resource.")]
-    public async Task<SpeakerSchema> DeleteSpeakerAsync(
+    public async Task<Speaker> DeleteSpeakerAsync(
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)
     {
-        var entity = await speakers.GetByIdAsync(id, ctx)
-            ?? throw new UserNotFoundException(nameof(Speaker.Id));
+        var entity = await speakers.GetSpeakerByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(SpeakerModel.Id));
 
-        await speakers.DeleteAsync(id, ctx);
+        await speakers.DeleteSpeakerAsync(id, ctx);
 
-        return SpeakerSchema.MapFrom(entity);
+        return Speaker.MapFrom(entity);
     }
 }

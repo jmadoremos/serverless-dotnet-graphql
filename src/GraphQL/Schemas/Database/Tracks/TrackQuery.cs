@@ -8,20 +8,20 @@ using System.Linq;
 public class TrackQuery([Service] ITrackRepository tracks)
 {
     [GraphQLDescription("A list of tracks.")]
-    public async Task<IEnumerable<TrackSchema>> GetTracksAsync(CancellationToken ctx)
+    public async Task<IEnumerable<Track>> GetTracksAsync(CancellationToken ctx)
     {
-        var result = await tracks.GetAllAsync(ctx);
-        return result.Select(TrackSchema.MapFrom);
+        var result = await tracks.GetAllTracksAsync(ctx);
+        return result.Select(Track.MapFrom);
     }
 
     [GraphQLDescription("A track.")]
-    public async Task<TrackSchema> GetTrackAsync(
-        [GraphQLType(typeof(IdType))] int id,
+    public async Task<Track> GetTrackAsync(
+        [ID(nameof(Track))] int id,
         CancellationToken ctx)
     {
-        var result = await tracks.GetByIdAsync(id, ctx)
+        var result = await tracks.GetTrackByIdAsync(id, ctx)
             ?? throw new TrackNotFoundException();
 
-        return TrackSchema.MapFrom(result);
+        return Track.MapFrom(result);
     }
 }

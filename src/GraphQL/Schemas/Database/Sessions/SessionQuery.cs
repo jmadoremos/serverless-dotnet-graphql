@@ -8,20 +8,20 @@ using System.Linq;
 public class SessionQuery([Service] ISessionRepository sessions)
 {
     [GraphQLDescription("A list of sessions of all tracks.")]
-    public async Task<IEnumerable<SessionSchema>> GetSessionsAsync(CancellationToken ctx)
+    public async Task<IEnumerable<Session>> GetSessionsAsync(CancellationToken ctx)
     {
-        var result = await sessions.GetAllAsync(ctx);
-        return result.Select(SessionSchema.MapFrom);
+        var result = await sessions.GetAllSessionsAsync(ctx);
+        return result.Select(Session.MapFrom);
     }
 
     [GraphQLDescription("A session of any track.")]
-    public async Task<SessionSchema> GetSessionAsync(
-        [GraphQLType(typeof(IdType))] int id,
+    public async Task<Session> GetSessionAsync(
+        [ID(nameof(Session))] int id,
         CancellationToken ctx)
     {
-        var result = await sessions.GetByIdAsync(id, ctx)
+        var result = await sessions.GetSessionByIdAsync(id, ctx)
             ?? throw new SessionNotFoundException();
 
-        return SessionSchema.MapFrom(result);
+        return Session.MapFrom(result);
     }
 }

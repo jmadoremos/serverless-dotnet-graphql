@@ -8,37 +8,39 @@ using GraphQL.Schemas.Database.Attendees;
 using GraphQL.Schemas.Database.Speakers;
 using GraphQL.Schemas.Database.Tracks;
 
-[ExtendObjectType(typeof(SessionSchema))]
+[ExtendObjectType(typeof(Session))]
 public class SessionExtension(
     [Service] ISessionAttendeeRepository sessionAttendees,
     [Service] ISessionSpeakerRepository sessionSpeakers,
     [Service] ITrackRepository tracks)
 {
-    public async Task<TrackSchema> GetTrackAsync(
-        [Parent] SessionSchema parent,
+    [BindMember(nameof(Session.TrackId))]
+    [GraphQLDescription("The track of this session.")]
+    public async Task<Track> GetTrackAsync(
+        [Parent] Session parent,
         CancellationToken ctx)
     {
-        var response = await tracks.GetByIdAsync(parent.TrackId, ctx)
+        var response = await tracks.GetTrackByIdAsync(parent.TrackId, ctx)
             ?? throw new TrackNotFoundException();
 
-        return TrackSchema.MapFrom(response);
+        return Track.MapFrom(response);
     }
 
-    public async Task<IEnumerable<SpeakerSchema>> GetSpeakersAsync(
-        [Parent] SessionSchema parent,
+    public async Task<IEnumerable<Speaker>> GetSpeakersAsync(
+        [Parent] Session parent,
         CancellationToken ctx)
     {
         var response = await sessionSpeakers.GetSpeakersBySessionAsync(parent.Id, ctx);
 
-        return response.Select(SpeakerSchema.MapFrom);
+        return response.Select(Speaker.MapFrom);
     }
 
-    public async Task<IEnumerable<AttendeeSchema>> GetAttendeesAsync(
-        [Parent] SessionSchema parent,
+    public async Task<IEnumerable<Attendee>> GetAttendeesAsync(
+        [Parent] Session parent,
         CancellationToken ctx)
     {
         var response = await sessionAttendees.GetAttendeesBySessionAsync(parent.Id, ctx);
 
-        return response.Select(AttendeeSchema.MapFrom);
+        return response.Select(Attendee.MapFrom);
     }
 }

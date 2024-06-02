@@ -7,49 +7,49 @@ using GraphQL.Repositories.Database.Tracks;
 public class TrackMutation([Service] ITrackRepository tracks)
 {
     [GraphQLDescription("Adds a track resource.")]
-    public async Task<TrackSchema> AddTrackAsync(
-        AddTrackSchema input,
+    public async Task<Track> AddTrackAsync(
+        AddTrackInput input,
         CancellationToken ctx)
     {
-        var attendee = TrackInput.MapFrom(input);
+        var attendee = TrackModelInput.MapFrom(input);
 
-        var id = await tracks.CreateAsync(attendee, ctx);
+        var id = await tracks.CreateTrackAsync(attendee, ctx);
 
-        var entity = await tracks.GetByIdAsync(id, ctx)
+        var entity = await tracks.GetTrackByIdAsync(id, ctx)
             ?? throw new TrackNotFoundException();
 
-        return TrackSchema.MapFrom(entity);
+        return Track.MapFrom(entity);
     }
 
     [GraphQLDescription("Updates a track resource.")]
-    public async Task<TrackSchema> UpdateTrackAsync(
+    public async Task<Track> UpdateTrackAsync(
         [GraphQLType(typeof(IdType))] int id,
-        UpdateTrackSchema input,
+        UpdateTrackInput input,
         CancellationToken ctx)
     {
-        var entity = await tracks.GetByIdAsync(id, ctx)
+        var entity = await tracks.GetTrackByIdAsync(id, ctx)
             ?? throw new TrackNotFoundException();
 
-        var attendee = TrackInput.MapFrom(entity, input);
+        var attendee = TrackModelInput.MapFrom(entity, input);
 
-        await tracks.UpdateAsync(id, attendee, ctx);
+        await tracks.UpdateTrackAsync(id, attendee, ctx);
 
-        entity = await tracks.GetByIdAsync(id, ctx)
+        entity = await tracks.GetTrackByIdAsync(id, ctx)
             ?? throw new TrackNotFoundException();
 
-        return TrackSchema.MapFrom(entity);
+        return Track.MapFrom(entity);
     }
 
     [GraphQLDescription("Deletes a track resource.")]
-    public async Task<TrackSchema> DeleteTrackAsync(
+    public async Task<Track> DeleteTrackAsync(
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)
     {
-        var entity = await tracks.GetByIdAsync(id, ctx)
+        var entity = await tracks.GetTrackByIdAsync(id, ctx)
             ?? throw new TrackNotFoundException();
 
-        await tracks.DeleteAsync(id, ctx);
+        await tracks.DeleteTrackAsync(id, ctx);
 
-        return TrackSchema.MapFrom(entity);
+        return Track.MapFrom(entity);
     }
 }

@@ -7,49 +7,49 @@ using GraphQL.Repositories.Database.Attendees;
 public class AttendeeMutation([Service] IAttendeeRepository attendees)
 {
     [GraphQLDescription("Adds an attendee resource.")]
-    public async Task<AttendeeSchema> AddAttendeeAsync(
-        AddAttendeeSchema input,
+    public async Task<Attendee> AddAttendeeAsync(
+        AddAttendeeInput input,
         CancellationToken ctx)
     {
-        var attendee = AttendeeInput.MapFrom(input);
+        var attendee = AttendeeModelInput.MapFrom(input);
 
-        var id = await attendees.CreateAsync(attendee, ctx);
+        var id = await attendees.CreateAttendeeAsync(attendee, ctx);
 
-        var entity = await attendees.GetByIdAsync(id, ctx)
-            ?? throw new UserNotFoundException(nameof(Attendee.Id));
+        var entity = await attendees.GetAttendeeByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(AttendeeModel.Id));
 
-        return AttendeeSchema.MapFrom(entity);
+        return Attendee.MapFrom(entity);
     }
 
     [GraphQLDescription("Updates an attendee resource.")]
-    public async Task<AttendeeSchema> UpdateAttendeeAsync(
+    public async Task<Attendee> UpdateAttendeeAsync(
         [GraphQLType(typeof(IdType))] int id,
-        UpdateAttendeeSchema input,
+        UpdateAttendeeInput input,
         CancellationToken ctx)
     {
-        var entity = await attendees.GetByIdAsync(id, ctx)
-            ?? throw new UserNotFoundException(nameof(Attendee.Id));
+        var entity = await attendees.GetAttendeeByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(AttendeeModel.Id));
 
-        var attendee = AttendeeInput.MapFrom(entity, input);
+        var attendee = AttendeeModelInput.MapFrom(entity, input);
 
-        await attendees.UpdateAsync(id, attendee, ctx);
+        await attendees.UpdateAttendeeAsync(id, attendee, ctx);
 
-        entity = await attendees.GetByIdAsync(id, ctx)
-            ?? throw new UserNotFoundException(nameof(Attendee.Id));
+        entity = await attendees.GetAttendeeByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(AttendeeModel.Id));
 
-        return AttendeeSchema.MapFrom(entity);
+        return Attendee.MapFrom(entity);
     }
 
     [GraphQLDescription("Deletes an attendee resource.")]
-    public async Task<AttendeeSchema> DeleteAttendeeAsync(
+    public async Task<Attendee> DeleteAttendeeAsync(
         [GraphQLType(typeof(IdType))] int id,
         CancellationToken ctx)
     {
-        var entity = await attendees.GetByIdAsync(id, ctx)
-            ?? throw new UserNotFoundException(nameof(Attendee.Id));
+        var entity = await attendees.GetAttendeeByIdAsync(id, ctx)
+            ?? throw new UserNotFoundException(nameof(AttendeeModel.Id));
 
-        await attendees.DeleteAsync(id, ctx);
+        await attendees.DeleteAttendeeAsync(id, ctx);
 
-        return AttendeeSchema.MapFrom(entity);
+        return Attendee.MapFrom(entity);
     }
 }
