@@ -31,18 +31,18 @@ public class FilmRepository([Service] ISwapiService swapi) : IFilmRepository
             }
 
             // Since the response has data, merge it to result
-            result.Count += response.Count;
             foreach (var e in response.Results)
             {
                 result.Results = result.Results.Append(e);
             }
 
             // Define the next URI to call based on the "next" property of the response
+            result.Previous = uri;
             uri = response.Next;
         } while (uri is not null);
 
-        result.Previous = string.Empty;
-        result.Next = string.Empty;
+        result.Count = response?.Count ?? 0;
+        result.Next = null;
 
         // Resolve
         return result;
