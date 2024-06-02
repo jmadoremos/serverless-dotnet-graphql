@@ -1,18 +1,6 @@
 {
   "configurations": [
     {
-      "name": "C#: GraphQL Debug",
-      "type": "dotnet",
-      "request": "launch",
-      "projectPath": "${workspaceFolder}/src/GraphQL/GraphQL.csproj",
-      "serverReadyAction": {
-        "action": "openExternally",
-        "pattern": "\\bNow listening on:\\s+https?://\\S",
-        "uriFormat": "http://localhost:5000/graphql/",
-        "killOnServerStop": true
-      }
-    },
-    {
       "name": "C#: GraphQL.Database Debug",
       "type": "dotnet",
       "request": "launch",
