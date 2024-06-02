@@ -8,6 +8,6 @@ public class TrackNotFoundException : GraphQLException
         this.Attributes =
         [
             "input",
-            nameof(Track.Name)
+            nameof(TrackModel.Name)
         ];
 }

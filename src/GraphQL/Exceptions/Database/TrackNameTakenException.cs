@@ -8,6 +8,6 @@ public class TrackNameTakenException : GraphQLException
         this.Attributes =
         [
             "input",
-            nameof(TrackInput.Name)
+            nameof(TrackModelInput.Name)
         ];
 }

@@ -8,6 +8,6 @@ public class SessionTitleTakenException : GraphQLException
         this.Attributes =
         [
             "input",
-            nameof(SessionInput.Title)
+            nameof(SessionModelInput.Title)
         ];
 }

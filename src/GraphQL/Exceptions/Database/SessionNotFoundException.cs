@@ -8,6 +8,6 @@ public class SessionNotFoundException : GraphQLException
         this.Attributes =
         [
             "input",
-            nameof(Session.Title)
+            nameof(SessionModel.Title)
         ];
 }

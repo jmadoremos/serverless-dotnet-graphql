@@ -8,7 +8,7 @@ public class SessionSpeakerExistsException : GraphQLException
         this.Attributes =
         [
             "input",
-            nameof(SessionSpeaker.SessionId),
-            nameof(SessionSpeaker.SpeakerId),
+            nameof(SessionSpeakerModel.SessionId),
+            nameof(SessionSpeakerModel.SpeakerId),
         ];
 }
