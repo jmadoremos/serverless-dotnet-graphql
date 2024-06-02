@@ -17,13 +17,13 @@ dotnet tool restore
 # Build .NET solution
 dotnet build src
 
-# Create initial migration manifest for GraphQL project
-dotnet ef migrations add Initial --project src/GraphQL
+# Create initial migration manifest for GraphQL.Database project
+dotnet ef migrations add Initial --project src/GraphQL.Database
 
 # Update database based on migration manifest for GraphQL project
-dotnet ef database update --project src/GraphQL >> /dev/null
+dotnet ef database update --project src/GraphQL.Database >> /dev/null
 if [[ $? -eq 1 ]]; then
-    dotnet ef database drop --project src/GraphQL --force
+    dotnet ef database drop --project src/GraphQL.Database --force
 
-    dotnet ef database update --project src/GraphQL
+    dotnet ef database update --project src/GraphQL.Database
 fi
