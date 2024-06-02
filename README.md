@@ -2,6 +2,12 @@
 
 A Serverless Framework boilerplate for .NET that serves a GraphQL server
 
+## Table of Contents
+
+[1. Initial setup](#initial-setup)
+
+[2. Create the web API project](docs/webAPI/01-create-graphql-webapi-project.md)
+
 ## Initial setup
 
 1. Create a new solution inside *src* folder.
@@ -10,33 +16,7 @@ A Serverless Framework boilerplate for .NET that serves a GraphQL server
 dotnet new sln --name ServerlessDotNetGraphQL --output src
 ```
 
-2. Create a new project using *Lambda ASP.NET Core Web API* template.
-
-```sh
-dotnet new serverless.AspNetCoreWebAPI --name GraphQL --output .
-```
-
-3. Associate the project to the solution.
-
-```sh
-dotnet sln src/ServerlessDotNetGraphQL.sln add src/GraphQL
-```
-
-4. Install package dependencies.
-
-```sh
-dotnet add src/GraphQL package Newtonsoft.Json
-
-dotnet add src/GraphQL package Microsoft.EntityFrameworkCore.Tools
-
-dotnet add src/GraphQL package Aspire.Npgsql.EntityFrameworkCore.PostgreSQL
-
-dotnet add src/GraphQL package HotChocolate.AspNetCore
-
-dotnet add src/GraphQL package HotChocolate.Data.EntityFramework
-```
-
-5. Install tool dependencies.
+2. Install tool dependencies.
 
     * To create from scratch,
 
@@ -58,4 +38,74 @@ dotnet add src/GraphQL package HotChocolate.Data.EntityFramework
 
     ```sh
     dotnet tool restore
+    ```
+
+3. Create the following files and their contents.
+
+    * _.vscode/launch.json_
+
+    > Note: These configurations are required to build the projects and run them in debugging mode.
+
+    ```json
+    {
+        "configurations": [
+            {
+                "name": "C#: GraphQL Debug",
+                "type": "dotnet",
+                "request": "launch",
+                "projectPath": "${workspaceFolder}/src/GraphQL/GraphQL.csproj",
+                "serverReadyAction": {
+                    "action": "openExternally",
+                    "pattern": "\\bNow listening on:\\s+https?://\\S",
+                    "uriFormat": "http://localhost:5000/graphql/",
+                    "killOnServerStop": true
+                }
+            },
+            {
+                "name": "C#: GraphQL.WebAPI Debug",
+                "type": "dotnet",
+                "request": "launch",
+                "projectPath": "${workspaceFolder}/src/GraphQL.WebAPI/GraphQL.WebAPI.csproj",
+                "serverReadyAction": {
+                    "action": "openExternally",
+                    "pattern": "\\bNow listening on:\\s+https?://\\S",
+                    "uriFormat": "http://localhost:5002/graphql/",
+                    "killOnServerStop": true
+                }
+            },
+            {
+                "name": "C#: GraphQL.Database Debug",
+                "type": "dotnet",
+                "request": "launch",
+                "projectPath": "${workspaceFolder}/src/GraphQL.Database/GraphQL.Database.csproj",
+                "serverReadyAction": {
+                    "action": "openExternally",
+                    "pattern": "\\bNow listening on:\\s+https?://\\S",
+                    "uriFormat": "http://localhost:5004/graphql/",
+                    "killOnServerStop": true
+                }
+            }
+        ]
+    }
+    ```
+
+    * _.vscode/settings.json_
+
+    > Note: These configurations are required by `mtxr.sqltools` extension to connect to the local database instance.
+
+    ```json
+    {
+        "sqltools.connections": [
+            {
+                "previewLimit": 50,
+                "server": "localhost",
+                "port": 5432,
+                "driver": "PostgreSQL",
+                "name": "localhost",
+                "database": "GraphQL",
+                "username": "postgre",
+                "password": "postgre"
+            }
+        ]
+    }
     ```
