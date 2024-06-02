@@ -6,6 +6,7 @@ using System.Collections.Generic;
 [ExtendObjectType("Query")]
 public class SpeciesQuery([Service] ISpeciesRepository species)
 {
+    [UsePaging]
     [GraphQLDescription("A list of species in Star Wars Universe.")]
     public async Task<IEnumerable<SpeciesSchema>?> GetSpeciesAsync(CancellationToken ctx)
     {

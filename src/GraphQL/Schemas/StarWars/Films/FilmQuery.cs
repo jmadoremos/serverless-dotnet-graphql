@@ -5,6 +5,7 @@ using GraphQL.Repositories.StarWars.Films;
 [ExtendObjectType("Query")]
 public class FilmQuery([Service] IFilmRepository films)
 {
+    [UsePaging]
     [GraphQLDescription("A list of films in Star Wars Universe.")]
     public async Task<IEnumerable<FilmSchema>?> GetFilmsAsync(CancellationToken ctx)
     {

@@ -7,6 +7,7 @@ using System.Linq;
 [ExtendObjectType("Query")]
 public class TrackQuery([Service] ITrackRepository tracks)
 {
+    [UsePaging]
     [GraphQLDescription("A list of tracks.")]
     public async Task<IEnumerable<Track>> GetTracksAsync(CancellationToken ctx)
     {

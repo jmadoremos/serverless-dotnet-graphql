@@ -25,6 +25,7 @@ using GraphQL.Schemas.StarWars.Species;
 using GraphQL.Schemas.StarWars.Starships;
 using GraphQL.Schemas.StarWars.Vehicles;
 using GraphQL.Services.StarWars;
+using HotChocolate.Types.Pagination;
 using Microsoft.EntityFrameworkCore;
 
 public class Startup(IConfiguration configuration)
@@ -77,6 +78,11 @@ public class Startup(IConfiguration configuration)
             .AddGlobalObjectIdentification()
             // Set execution timeout
             //.ModifyRequestOptions(options => options.ExecutionTimeout = TimeSpan.FromSeconds(60))
+            // Set paging options
+            .SetPagingOptions(new PagingOptions
+            {
+                IncludeTotalCount = true
+            })
             // Custom services using DbContext
             .RegisterService<IAttendeeRepository>()
             .RegisterService<ISessionRepository>()

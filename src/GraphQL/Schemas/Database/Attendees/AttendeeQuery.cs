@@ -7,6 +7,7 @@ using System.Linq;
 [ExtendObjectType("Query")]
 public class AttendeeQuery([Service] IAttendeeRepository attendees)
 {
+    [UsePaging]
     [GraphQLDescription("A list of attendees from all sessions.")]
     public async Task<IEnumerable<Attendee>> GetAttendeesAsync(CancellationToken ctx)
     {

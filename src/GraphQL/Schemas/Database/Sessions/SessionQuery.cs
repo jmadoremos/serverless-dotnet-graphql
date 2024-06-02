@@ -7,6 +7,7 @@ using System.Linq;
 [ExtendObjectType("Query")]
 public class SessionQuery([Service] ISessionRepository sessions)
 {
+    [UsePaging]
     [GraphQLDescription("A list of sessions of all tracks.")]
     public async Task<IEnumerable<Session>> GetSessionsAsync(CancellationToken ctx)
     {

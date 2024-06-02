@@ -5,6 +5,7 @@ using GraphQL.Repositories.StarWars.Starships;
 [ExtendObjectType("Query")]
 public class StarshipQuery([Service] IStarshipRepository starships)
 {
+    [UsePaging]
     [GraphQLDescription("A list of starships in Star Wars Universe.")]
     public async Task<IEnumerable<StarshipSchema>?> GetStarshipsAsync(CancellationToken ctx)
     {

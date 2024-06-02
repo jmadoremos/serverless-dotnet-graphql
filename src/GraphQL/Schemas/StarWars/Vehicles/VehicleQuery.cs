@@ -5,6 +5,7 @@ using GraphQL.Repositories.StarWars.Vehicles;
 [ExtendObjectType("Query")]
 public class VehicleQuery([Service] IVehicleRepository vehicles)
 {
+    [UsePaging]
     [GraphQLDescription("A list of vehicle in Star Wars Universe.")]
     public async Task<IEnumerable<VehicleSchema>?> GetVehiclesAsync(CancellationToken ctx)
     {

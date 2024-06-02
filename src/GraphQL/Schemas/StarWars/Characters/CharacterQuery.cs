@@ -6,6 +6,7 @@ using System.Collections.Generic;
 [ExtendObjectType("Query")]
 public class CharacterQuery([Service] ICharacterRepository people)
 {
+    [UsePaging]
     [GraphQLDescription("A list of people in Star Wars Universe.")]
     public async Task<IEnumerable<CharacterSchema>?> GetCharactersAsync(CancellationToken ctx)
     {
