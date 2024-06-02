@@ -50,11 +50,43 @@ public class Startup(IConfiguration configuration)
         services.AddPooledDbContextFactory<ApplicationDbContext>(options =>
             options.UseNpgsql(dbconn));
 
+        // Allow dependency injection of testable classes
+        services
+            // Services
+            .AddSingleton<ISwapiService, SwapiService>()
+            // Database
+            .AddTransient<IAttendeeRepository, AttendeeRepository>()
+            .AddTransient<ISessionRepository, SessionRepository>()
+            .AddTransient<ISessionAttendeeRepository, SessionAttendeeRepository>()
+            .AddTransient<ISessionSpeakerRepository, SessionSpeakerRepository>()
+            .AddTransient<ISpeakerRepository, SpeakerRepository>()
+            .AddTransient<ITrackRepository, TrackRepository>()
+            // Web API
+            .AddSingleton<ICharacterRepository, CharacterRepository>()
+            .AddSingleton<IFilmRepository, FilmRepository>()
+            .AddSingleton<IPlanetRepository, PlanetRepository>()
+            .AddSingleton<ISpeciesRepository, SpeciesRepository>()
+            .AddSingleton<IStarshipRepository, StarshipRepository>()
+            .AddSingleton<IVehicleRepository, VehicleRepository>();
+
         // Define GraphQL server parameters
         services.AddGraphQLServer()
             // DbContext
             .RegisterDbContext<ApplicationDbContext>(DbContextKind.Pooled)
             // Custom services using DbContext
+            .RegisterService<IAttendeeRepository>()
+            .RegisterService<ISessionRepository>()
+            .RegisterService<ISessionAttendeeRepository>()
+            .RegisterService<ISessionSpeakerRepository>()
+            .RegisterService<ISpeakerRepository>()
+            .RegisterService<ITrackRepository>()
+            // Custom services using web APIs
+            .RegisterService<ICharacterRepository>()
+            .RegisterService<IFilmRepository>()
+            .RegisterService<IPlanetRepository>()
+            .RegisterService<ISpeciesRepository>()
+            .RegisterService<IStarshipRepository>()
+            .RegisterService<IVehicleRepository>()
             // Data loaders
             .AddDataLoader<AttendeeByIdBatchDataLoader>()
             .AddDataLoader<SessionByIdBatchDataLoader>()
@@ -92,26 +124,6 @@ public class Startup(IConfiguration configuration)
                 .AddType<SessionMutation>()
                 .AddType<SpeakerMutation>()
                 .AddType<TrackMutation>();
-
-        // Allow dependency injection of testable custom services
-        services.AddSingleton<ISwapiService, SwapiService>();
-
-        // Allow dependency injection of testable custom repositories
-        services
-            // Database
-            .AddTransient<IAttendeeRepository, AttendeeRepository>()
-            .AddTransient<ISessionRepository, SessionRepository>()
-            .AddTransient<ISessionAttendeeRepository, SessionAttendeeRepository>()
-            .AddTransient<ISessionSpeakerRepository, SessionSpeakerRepository>()
-            .AddTransient<ISpeakerRepository, SpeakerRepository>()
-            .AddTransient<ITrackRepository, TrackRepository>()
-            // Web API
-            .AddSingleton<ICharacterRepository, CharacterRepository>()
-            .AddSingleton<IFilmRepository, FilmRepository>()
-            .AddSingleton<IPlanetRepository, PlanetRepository>()
-            .AddSingleton<ISpeciesRepository, SpeciesRepository>()
-            .AddSingleton<IStarshipRepository, StarshipRepository>()
-            .AddSingleton<IVehicleRepository, VehicleRepository>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
