@@ -14,9 +14,9 @@
       "group": "build",
     },
     {
-      "label": "Run GraphQL.WebAPI project",
+      "label": "Run GraphQL.StarWars project",
       "type": "shell",
-      "command": "dotnet run --project src/GraphQL.WebAPI",
+      "command": "dotnet run --project src/GraphQL.StarWars",
       "group": "build",
     }
   ]

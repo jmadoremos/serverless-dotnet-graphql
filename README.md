@@ -6,7 +6,7 @@ A Serverless Framework boilerplate for .NET that serves a GraphQL server
 
 [1. Initial setup](#initial-setup)
 
-[2. Create the web API project](docs/webAPI/01-create-graphql-webapi-project.md)
+[2. Create the Star Wars project](docs/starWars/01-create-graphql-starwars-project.md)
 
 [3. Create the database project](docs/database/01-create-graphql-database-project.md)
 
@@ -54,10 +54,10 @@ dotnet new sln --name ServerlessDotNetGraphQL --output src
     {
         "configurations": [
             {
-                "name": "C#: GraphQL.WebAPI Debug",
+                "name": "C#: GraphQL.StarWars Debug",
                 "type": "dotnet",
                 "request": "launch",
-                "projectPath": "${workspaceFolder}/src/GraphQL.WebAPI/GraphQL.WebAPI.csproj",
+                "projectPath": "${workspaceFolder}/src/GraphQL.StarWars/GraphQL.StarWars.csproj",
                 "serverReadyAction": {
                     "action": "openExternally",
                     "pattern": "\\bNow listening on:\\s+https?://\\S",

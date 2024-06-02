@@ -25,10 +25,10 @@
       }
     },
     {
-      "name": "C#: GraphQL.WebAPI Debug",
+      "name": "C#: GraphQL.StarWars Debug",
       "type": "dotnet",
       "request": "launch",
-      "projectPath": "${workspaceFolder}/src/GraphQL.WebAPI/GraphQL.WebAPI.csproj",
+      "projectPath": "${workspaceFolder}/src/GraphQL.StarWars/GraphQL.StarWars.csproj",
       "serverReadyAction": {
         "action": "openExternally",
         "pattern": "\\bNow listening on:\\s+https?://\\S",
