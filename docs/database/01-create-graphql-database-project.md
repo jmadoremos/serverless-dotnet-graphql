@@ -32,7 +32,7 @@ dotnet add src/GraphQL.Database package HotChocolate.Data.EntityFramework
 
 
 ```sh
-GraphQL.WebAPI
+GraphQL.Database
 |_ DataLoaders/
     |_ AttendeeByIdBatchDataLoader.cs
     |_ SessionByIdBatchDataLoader.cs
@@ -124,7 +124,7 @@ GraphQL.WebAPI
 
 5. Update the contents of the following default files:
 
-    * _src/GraphQL.WebAPI/appsettings.Development.json_
+    * _src/GraphQL.StarWars/appsettings.Development.json_
 
     > Note: Port number is set to 5002 (HTTP) and 5003 (HTTPS).
 
@@ -158,7 +158,7 @@ GraphQL.WebAPI
     }
     ```
 
-    * _src/GraphQL.WebAPI/appsettings.json_
+    * _src/GraphQL.StarWars/appsettings.json_
 
     > Note: Port number is set to 5002 (HTTP) and 5003 (HTTPS).
 
