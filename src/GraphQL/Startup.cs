@@ -1,6 +1,7 @@
-﻿namespace GraphQL;
+namespace GraphQL;
 
 using GraphQL.Data;
+using GraphQL.DataLoaders.Database;
 using GraphQL.Repositories.Database.Attendees;
 using GraphQL.Repositories.Database.SessionAttendees;
 using GraphQL.Repositories.Database.Sessions;
@@ -54,12 +55,11 @@ public class Startup(IConfiguration configuration)
             // DbContext
             .RegisterDbContext<ApplicationDbContext>(DbContextKind.Pooled)
             // Custom services using DbContext
-            .RegisterService<AttendeeRepository>()
-            .RegisterService<SessionRepository>()
-            .RegisterService<SessionAttendeeRepository>()
-            .RegisterService<SessionSpeakerRepository>()
-            .RegisterService<SpeakerRepository>()
-            .RegisterService<TrackRepository>()
+            // Data loaders
+            .AddDataLoader<AttendeeByIdBatchDataLoader>()
+            .AddDataLoader<SessionByIdBatchDataLoader>()
+            .AddDataLoader<SpeakerByIdBatchDataLoader>()
+            .AddDataLoader<TrackByIdBatchDataLoader>()
             // Queries
             .AddQueryType(d => d.Name("Query"))
                 // Database
