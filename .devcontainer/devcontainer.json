@@ -31,6 +31,7 @@
       "extensions": [
         "EditorConfig.EditorConfig",
         "eamodio.gitlens",
+        "humao.rest-client",
         "ms-dotnettools.csdevkit",
         "mtxr.sqltools",
         "mtxr.sqltools-driver-pg"

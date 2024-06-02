@@ -1,0 +1,58 @@
+POST http://localhost:5002/graphql HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetOneRecord {
+    characterById(id: "Q2hhcmFjdGVyCmkx") {
+        id
+        name
+        homeworld {
+            id
+            name
+        }
+        films {
+            id
+            title
+        }
+    }
+    filmById(id: "RmlsbQppMg==") {
+        id
+        title
+        characters {
+            id
+            name
+        }
+    }
+    planetById(id: "UGxhbmV0Cmk4") {
+        id
+        name
+        residents {
+            id
+            name
+        }
+    }
+    speciesById(id: "U3BlY2llcwppOQ==") {
+        id
+        name
+        people {
+            id
+            name
+        }
+    }
+    starshipById(id: "U3RhcnNoaXAKaTEy") {
+        id
+        name
+        pilots {
+            id
+            name
+        }
+    }
+    vehicleById(id: "VmVoaWNsZQppMTQ=") {
+        id
+        name
+        pilots {
+            id
+            name
+        }
+    }
+}

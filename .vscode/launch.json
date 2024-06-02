@@ -1,14 +1,38 @@
 {
   "configurations": [
     {
-      "name": "C#: GraphQL Debug",
+      "name": "C#: GraphQL.Database Debug",
       "type": "dotnet",
       "request": "launch",
-      "projectPath": "${workspaceFolder}/src/GraphQL/GraphQL.csproj",
+      "projectPath": "${workspaceFolder}/src/GraphQL.Database/GraphQL.Database.csproj",
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+https?://\\S",
+        "uriFormat": "http://localhost:5004/graphql/",
+        "killOnServerStop": true
+      }
+    },
+    {
+      "name": "C#: GraphQL.Gateway Debug",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/src/GraphQL.Gateway/GraphQL.Gateway.csproj",
       "serverReadyAction": {
         "action": "openExternally",
         "pattern": "\\bNow listening on:\\s+https?://\\S",
         "uriFormat": "http://localhost:5000/graphql/",
+        "killOnServerStop": true
+      }
+    },
+    {
+      "name": "C#: GraphQL.StarWars Debug",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/src/GraphQL.StarWars/GraphQL.StarWars.csproj",
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+https?://\\S",
+        "uriFormat": "http://localhost:5002/graphql/",
         "killOnServerStop": true
       }
     }

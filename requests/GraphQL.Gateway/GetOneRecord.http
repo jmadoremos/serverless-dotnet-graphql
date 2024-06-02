@@ -1,0 +1,107 @@
+POST http://localhost:5000/graphql HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetOneRecord {
+    attendee(id: "QXR0ZW5kZWUKaTE=") {
+        id
+        username
+        lastname
+        firstname
+        email
+        sessions {
+            id
+            title
+        }
+    }
+    session(id: "U2Vzc2lvbgppMQ==") {
+        id
+        title
+        abstract
+        startTime
+        endTime
+        duration
+        track {
+            id
+            name
+        }
+        speakers {
+            id
+            name
+        }
+        attendees {
+            id
+            username
+        }
+    }
+    speaker(id: "U3BlYWtlcgppMQ==") {
+        id
+        name
+        bio
+        website
+        sessions {
+            id
+            title
+        }
+    }
+    track(id: "VHJhY2sKaTE=") {
+        id
+        name
+        sessions {
+            id
+            title
+        }
+    }
+    characterById(id: "Q2hhcmFjdGVyCmkx") {
+        id
+        name
+        homeworld {
+            id
+            name
+        }
+        films {
+            id
+            title
+        }
+    }
+    filmById(id: "RmlsbQppMg==") {
+        id
+        title
+        characters {
+            id
+            name
+        }
+    }
+    planetById(id: "UGxhbmV0Cmk4") {
+        id
+        name
+        residents {
+            id
+            name
+        }
+    }
+    speciesById(id: "U3BlY2llcwppOQ==") {
+        id
+        name
+        people {
+            id
+            name
+        }
+    }
+    starshipById(id: "U3RhcnNoaXAKaTEy") {
+        id
+        name
+        pilots {
+            id
+            name
+        }
+    }
+    vehicleById(id: "VmVoaWNsZQppMTQ=") {
+        id
+        name
+        pilots {
+            id
+            name
+        }
+    }
+}
