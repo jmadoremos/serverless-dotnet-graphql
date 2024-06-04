@@ -15,12 +15,22 @@
   "forwardPorts": [
     5000,
     5001,
-    5432,
-    5050
+    5050,
+    5432
   ],
   "portsAttributes": {
+    "5000": {
+      "label": "GraphQL (HTTP)"
+    },
     "5001": {
-      "protocol": "https"
+      "protocol": "https",
+      "label": "GraphQL (HTTPS)"
+    },
+    "5050": {
+      "label": "AWS Lambda Test Tool"
+    },
+    "5432": {
+      "label": "PostgreSQL"
     }
   },
   // Use 'postCreateCommand' to run commands after the container is created.
