@@ -30,7 +30,7 @@ public class SessionAttendeeRepository(IDbContextFactory<ApplicationDbContext> d
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
-        var result = await dbContext.Speakers
+        var result = await dbContext.Attendees
             .Where(e => e.Id == attendeeId)
             .Include(e => e.Sessions)
             .SelectMany(e => e.Sessions)
