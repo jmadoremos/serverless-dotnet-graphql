@@ -60,16 +60,17 @@ public class SpeakerRepository(IDbContextFactory<ApplicationDbContext> dbContext
         SpeakerModelInput input,
         CancellationToken ctx)
     {
-        var existing = await this.GetSpeakerByNameAsync(input.Name, ctx);
+        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
-        if (existing is not null)
+        var existing = await dbContext.Speakers
+            .AnyAsync(e => e.Name == input.Name, ctx);
+
+        if (!existing)
         {
             throw new UsernameTakenException(nameof(SpeakerModel.Name));
         }
 
         var entity = SpeakerModel.MapFrom(input);
-
-        using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
         dbContext.Speakers
             .Add(entity);
@@ -84,10 +85,15 @@ public class SpeakerRepository(IDbContextFactory<ApplicationDbContext> dbContext
         SpeakerModelInput input,
         CancellationToken ctx)
     {
-        var _ = await this.GetSpeakerByIdAsync(id, ctx)
-            ?? throw new UserNotFoundException(nameof(SpeakerModel.Id));
-
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
+        var existing = await dbContext.Speakers
+            .AnyAsync(e => e.Id == id, ctx);
+
+        if (!existing)
+        {
+            throw new UsernameTakenException(nameof(SpeakerModel.Id));
+        }
 
         dbContext.Speakers
             .Where(e => e.Id == id)
@@ -103,10 +109,15 @@ public class SpeakerRepository(IDbContextFactory<ApplicationDbContext> dbContext
         int id,
         CancellationToken ctx)
     {
-        var _ = await this.GetSpeakerByIdAsync(id, ctx)
-            ?? throw new UserNotFoundException(nameof(SpeakerModel.Id));
-
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
+
+        var existing = await dbContext.Speakers
+            .AnyAsync(e => e.Id == id, ctx);
+
+        if (!existing)
+        {
+            throw new UsernameTakenException(nameof(SpeakerModel.Id));
+        }
 
         dbContext.Speakers
             .Where(e => e.Id == id)

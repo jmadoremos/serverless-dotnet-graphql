@@ -62,9 +62,10 @@ public class SessionRepository(IDbContextFactory<ApplicationDbContext> dbContext
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
-        var existing = await this.GetSessionByTitleAsync(input.Title, ctx);
+        var existing = await dbContext.Sessions
+            .AnyAsync(e => e.Title == input.Title, ctx);
 
-        if (existing is not null)
+        if (!existing)
         {
             throw new SessionTitleTakenException();
         }
@@ -86,8 +87,13 @@ public class SessionRepository(IDbContextFactory<ApplicationDbContext> dbContext
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
-        var _ = await this.GetSessionByIdAsync(id, ctx)
-            ?? throw new SessionNotFoundException();
+        var existing = await dbContext.Sessions
+            .AnyAsync(e => e.Id == id, ctx);
+
+        if (!existing)
+        {
+            throw new SessionNotFoundException();
+        }
 
         dbContext.Sessions
             .Where(w => w.Id == id)
@@ -107,8 +113,13 @@ public class SessionRepository(IDbContextFactory<ApplicationDbContext> dbContext
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
-        var _ = await this.GetSessionByIdAsync(id, ctx)
-            ?? throw new SessionNotFoundException();
+        var existing = await dbContext.Sessions
+            .AnyAsync(e => e.Id == id, ctx);
+
+        if (!existing)
+        {
+            throw new SessionNotFoundException();
+        }
 
         dbContext.Sessions
             .Where(e => e.Id == id)

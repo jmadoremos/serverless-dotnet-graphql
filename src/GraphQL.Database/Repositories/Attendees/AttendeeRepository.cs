@@ -62,9 +62,10 @@ public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContex
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
-        var existing = await this.GetAttendeeByUserNameAsync(input.UserName, ctx);
+        var existing = await dbContext.Attendees
+            .AnyAsync(e => e.UserName == input.UserName, ctx);
 
-        if (existing is not null)
+        if (!existing)
         {
             throw new UsernameTakenException(nameof(AttendeeModel.UserName));
         }
@@ -86,8 +87,13 @@ public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContex
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
-        var _ = await this.GetAttendeeByIdAsync(id, ctx)
-            ?? throw new UserNotFoundException(nameof(AttendeeModel.Id));
+        var existing = await dbContext.Attendees
+            .AnyAsync(e => e.Id == id, ctx);
+
+        if (!existing)
+        {
+            throw new UserNotFoundException(nameof(AttendeeModel.Id));
+        }
 
         dbContext.Attendees
             .Where(w => w.Id == id)
@@ -105,8 +111,13 @@ public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContex
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
-        var _ = await this.GetAttendeeByIdAsync(id, ctx)
-            ?? throw new UserNotFoundException(nameof(AttendeeModel.Id));
+        var existing = await dbContext.Attendees
+            .AnyAsync(e => e.Id == id, ctx);
+
+        if (!existing)
+        {
+            throw new UserNotFoundException(nameof(AttendeeModel.Id));
+        }
 
         dbContext.Attendees
             .Where(w => w.Id == id)

@@ -78,9 +78,10 @@ public class TrackRepository(IDbContextFactory<ApplicationDbContext> dbContextFa
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
-        var existing = await this.GetTrackByNameAsync(input.Name, ctx);
+        var existing = await dbContext.Tracks
+            .AnyAsync(e => e.Name == input.Name, ctx);
 
-        if (existing is not null)
+        if (!existing)
         {
             throw new TrackNameTakenException();
         }
@@ -102,8 +103,13 @@ public class TrackRepository(IDbContextFactory<ApplicationDbContext> dbContextFa
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
-        var _ = await this.GetTrackByIdAsync(id, ctx)
-            ?? throw new TrackNotFoundException();
+        var existing = await dbContext.Tracks
+            .AnyAsync(e => e.Id == id, ctx);
+
+        if (!existing)
+        {
+            throw new TrackNotFoundException();
+        }
 
         dbContext.Tracks
             .Where(e => e.Id == id)
@@ -119,8 +125,13 @@ public class TrackRepository(IDbContextFactory<ApplicationDbContext> dbContextFa
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
-        var _ = await this.GetTrackByIdAsync(id, ctx)
-            ?? throw new TrackNotFoundException();
+        var existing = await dbContext.Tracks
+            .AnyAsync(e => e.Id == id, ctx);
+
+        if (!existing)
+        {
+            throw new TrackNotFoundException();
+        }
 
         dbContext.Tracks
             .Where(e => e.Id == id)
