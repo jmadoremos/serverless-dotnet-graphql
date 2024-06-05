@@ -48,7 +48,7 @@ public class AttendeeMutation([Service] IAttendeeRepository attendees)
         return UpdateAttendeePayload.MapFrom(id, entity, attendee);
     }
 
-    [GraphQLDescription("Deletes an attendee resource.")]
+    [GraphQLDescription("Removes an attendee resource.")]
     public async Task<AddRemoveAttendeePayload> RemoveAttendeeAsync(
         [ID(nameof(Attendee))] int id,
         CancellationToken ctx)

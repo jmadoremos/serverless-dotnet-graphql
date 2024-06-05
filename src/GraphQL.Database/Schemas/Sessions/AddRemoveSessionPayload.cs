@@ -3,6 +3,7 @@ namespace GraphQL.Database.Schemas.Sessions;
 using ErrorOr;
 using GraphQL.Database.Repositories.Sessions;
 
+[GraphQLDescription("A result of add or remove session resource.")]
 public class AddRemoveSessionPayload
 {
     [GraphQLDescription("The session resource added or removed.")]

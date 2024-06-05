@@ -1,6 +1,7 @@
 namespace GraphQL.Database.Schemas.Tracks;
 
-[GraphQLDescription("A track resource.")]
+[GraphQLDescription("The input of update track resource.")]
+
 public class UpdateTrackInput
 {
     [GraphQLDescription("The name of this track.")]

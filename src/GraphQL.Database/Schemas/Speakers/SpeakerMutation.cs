@@ -48,7 +48,7 @@ public class SpeakerMutation([Service] ISpeakerRepository speakers)
         return UpdateSpeakerPayload.MapFrom(id, entity, attendee);
     }
 
-    [GraphQLDescription("Deletes a speaker resource.")]
+    [GraphQLDescription("Removes a speaker resource.")]
     public async Task<AddRemoveSpeakerPayload> RemoveSpeakerAsync(
         [ID(nameof(Speaker))] int id,
         CancellationToken ctx)

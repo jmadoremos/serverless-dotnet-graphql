@@ -3,6 +3,7 @@ namespace GraphQL.Database.Schemas.Speakers;
 using ErrorOr;
 using GraphQL.Database.Repositories.Speakers;
 
+[GraphQLDescription("A result of update speaker resource.")]
 public class UpdateSpeakerPayload
 {
     [GraphQLDescription("The speaker resource before the changes.")]

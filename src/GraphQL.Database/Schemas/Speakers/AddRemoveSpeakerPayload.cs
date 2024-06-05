@@ -4,6 +4,7 @@ using ErrorOr;
 using System.Collections.Generic;
 using GraphQL.Database.Repositories.Speakers;
 
+[GraphQLDescription("A result of add or remove speaker resource.")]
 public class AddRemoveSpeakerPayload
 {
     [GraphQLDescription("The speaker resource added or removed.")]

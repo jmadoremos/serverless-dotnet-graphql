@@ -3,6 +3,7 @@ namespace GraphQL.Database.Schemas.Sessions;
 using ErrorOr;
 using GraphQL.Database.Repositories.Sessions;
 
+[GraphQLDescription("A result of update session resource.")]
 public class UpdateSessionPayload
 {
     [GraphQLDescription("The session resource before the changes.")]

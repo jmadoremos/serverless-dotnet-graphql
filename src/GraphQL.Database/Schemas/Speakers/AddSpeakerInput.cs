@@ -1,6 +1,6 @@
 namespace GraphQL.Database.Schemas.Speakers;
 
-[GraphQLDescription("A speaker resource of sessions.")]
+[GraphQLDescription("The input of add speaker resource.")]
 public class AddSpeakerInput
 {
     [GraphQLDescription("The name of this speaker.")]

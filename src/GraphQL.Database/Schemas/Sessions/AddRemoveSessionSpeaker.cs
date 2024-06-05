@@ -2,7 +2,7 @@ namespace GraphQL.Database.Schemas.Sessions;
 
 using GraphQL.Database.Schemas.Speakers;
 
-[GraphQLDescription("A speaker resource of sessions.")]
+[GraphQLDescription("The input of add or remove session speaker mapping.")]
 public class AddRemoveSessionSpeaker
 {
     [ID(nameof(Session))]

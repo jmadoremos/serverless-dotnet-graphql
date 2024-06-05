@@ -2,6 +2,7 @@ namespace GraphQL.Database.Schemas.Sessions;
 
 using ErrorOr;
 
+[GraphQLDescription("A result of add or remove session attendee mapping.")]
 public class AddRemoveSessionAttendeePayload
 {
     [GraphQLDescription("A list of errors encountered.")]

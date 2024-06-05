@@ -1,6 +1,6 @@
 namespace GraphQL.Database.Schemas.Attendees;
 
-[GraphQLDescription("An attendee resource of sessions.")]
+[GraphQLDescription("The input of update attendee resource.")]
 public class UpdateAttendeeInput
 {
     [GraphQLDescription("The firstnames of this attendee.")]

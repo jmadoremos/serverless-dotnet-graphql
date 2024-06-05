@@ -3,6 +3,7 @@ namespace GraphQL.Database.Schemas.Tracks;
 using ErrorOr;
 using GraphQL.Database.Repositories.Tracks;
 
+[GraphQLDescription("A result of update track resource.")]
 public class UpdateTrackPayload
 {
     [GraphQLDescription("The track resource before the changes.")]

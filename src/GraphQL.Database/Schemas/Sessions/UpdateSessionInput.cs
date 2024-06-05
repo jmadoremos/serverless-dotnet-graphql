@@ -1,6 +1,6 @@
 namespace GraphQL.Database.Schemas.Sessions;
 
-[GraphQLDescription("A session resource of tracks.")]
+[GraphQLDescription("The input of update session resource.")]
 public class UpdateSessionInput
 {
     [GraphQLDescription("The title of this session.")]

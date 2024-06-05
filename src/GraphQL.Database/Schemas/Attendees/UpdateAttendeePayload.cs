@@ -3,6 +3,7 @@ namespace GraphQL.Database.Schemas.Attendees;
 using ErrorOr;
 using GraphQL.Database.Repositories.Attendees;
 
+[GraphQLDescription("A result of update attendee resource.")]
 public class UpdateAttendeePayload
 {
     [GraphQLDescription("The attendee resource before the changes.")]

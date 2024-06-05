@@ -53,7 +53,7 @@ public class SessionMutation(
         return UpdateSessionPayload.MapFrom(id, entity, session);
     }
 
-    [GraphQLDescription("Deletes a session resource.")]
+    [GraphQLDescription("Removes a session resource.")]
     public async Task<AddRemoveSessionPayload> RemoveSessionAsync(
         [ID(nameof(Session))] int id,
         CancellationToken ctx)

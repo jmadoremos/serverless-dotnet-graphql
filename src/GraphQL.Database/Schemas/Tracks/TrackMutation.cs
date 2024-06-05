@@ -48,7 +48,7 @@ public class TrackMutation([Service] ITrackRepository tracks)
         return UpdateTrackPayload.MapFrom(id, entity, track);
     }
 
-    [GraphQLDescription("Deletes a track resource.")]
+    [GraphQLDescription("Removes a track resource.")]
     public async Task<AddRemoveTrackPayload> RemoveTrackAsync(
         [ID(nameof(Track))] int id,
         CancellationToken ctx)

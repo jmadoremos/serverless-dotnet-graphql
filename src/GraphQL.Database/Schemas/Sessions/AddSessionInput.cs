@@ -1,6 +1,6 @@
 namespace GraphQL.Database.Schemas.Sessions;
 
-[GraphQLDescription("A session resource of tracks.")]
+[GraphQLDescription("The input of add  session resource.")]
 public class AddSessionInput
 {
     [GraphQLDescription("The title of this session.")]

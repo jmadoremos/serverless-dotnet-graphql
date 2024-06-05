@@ -2,7 +2,7 @@ namespace GraphQL.Database.Schemas.Sessions;
 
 using GraphQL.Database.Schemas.Attendees;
 
-[GraphQLDescription("An attendee resource of sessions.")]
+[GraphQLDescription("The input of add or remove session attendee mapping.")]
 public class AddRemoveSessionAttendee
 {
     [ID(nameof(Session))]

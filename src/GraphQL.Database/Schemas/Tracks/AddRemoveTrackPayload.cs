@@ -3,6 +3,7 @@ namespace GraphQL.Database.Schemas.Tracks;
 using ErrorOr;
 using GraphQL.Database.Repositories.Tracks;
 
+[GraphQLDescription("A result of add or remove track resource.")]
 public class AddRemoveTrackPayload
 {
     [GraphQLDescription("The track resource added or removed.")]

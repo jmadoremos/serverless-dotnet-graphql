@@ -3,6 +3,7 @@ namespace GraphQL.Database.Schemas.Attendees;
 using ErrorOr;
 using GraphQL.Database.Repositories.Attendees;
 
+[GraphQLDescription("A result of add or remove attendee resource.")]
 public class AddRemoveAttendeePayload
 {
     [GraphQLDescription("The attendee resource added or removed.")]
