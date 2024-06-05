@@ -29,4 +29,10 @@ public class Track
         Id = r.Id,
         Name = r.Name
     };
+
+    public static Track MapFrom(int id, TrackModelInput i) => new()
+    {
+        Id = id,
+        Name = i.Name
+    };
 }

@@ -53,4 +53,14 @@ public class Session
         EndTime = r.EndTime,
         TrackId = r.TrackId,
     };
+
+    public static Session MapFrom(int id, SessionModelInput i) => new()
+    {
+        Id = id,
+        Title = i.Title,
+        Abstract = i.Abstract,
+        StartTime = i.StartTime,
+        EndTime = i.EndTime,
+        TrackId = i.TrackId,
+    };
 }

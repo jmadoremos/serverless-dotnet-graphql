@@ -1,7 +1,8 @@
 namespace GraphQL.Database.Repositories.Tracks;
 
+using ErrorOr;
 using GraphQL.Database;
-using GraphQL.Database.Exceptions;
+using GraphQL.Database.Errors;
 using GraphQL.Database.Repositories.Sessions;
 using Microsoft.EntityFrameworkCore;
 
@@ -72,7 +73,7 @@ public class TrackRepository(IDbContextFactory<ApplicationDbContext> dbContextFa
         return result.AsQueryable();
     }
 
-    public async Task<int> CreateTrackAsync(
+    public async Task<ErrorOr<int>> CreateTrackAsync(
         TrackModelInput input,
         CancellationToken ctx)
     {
@@ -83,7 +84,7 @@ public class TrackRepository(IDbContextFactory<ApplicationDbContext> dbContextFa
 
         if (!existing)
         {
-            throw new TrackNameTakenException();
+            return TrackError.NameTaken(input.Name);
         }
 
         var entity = TrackModel.MapFrom(input);
@@ -96,7 +97,7 @@ public class TrackRepository(IDbContextFactory<ApplicationDbContext> dbContextFa
         return entity.Id;
     }
 
-    public async Task UpdateTrackAsync(
+    public async Task<ErrorOr<Updated>> UpdateTrackAsync(
         int id,
         TrackModelInput input,
         CancellationToken ctx)
@@ -108,7 +109,7 @@ public class TrackRepository(IDbContextFactory<ApplicationDbContext> dbContextFa
 
         if (!existing)
         {
-            throw new TrackNotFoundException();
+            return TrackError.NotFound(id);
         }
 
         dbContext.Tracks
@@ -117,9 +118,11 @@ public class TrackRepository(IDbContextFactory<ApplicationDbContext> dbContextFa
                 .SetProperty(ee => ee.Name, input.Name));
 
         await dbContext.SaveChangesAsync(ctx);
+
+        return Result.Updated;
     }
 
-    public async Task DeleteTrackAsync(
+    public async Task<ErrorOr<Deleted>> DeleteTrackAsync(
         int id,
         CancellationToken ctx)
     {
@@ -130,7 +133,7 @@ public class TrackRepository(IDbContextFactory<ApplicationDbContext> dbContextFa
 
         if (!existing)
         {
-            throw new TrackNotFoundException();
+            return TrackError.NotFound(id);
         }
 
         dbContext.Tracks
@@ -138,5 +141,7 @@ public class TrackRepository(IDbContextFactory<ApplicationDbContext> dbContextFa
             .ExecuteDelete();
 
         await dbContext.SaveChangesAsync(ctx);
+
+        return Result.Deleted;
     }
 }

@@ -41,4 +41,13 @@ public class Attendee
         Username = r.UserName,
         Email = r.EmailAddress
     };
+
+    public static Attendee MapFrom(int id, AttendeeModelInput i) => new()
+    {
+        Id = id,
+        Firstname = i.FirstName,
+        Lastname = i.LastName,
+        Username = i.UserName,
+        Email = i.EmailAddress
+    };
 }

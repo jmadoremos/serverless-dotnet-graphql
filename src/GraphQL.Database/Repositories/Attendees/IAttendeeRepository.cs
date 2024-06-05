@@ -1,5 +1,7 @@
 namespace GraphQL.Database.Repositories.Attendees;
 
+using ErrorOr;
+
 public interface IAttendeeRepository
 {
     Task<IQueryable<AttendeeModel>> GetAllAttendeesAsync(CancellationToken ctx);
@@ -10,9 +12,9 @@ public interface IAttendeeRepository
 
     Task<AttendeeModel?> GetAttendeeByUserNameAsync(string userName, CancellationToken ctx);
 
-    Task<int> CreateAttendeeAsync(AttendeeModelInput input, CancellationToken ctx);
+    Task<ErrorOr<int>> CreateAttendeeAsync(AttendeeModelInput input, CancellationToken ctx);
 
-    Task UpdateAttendeeAsync(int id, AttendeeModelInput input, CancellationToken ctx);
+    Task<ErrorOr<Updated>> UpdateAttendeeAsync(int id, AttendeeModelInput input, CancellationToken ctx);
 
-    Task DeleteAttendeeAsync(int id, CancellationToken ctx);
+    Task<ErrorOr<Deleted>> DeleteAttendeeAsync(int id, CancellationToken ctx);
 }

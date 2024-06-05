@@ -26,6 +26,8 @@ dotnet add src/GraphQL.Database package Aspire.Npgsql.EntityFrameworkCore.Postgr
 dotnet add src/GraphQL.Database package HotChocolate.AspNetCore
 
 dotnet add src/GraphQL.Database package HotChocolate.Data.EntityFramework
+
+dotnet add src/GraphQL.Database package ErrorOr
 ```
 
 4. Create the folder structure as follows. Delete the files and folders inside the _src/GraphQL.Database_ folder that are not shown below.

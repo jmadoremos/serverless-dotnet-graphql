@@ -1,7 +1,8 @@
 namespace GraphQL.Database.Repositories.Sessions;
 
+using ErrorOr;
 using GraphQL.Database;
-using GraphQL.Database.Exceptions;
+using GraphQL.Database.Errors;
 using Microsoft.EntityFrameworkCore;
 
 public class SessionRepository(IDbContextFactory<ApplicationDbContext> dbContextFactory)
@@ -56,7 +57,7 @@ public class SessionRepository(IDbContextFactory<ApplicationDbContext> dbContext
         return result;
     }
 
-    public async Task<int> CreateSessionAsync(
+    public async Task<ErrorOr<int>> CreateSessionAsync(
         SessionModelInput input,
         CancellationToken ctx)
     {
@@ -67,7 +68,7 @@ public class SessionRepository(IDbContextFactory<ApplicationDbContext> dbContext
 
         if (!existing)
         {
-            throw new SessionTitleTakenException();
+            return SessionError.TitleTaken(input.Title);
         }
 
         var entity = SessionModel.MapFrom(input);
@@ -80,7 +81,7 @@ public class SessionRepository(IDbContextFactory<ApplicationDbContext> dbContext
         return entity.Id;
     }
 
-    public async Task UpdateSessionAsync(
+    public async Task<ErrorOr<Updated>> UpdateSessionAsync(
         int id,
         SessionModelInput input,
         CancellationToken ctx)
@@ -92,7 +93,7 @@ public class SessionRepository(IDbContextFactory<ApplicationDbContext> dbContext
 
         if (!existing)
         {
-            throw new SessionNotFoundException();
+            return SessionError.NotFound(id);
         }
 
         dbContext.Sessions
@@ -105,9 +106,11 @@ public class SessionRepository(IDbContextFactory<ApplicationDbContext> dbContext
                 .SetProperty(ee => ee.TrackId, input.TrackId));
 
         await dbContext.SaveChangesAsync(ctx);
+
+        return Result.Updated;
     }
 
-    public async Task DeleteSessionAsync(
+    public async Task<ErrorOr<Deleted>> DeleteSessionAsync(
         int id,
         CancellationToken ctx)
     {
@@ -118,7 +121,7 @@ public class SessionRepository(IDbContextFactory<ApplicationDbContext> dbContext
 
         if (!existing)
         {
-            throw new SessionNotFoundException();
+            return SessionError.NotFound(id);
         }
 
         dbContext.Sessions
@@ -126,5 +129,7 @@ public class SessionRepository(IDbContextFactory<ApplicationDbContext> dbContext
             .ExecuteDelete();
 
         await dbContext.SaveChangesAsync(ctx);
+
+        return Result.Deleted;
     }
 }

@@ -1,6 +1,6 @@
 namespace GraphQL.Database.Schemas.Sessions;
 
-using GraphQL.Database.Exceptions;
+using GraphQL.Database.Errors;
 using GraphQL.Database.Repositories.SessionAttendees;
 using GraphQL.Database.Repositories.Sessions;
 using GraphQL.Database.Repositories.SessionSpeakers;
@@ -12,7 +12,7 @@ public class SessionMutation(
     [Service] ISessionSpeakerRepository sessionSpeakers)
 {
     [GraphQLDescription("Adds a session resource.")]
-    public async Task<Session> AddSessionAsync(
+    public async Task<AddRemoveSessionPayload> AddSessionAsync(
         AddSessionInput input,
         CancellationToken ctx)
     {
@@ -20,89 +20,126 @@ public class SessionMutation(
 
         var id = await sessions.CreateSessionAsync(attendee, ctx);
 
-        var entity = await sessions.GetSessionByIdAsync(id, ctx)
-            ?? throw new SessionNotFoundException();
+        if (id.IsError)
+        {
+            return AddRemoveSessionPayload.MapFrom(id.Errors);
+        }
 
-        return Session.MapFrom(entity);
+        return AddRemoveSessionPayload.MapFrom(id.Value, attendee);
     }
 
     [GraphQLDescription("Updates a session resource.")]
-    public async Task<Session> UpdateSessionAsync(
+    public async Task<UpdateSessionPayload> UpdateSessionAsync(
         [ID(nameof(Session))] int id,
         UpdateSessionInput input,
         CancellationToken ctx)
     {
-        var entity = await sessions.GetSessionByIdAsync(id, ctx)
-            ?? throw new SessionNotFoundException();
+        var entity = await sessions.GetSessionByIdAsync(id, ctx);
 
-        var attendee = SessionModelInput.MapFrom(entity, input);
+        if (entity is null)
+        {
+            return UpdateSessionPayload.MapFrom(SessionError.NotFound(id));
+        }
 
-        await sessions.UpdateSessionAsync(id, attendee, ctx);
+        var session = SessionModelInput.MapFrom(entity, input);
 
-        entity = await sessions.GetSessionByIdAsync(id, ctx)
-            ?? throw new SessionNotFoundException();
+        var update = await sessions.UpdateSessionAsync(id, session, ctx);
 
-        return Session.MapFrom(entity);
+        if (update.IsError)
+        {
+            return UpdateSessionPayload.MapFrom(entity, update.Errors);
+        }
+
+        return UpdateSessionPayload.MapFrom(id, entity, session);
     }
 
     [GraphQLDescription("Deletes a session resource.")]
-    public async Task<Session> DeleteSessionAsync(
+    public async Task<AddRemoveSessionPayload> RemoveSessionAsync(
         [ID(nameof(Session))] int id,
         CancellationToken ctx)
     {
-        var entity = await sessions.GetSessionByIdAsync(id, ctx)
-            ?? throw new SessionNotFoundException();
+        var entity = await sessions.GetSessionByIdAsync(id, ctx);
 
-        await sessions.DeleteSessionAsync(id, ctx);
+        if (entity is null)
+        {
+            return AddRemoveSessionPayload.MapFrom(SessionError.NotFound(id));
+        }
 
-        return Session.MapFrom(entity);
+        var delete = await sessions.DeleteSessionAsync(id, ctx);
+
+        if (delete.IsError)
+        {
+            return AddRemoveSessionPayload.MapFrom(delete.Errors);
+        }
+
+        return AddRemoveSessionPayload.MapFrom(entity);
     }
 
     [GraphQLDescription("Adds a speaker resource to a session.")]
-    public async Task<AddRemoveSessionSpeaker> AddSessionSpeakerAsync(
+    public async Task<AddRemoveSessionSpeakerPayload> AddSessionSpeakerAsync(
         AddRemoveSessionSpeaker input,
         CancellationToken ctx)
     {
         var sessionSpeaker = SessionSpeakerModelInput.MapFrom(input);
 
-        await sessionSpeakers.CreateSessionSpeakerAsync(sessionSpeaker, ctx);
+        var create = await sessionSpeakers.CreateSessionSpeakerAsync(sessionSpeaker, ctx);
 
-        return input;
+        if (create.IsError)
+        {
+            return AddRemoveSessionSpeakerPayload.MapFrom(create.Errors);
+        }
+
+        return new AddRemoveSessionSpeakerPayload();
     }
 
     [GraphQLDescription("Adds an attendee resource to a session.")]
-    public async Task<AddRemoveSessionAttendee> AddSessionAttendeeAsync(
+    public async Task<AddRemoveSessionAttendeePayload> AddSessionAttendeeAsync(
         AddRemoveSessionAttendee input,
         CancellationToken ctx)
     {
         var sessionAttendee = SessionAttendeeModelInput.MapFrom(input);
 
-        await sessionAttendees.CreateSessionAttendeeAsync(sessionAttendee, ctx);
+        var create = await sessionAttendees.CreateSessionAttendeeAsync(sessionAttendee, ctx);
 
-        return input;
+        if (create.IsError)
+        {
+            return AddRemoveSessionAttendeePayload.MapFrom(create.Errors);
+        }
+
+        return new AddRemoveSessionAttendeePayload();
     }
 
     [GraphQLDescription("Removes a speaker resource from a session.")]
-    public async Task<AddRemoveSessionSpeaker> RemoveSessionSpeakerAsync(
+    public async Task<AddRemoveSessionSpeakerPayload> RemoveSessionSpeakerAsync(
         AddRemoveSessionSpeaker input,
         CancellationToken ctx)
     {
         var sessionSpeaker = SessionSpeakerModelInput.MapFrom(input);
 
-        await sessionSpeakers.DeleteSessionSpeakerAsync(sessionSpeaker, ctx);
+        var delete = await sessionSpeakers.DeleteSessionSpeakerAsync(sessionSpeaker, ctx);
 
-        return input;
+        if (delete.IsError)
+        {
+            return AddRemoveSessionSpeakerPayload.MapFrom(delete.Errors);
+        }
+
+        return new AddRemoveSessionSpeakerPayload();
     }
 
     [GraphQLDescription("Removes an attendee resource from a session.")]
-    public async Task<AddRemoveSessionAttendee> RemoveSessionAttendeeAsync(
+    public async Task<AddRemoveSessionAttendeePayload> RemoveSessionAttendeeAsync(
         AddRemoveSessionAttendee input,
         CancellationToken ctx)
     {
         var sessionAttendee = SessionAttendeeModelInput.MapFrom(input);
 
-        await sessionAttendees.DeleteSessionAttendeeAsync(sessionAttendee, ctx);
+        var delete = await sessionAttendees.DeleteSessionAttendeeAsync(sessionAttendee, ctx);
 
-        return input;
+        if (delete.IsError)
+        {
+            return AddRemoveSessionAttendeePayload.MapFrom(delete.Errors);
+        }
+
+        return new AddRemoveSessionAttendeePayload();
     }
 }

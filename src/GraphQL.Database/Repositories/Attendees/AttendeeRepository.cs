@@ -1,7 +1,8 @@
 namespace GraphQL.Database.Repositories.Attendees;
 
+using ErrorOr;
 using GraphQL.Database;
-using GraphQL.Database.Exceptions;
+using GraphQL.Database.Errors;
 using Microsoft.EntityFrameworkCore;
 
 public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContextFactory)
@@ -56,7 +57,7 @@ public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContex
         return result;
     }
 
-    public async Task<int> CreateAttendeeAsync(
+    public async Task<ErrorOr<int>> CreateAttendeeAsync(
         AttendeeModelInput input,
         CancellationToken ctx)
     {
@@ -67,7 +68,7 @@ public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContex
 
         if (!existing)
         {
-            throw new UsernameTakenException(nameof(AttendeeModel.UserName));
+            return AttendeeError.UserNameTaken(input.UserName);
         }
 
         var entity = AttendeeModel.MapFrom(input);
@@ -80,7 +81,7 @@ public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContex
         return entity.Id;
     }
 
-    public async Task UpdateAttendeeAsync(
+    public async Task<ErrorOr<Updated>> UpdateAttendeeAsync(
         int id,
         AttendeeModelInput input,
         CancellationToken ctx)
@@ -92,7 +93,7 @@ public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContex
 
         if (!existing)
         {
-            throw new UserNotFoundException(nameof(AttendeeModel.Id));
+            return AttendeeError.NotFound(id);
         }
 
         dbContext.Attendees
@@ -103,9 +104,11 @@ public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContex
                 .SetProperty(s => s.EmailAddress, input.EmailAddress));
 
         await dbContext.SaveChangesAsync(ctx);
+
+        return Result.Updated;
     }
 
-    public async Task DeleteAttendeeAsync(
+    public async Task<ErrorOr<Deleted>> DeleteAttendeeAsync(
         int id,
         CancellationToken ctx)
     {
@@ -116,7 +119,7 @@ public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContex
 
         if (!existing)
         {
-            throw new UserNotFoundException(nameof(AttendeeModel.Id));
+            return AttendeeError.NotFound(id);
         }
 
         dbContext.Attendees
@@ -124,5 +127,7 @@ public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContex
             .ExecuteDelete();
 
         await dbContext.SaveChangesAsync(ctx);
+
+        return Result.Deleted;
     }
 }

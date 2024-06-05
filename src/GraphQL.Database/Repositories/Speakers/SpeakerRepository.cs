@@ -1,7 +1,8 @@
 namespace GraphQL.Database.Repositories.Speakers;
 
+using ErrorOr;
 using GraphQL.Database;
-using GraphQL.Database.Exceptions;
+using GraphQL.Database.Errors;
 using Microsoft.EntityFrameworkCore;
 
 public class SpeakerRepository(IDbContextFactory<ApplicationDbContext> dbContextFactory)
@@ -56,7 +57,7 @@ public class SpeakerRepository(IDbContextFactory<ApplicationDbContext> dbContext
         return result;
     }
 
-    public async Task<int> CreateSpeakerAsync(
+    public async Task<ErrorOr<int>> CreateSpeakerAsync(
         SpeakerModelInput input,
         CancellationToken ctx)
     {
@@ -67,7 +68,7 @@ public class SpeakerRepository(IDbContextFactory<ApplicationDbContext> dbContext
 
         if (!existing)
         {
-            throw new UsernameTakenException(nameof(SpeakerModel.Name));
+            return SpeakerError.NameTaken(input.Name);
         }
 
         var entity = SpeakerModel.MapFrom(input);
@@ -80,7 +81,7 @@ public class SpeakerRepository(IDbContextFactory<ApplicationDbContext> dbContext
         return entity.Id;
     }
 
-    public async Task UpdateSpeakerAsync(
+    public async Task<ErrorOr<Updated>> UpdateSpeakerAsync(
         int id,
         SpeakerModelInput input,
         CancellationToken ctx)
@@ -92,7 +93,7 @@ public class SpeakerRepository(IDbContextFactory<ApplicationDbContext> dbContext
 
         if (!existing)
         {
-            throw new UsernameTakenException(nameof(SpeakerModel.Id));
+            return SpeakerError.NotFound(id);
         }
 
         dbContext.Speakers
@@ -103,9 +104,11 @@ public class SpeakerRepository(IDbContextFactory<ApplicationDbContext> dbContext
                 .SetProperty(ee => ee.WebSite, input.WebSite));
 
         await dbContext.SaveChangesAsync(ctx);
+
+        return Result.Updated;
     }
 
-    public async Task DeleteSpeakerAsync(
+    public async Task<ErrorOr<Deleted>> DeleteSpeakerAsync(
         int id,
         CancellationToken ctx)
     {
@@ -116,7 +119,7 @@ public class SpeakerRepository(IDbContextFactory<ApplicationDbContext> dbContext
 
         if (!existing)
         {
-            throw new UsernameTakenException(nameof(SpeakerModel.Id));
+            return SpeakerError.NotFound(id);
         }
 
         dbContext.Speakers
@@ -124,5 +127,7 @@ public class SpeakerRepository(IDbContextFactory<ApplicationDbContext> dbContext
             .ExecuteDelete();
 
         await dbContext.SaveChangesAsync(ctx);
+
+        return Result.Deleted;
     }
 }

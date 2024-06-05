@@ -1,5 +1,7 @@
 namespace GraphQL.Database.Repositories.Speakers;
 
+using ErrorOr;
+
 public interface ISpeakerRepository
 {
     Task<IQueryable<SpeakerModel>> GetAllSpeakersAsync(CancellationToken ctx);
@@ -10,9 +12,9 @@ public interface ISpeakerRepository
 
     Task<SpeakerModel?> GetSpeakerByNameAsync(string name, CancellationToken ctx);
 
-    Task<int> CreateSpeakerAsync(SpeakerModelInput input, CancellationToken ctx);
+    Task<ErrorOr<int>> CreateSpeakerAsync(SpeakerModelInput input, CancellationToken ctx);
 
-    Task UpdateSpeakerAsync(int id, SpeakerModelInput input, CancellationToken ctx);
+    Task<ErrorOr<Updated>> UpdateSpeakerAsync(int id, SpeakerModelInput input, CancellationToken ctx);
 
-    Task DeleteSpeakerAsync(int id, CancellationToken ctx);
+    Task<ErrorOr<Deleted>> DeleteSpeakerAsync(int id, CancellationToken ctx);
 }

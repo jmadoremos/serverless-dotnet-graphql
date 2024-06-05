@@ -1,55 +1,72 @@
 namespace GraphQL.Database.Schemas.Tracks;
 
-using GraphQL.Database.Exceptions;
+using GraphQL.Database.Errors;
 using GraphQL.Database.Repositories.Tracks;
 
 [ExtendObjectType("Mutation")]
 public class TrackMutation([Service] ITrackRepository tracks)
 {
     [GraphQLDescription("Adds a track resource.")]
-    public async Task<Track> AddTrackAsync(
+    public async Task<AddRemoveTrackPayload> AddTrackAsync(
         AddTrackInput input,
         CancellationToken ctx)
     {
-        var attendee = TrackModelInput.MapFrom(input);
+        var track = TrackModelInput.MapFrom(input);
 
-        var id = await tracks.CreateTrackAsync(attendee, ctx);
+        var id = await tracks.CreateTrackAsync(track, ctx);
 
-        var entity = await tracks.GetTrackByIdAsync(id, ctx)
-            ?? throw new TrackNotFoundException();
+        if (id.IsError)
+        {
+            return AddRemoveTrackPayload.MapFrom(id.Errors);
+        }
 
-        return Track.MapFrom(entity);
+        return AddRemoveTrackPayload.MapFrom(id.Value, track);
     }
 
     [GraphQLDescription("Updates a track resource.")]
-    public async Task<Track> UpdateTrackAsync(
+    public async Task<UpdateTrackPayload> UpdateTrackAsync(
         [ID(nameof(Track))] int id,
         UpdateTrackInput input,
         CancellationToken ctx)
     {
-        var entity = await tracks.GetTrackByIdAsync(id, ctx)
-            ?? throw new TrackNotFoundException();
+        var entity = await tracks.GetTrackByIdAsync(id, ctx);
 
-        var attendee = TrackModelInput.MapFrom(entity, input);
+        if (entity is null)
+        {
+            return UpdateTrackPayload.MapFrom(TrackError.NotFound(id));
+        }
 
-        await tracks.UpdateTrackAsync(id, attendee, ctx);
+        var track = TrackModelInput.MapFrom(entity, input);
 
-        entity = await tracks.GetTrackByIdAsync(id, ctx)
-            ?? throw new TrackNotFoundException();
+        var update = await tracks.UpdateTrackAsync(id, track, ctx);
 
-        return Track.MapFrom(entity);
+        if (update.IsError)
+        {
+            return UpdateTrackPayload.MapFrom(entity, update.Errors);
+        }
+
+        return UpdateTrackPayload.MapFrom(id, entity, track);
     }
 
     [GraphQLDescription("Deletes a track resource.")]
-    public async Task<Track> DeleteTrackAsync(
+    public async Task<AddRemoveTrackPayload> RemoveTrackAsync(
         [ID(nameof(Track))] int id,
         CancellationToken ctx)
     {
-        var entity = await tracks.GetTrackByIdAsync(id, ctx)
-            ?? throw new TrackNotFoundException();
+        var entity = await tracks.GetTrackByIdAsync(id, ctx);
 
-        await tracks.DeleteTrackAsync(id, ctx);
+        if (entity is null)
+        {
+            return AddRemoveTrackPayload.MapFrom(AttendeeError.NotFound(id));
+        }
 
-        return Track.MapFrom(entity);
+        var delete = await tracks.DeleteTrackAsync(id, ctx);
+
+        if (delete.IsError)
+        {
+            return AddRemoveTrackPayload.MapFrom(delete.Errors);
+        }
+
+        return AddRemoveTrackPayload.MapFrom(entity);
     }
 }

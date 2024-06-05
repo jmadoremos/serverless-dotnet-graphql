@@ -37,4 +37,12 @@ public class Speaker
         Bio = r.Bio,
         Website = r.WebSite
     };
+
+    public static Speaker MapFrom(int id, SpeakerModelInput i) => new()
+    {
+        Id = id,
+        Name = i.Name,
+        Bio = i.Bio,
+        Website = i.WebSite
+    };
 }

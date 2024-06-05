@@ -1,6 +1,6 @@
 namespace GraphQL.Database.Schemas.Sessions;
 
-using GraphQL.Database.Exceptions;
+using GraphQL.Database.Errors;
 using GraphQL.Database.Repositories.SessionAttendees;
 using GraphQL.Database.Repositories.SessionSpeakers;
 using GraphQL.Database.Repositories.Tracks;
@@ -16,12 +16,16 @@ public class SessionExtension(
 {
     [BindMember(nameof(Session.TrackId))]
     [GraphQLDescription("The track of this session.")]
-    public async Task<Track> GetTrackAsync(
+    public async Task<Track?> GetTrackAsync(
         [Parent] Session parent,
         CancellationToken ctx)
     {
-        var response = await tracks.GetTrackByIdAsync(parent.TrackId, ctx)
-            ?? throw new TrackNotFoundException();
+        var response = await tracks.GetTrackByIdAsync(parent.TrackId, ctx);
+
+        if (response is null)
+        {
+            return null;
+        }
 
         return Track.MapFrom(response);
     }

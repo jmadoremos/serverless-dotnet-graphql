@@ -1,7 +1,8 @@
 namespace GraphQL.Database.Repositories.SessionAttendees;
 
+using ErrorOr;
 using GraphQL.Database;
-using GraphQL.Database.Exceptions;
+using GraphQL.Database.Errors;
 using GraphQL.Database.Repositories.Attendees;
 using GraphQL.Database.Repositories.Sessions;
 using Microsoft.EntityFrameworkCore;
@@ -39,21 +40,44 @@ public class SessionAttendeeRepository(IDbContextFactory<ApplicationDbContext> d
         return result.AsQueryable();
     }
 
-    public async Task CreateSessionAttendeeAsync(
+    public async Task<ErrorOr<Created>> CreateSessionAttendeeAsync(
         SessionAttendeeModelInput input,
         CancellationToken ctx)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
-        var existing = await dbContext.SessionAttendees
+        var session = dbContext.Sessions.AnyAsync(e => e.Id == input.SessionId, ctx);
+
+        var attendee = dbContext.Attendees.AnyAsync(e => e.Id == input.AttendeeId, ctx);
+
+        var mapping = dbContext.SessionAttendees
             .AnyAsync(e =>
                 e.SessionId == input.SessionId &&
                 e.AttendeeId == input.AttendeeId,
                 ctx);
 
-        if (existing)
+        await Task.WhenAll(session, attendee, mapping);
+
+        List<Error> errors = [];
+
+        if (!session.Result)
         {
-            throw new SessionSpeakerExistsException();
+            errors.Add(SessionError.NotFound(input.SessionId));
+        }
+
+        if (!attendee.Result)
+        {
+            errors.Add(AttendeeError.NotFound(input.AttendeeId));
+        }
+
+        if (mapping.Result)
+        {
+            errors.Add(SessionAttendeeError.AlreadyExists(input.SessionId, input.AttendeeId));
+        }
+
+        if (errors.Count > 0)
+        {
+            return errors;
         }
 
         var entity = SessionAttendeeModel.MapFrom(input);
@@ -61,23 +85,48 @@ public class SessionAttendeeRepository(IDbContextFactory<ApplicationDbContext> d
         dbContext.SessionAttendees.Add(entity);
 
         await dbContext.SaveChangesAsync(ctx);
+
+        return Result.Created;
     }
 
-    public async Task DeleteSessionAttendeeAsync(
+    public async Task<ErrorOr<Deleted>> DeleteSessionAttendeeAsync(
         SessionAttendeeModelInput input,
         CancellationToken ctx)
     {
         using var dbContext = await dbContextFactory.CreateDbContextAsync(ctx);
 
-        var existing = await dbContext.SessionAttendees
+        var session = dbContext.Sessions.AnyAsync(e => e.Id == input.SessionId, ctx);
+
+        var attendee = dbContext.Attendees.AnyAsync(e => e.Id == input.AttendeeId, ctx);
+
+        var mapping = dbContext.SessionAttendees
             .AnyAsync(e =>
                 e.SessionId == input.SessionId &&
                 e.AttendeeId == input.AttendeeId,
                 ctx);
 
-        if (!existing)
+        await Task.WhenAll(session, attendee, mapping);
+
+        List<Error> errors = [];
+
+        if (!session.Result)
         {
-            throw new SessionSpeakerNotFoundException();
+            errors.Add(SessionError.NotFound(input.SessionId));
+        }
+
+        if (!attendee.Result)
+        {
+            errors.Add(AttendeeError.NotFound(input.AttendeeId));
+        }
+
+        if (!mapping.Result)
+        {
+            errors.Add(SessionAttendeeError.NotFound(input.SessionId, input.AttendeeId));
+        }
+
+        if (errors.Count > 0)
+        {
+            return errors;
         }
 
         var entity = SessionAttendeeModel.MapFrom(input);
@@ -86,5 +135,7 @@ public class SessionAttendeeRepository(IDbContextFactory<ApplicationDbContext> d
             .Remove(entity);
 
         await dbContext.SaveChangesAsync(ctx);
+
+        return Result.Deleted;
     }
 }
