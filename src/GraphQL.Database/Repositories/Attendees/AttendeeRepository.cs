@@ -66,7 +66,7 @@ public class AttendeeRepository(IDbContextFactory<ApplicationDbContext> dbContex
         var existing = await dbContext.Attendees
             .AnyAsync(e => e.UserName == input.UserName, ctx);
 
-        if (!existing)
+        if (existing)
         {
             return AttendeeError.UserNameTaken(input.UserName);
         }
