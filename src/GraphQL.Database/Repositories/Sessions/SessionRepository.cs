@@ -66,7 +66,7 @@ public class SessionRepository(IDbContextFactory<ApplicationDbContext> dbContext
         var existing = await dbContext.Sessions
             .AnyAsync(e => e.Title == input.Title, ctx);
 
-        if (!existing)
+        if (existing)
         {
             return SessionError.TitleTaken(input.Title);
         }

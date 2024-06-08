@@ -66,7 +66,7 @@ public class SpeakerRepository(IDbContextFactory<ApplicationDbContext> dbContext
         var existing = await dbContext.Speakers
             .AnyAsync(e => e.Name == input.Name, ctx);
 
-        if (!existing)
+        if (existing)
         {
             return SpeakerError.NameTaken(input.Name);
         }

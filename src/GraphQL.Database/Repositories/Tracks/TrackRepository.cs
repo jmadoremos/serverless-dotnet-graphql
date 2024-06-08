@@ -82,7 +82,7 @@ public class TrackRepository(IDbContextFactory<ApplicationDbContext> dbContextFa
         var existing = await dbContext.Tracks
             .AnyAsync(e => e.Name == input.Name, ctx);
 
-        if (!existing)
+        if (existing)
         {
             return TrackError.NameTaken(input.Name);
         }
