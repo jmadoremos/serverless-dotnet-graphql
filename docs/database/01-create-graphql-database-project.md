@@ -25,6 +25,8 @@ dotnet add src/GraphQL.Database package Aspire.Npgsql.EntityFrameworkCore.Postgr
 
 dotnet add src/GraphQL.Database package HotChocolate.AspNetCore
 
+dotnet add src/GraphQL.Database package HotChocolate.Data
+
 dotnet add src/GraphQL.Database package HotChocolate.Data.EntityFramework
 
 dotnet add src/GraphQL.Database package ErrorOr

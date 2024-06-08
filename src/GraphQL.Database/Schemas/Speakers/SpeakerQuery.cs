@@ -7,6 +7,9 @@ using System.Linq;
 public class SpeakerQuery([Service] ISpeakerRepository speakers)
 {
     [UsePaging]
+    [UseProjection]
+    [UseFiltering]
+    [UseSorting]
     [GraphQLDescription("A list of speakers from all sessions.")]
     public async Task<IEnumerable<Speaker>> GetSpeakersAsync(CancellationToken ctx)
     {

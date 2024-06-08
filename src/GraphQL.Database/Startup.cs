@@ -51,6 +51,12 @@ public class Startup(IConfiguration configuration)
             {
                 IncludeTotalCount = true
             })
+            // Enable projections
+            .AddProjections()
+            // Enable filtering
+            .AddFiltering()
+            // Enable sorting
+            .AddSorting()
             // Custom services
             .RegisterService<IAttendeeRepository>()
             .RegisterService<ISessionRepository>()
@@ -98,6 +104,13 @@ public class Startup(IConfiguration configuration)
 
         // app.UseAuthorization();
 
-        app.UseEndpoints(endpoints => endpoints.MapGraphQL());
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapGraphQL("/graphql");
+
+            endpoints.MapGraphQLSchema("/graphql/schema");
+
+            endpoints.MapGraphQLWebSocket("/graphql/ws");
+        });
     }
 }
