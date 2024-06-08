@@ -86,6 +86,13 @@ public class Startup(IConfiguration configuration)
                 .AddType<SessionMutation>()
                 .AddType<SpeakerMutation>()
                 .AddType<TrackMutation>()
+            // Subscriptions
+            .AddInMemorySubscriptions()
+            .AddSubscriptionType(d => d.Name("Subscription"))
+                .AddType<AttendeeSubscription>()
+                .AddType<SessionSubscription>()
+                .AddType<SpeakerSubscription>()
+                .AddType<TrackSubscription>()
             // Initialize schema on startup without waiting for the first request
             .InitializeOnStartup();
     }
@@ -103,6 +110,8 @@ public class Startup(IConfiguration configuration)
         app.UseRouting();
 
         // app.UseAuthorization();
+
+        app.UseWebSockets();
 
         app.UseEndpoints(endpoints =>
         {

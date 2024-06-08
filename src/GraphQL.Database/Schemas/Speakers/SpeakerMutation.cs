@@ -2,9 +2,12 @@ namespace GraphQL.Database.Schemas.Speakers;
 
 using GraphQL.Database.Errors;
 using GraphQL.Database.Repositories.Speakers;
+using HotChocolate.Subscriptions;
 
 [ExtendObjectType("Mutation")]
-public class SpeakerMutation([Service] ISpeakerRepository speakers)
+public class SpeakerMutation(
+    [Service] ITopicEventSender sender,
+    [Service] ISpeakerRepository speakers)
 {
     [GraphQLDescription("Adds a speaker resource.")]
     public async Task<AddRemoveSpeakerPayload> AddSpeakerAsync(
@@ -17,10 +20,16 @@ public class SpeakerMutation([Service] ISpeakerRepository speakers)
 
         if (id.IsError)
         {
-            return AddRemoveSpeakerPayload.MapFrom(id.Errors);
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(SpeakerSubscription.SpeakerAdded),
+                AddRemoveSpeakerPayload.MapFrom(id.Errors),
+                ctx);
         }
 
-        return AddRemoveSpeakerPayload.MapFrom(id.Value, speaker);
+        return await this.PublishAndReturnPayloadAsync(
+            nameof(SpeakerSubscription.SpeakerAdded),
+            AddRemoveSpeakerPayload.MapFrom(id.Value, speaker),
+            ctx);
     }
 
     [GraphQLDescription("Updates a speaker resource.")]
@@ -33,7 +42,10 @@ public class SpeakerMutation([Service] ISpeakerRepository speakers)
 
         if (entity is null)
         {
-            return UpdateSpeakerPayload.MapFrom(SpeakerError.NotFound(id));
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(SpeakerSubscription.SpeakerUpdated),
+                UpdateSpeakerPayload.MapFrom(SpeakerError.NotFound(id)),
+                ctx);
         }
 
         var attendee = SpeakerModelInput.MapFrom(entity, input);
@@ -42,10 +54,16 @@ public class SpeakerMutation([Service] ISpeakerRepository speakers)
 
         if (update.IsError)
         {
-            return UpdateSpeakerPayload.MapFrom(entity, update.Errors);
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(SpeakerSubscription.SpeakerUpdated),
+                UpdateSpeakerPayload.MapFrom(entity, update.Errors),
+                ctx);
         }
 
-        return UpdateSpeakerPayload.MapFrom(id, entity, attendee);
+        return await this.PublishAndReturnPayloadAsync(
+            nameof(SpeakerSubscription.SpeakerUpdated),
+            UpdateSpeakerPayload.MapFrom(id, entity, attendee),
+            ctx);
     }
 
     [GraphQLDescription("Removes a speaker resource.")]
@@ -57,16 +75,35 @@ public class SpeakerMutation([Service] ISpeakerRepository speakers)
 
         if (entity is null)
         {
-            return AddRemoveSpeakerPayload.MapFrom(SpeakerError.NotFound(id));
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(SpeakerSubscription.SpeakerRemoved),
+                AddRemoveSpeakerPayload.MapFrom(SpeakerError.NotFound(id)),
+                ctx);
         }
 
         var delete = await speakers.DeleteSpeakerAsync(id, ctx);
 
         if (delete.IsError)
         {
-            return AddRemoveSpeakerPayload.MapFrom(delete.Errors);
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(SpeakerSubscription.SpeakerRemoved),
+                AddRemoveSpeakerPayload.MapFrom(delete.Errors),
+                ctx);
         }
 
-        return AddRemoveSpeakerPayload.MapFrom(entity);
+        return await this.PublishAndReturnPayloadAsync(
+            nameof(SpeakerSubscription.SpeakerRemoved),
+            AddRemoveSpeakerPayload.MapFrom(entity),
+            ctx);
+    }
+
+    private async Task<TPayload> PublishAndReturnPayloadAsync<TPayload>(
+        string eventName,
+        TPayload payload,
+        CancellationToken ctx)
+    {
+        await sender.SendAsync(eventName, payload, ctx);
+
+        return payload;
     }
 }

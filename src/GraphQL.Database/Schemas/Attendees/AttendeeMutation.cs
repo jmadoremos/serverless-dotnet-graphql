@@ -2,9 +2,12 @@ namespace GraphQL.Database.Schemas.Attendees;
 
 using GraphQL.Database.Errors;
 using GraphQL.Database.Repositories.Attendees;
+using HotChocolate.Subscriptions;
 
 [ExtendObjectType("Mutation")]
-public class AttendeeMutation([Service] IAttendeeRepository attendees)
+public class AttendeeMutation(
+    [Service] IAttendeeRepository attendees,
+    [Service] ITopicEventSender sender)
 {
     [GraphQLDescription("Adds an attendee resource.")]
     public async Task<AddRemoveAttendeePayload> AddAttendeeAsync(
@@ -17,10 +20,16 @@ public class AttendeeMutation([Service] IAttendeeRepository attendees)
 
         if (id.IsError)
         {
-            return AddRemoveAttendeePayload.MapFrom(id.Errors);
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(AttendeeSubscription.AttendeeAdded),
+                AddRemoveAttendeePayload.MapFrom(id.Errors),
+                ctx);
         }
 
-        return AddRemoveAttendeePayload.MapFrom(id.Value, attendee);
+        return await this.PublishAndReturnPayloadAsync(
+            nameof(AttendeeSubscription.AttendeeAdded),
+            AddRemoveAttendeePayload.MapFrom(id.Value, attendee),
+            ctx);
     }
 
     [GraphQLDescription("Updates an attendee resource.")]
@@ -33,7 +42,10 @@ public class AttendeeMutation([Service] IAttendeeRepository attendees)
 
         if (entity is null)
         {
-            return UpdateAttendeePayload.MapFrom(AttendeeError.NotFound(id));
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(AttendeeSubscription.AttendeeUpdated),
+                UpdateAttendeePayload.MapFrom(AttendeeError.NotFound(id)),
+                ctx);
         }
 
         var attendee = AttendeeModelInput.MapFrom(entity, input);
@@ -42,10 +54,16 @@ public class AttendeeMutation([Service] IAttendeeRepository attendees)
 
         if (update.IsError)
         {
-            return UpdateAttendeePayload.MapFrom(entity, update.Errors);
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(AttendeeSubscription.AttendeeUpdated),
+                UpdateAttendeePayload.MapFrom(entity, update.Errors),
+                ctx);
         }
 
-        return UpdateAttendeePayload.MapFrom(id, entity, attendee);
+        return await this.PublishAndReturnPayloadAsync(
+            nameof(AttendeeSubscription.AttendeeUpdated),
+            UpdateAttendeePayload.MapFrom(id, entity, attendee),
+            ctx);
     }
 
     [GraphQLDescription("Removes an attendee resource.")]
@@ -57,16 +75,35 @@ public class AttendeeMutation([Service] IAttendeeRepository attendees)
 
         if (entity is null)
         {
-            return AddRemoveAttendeePayload.MapFrom(AttendeeError.NotFound(id));
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(AttendeeSubscription.AttendeeRemoved),
+                AddRemoveAttendeePayload.MapFrom(AttendeeError.NotFound(id)),
+                ctx);
         }
 
         var delete = await attendees.DeleteAttendeeAsync(id, ctx);
 
         if (delete.IsError)
         {
-            return AddRemoveAttendeePayload.MapFrom(delete.Errors);
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(AttendeeSubscription.AttendeeRemoved),
+                AddRemoveAttendeePayload.MapFrom(delete.Errors),
+                ctx);
         }
 
-        return AddRemoveAttendeePayload.MapFrom(entity);
+        return await this.PublishAndReturnPayloadAsync(
+            nameof(AttendeeSubscription.AttendeeRemoved),
+            AddRemoveAttendeePayload.MapFrom(entity),
+            ctx);
+    }
+
+    private async Task<TPayload> PublishAndReturnPayloadAsync<TPayload>(
+        string eventName,
+        TPayload payload,
+        CancellationToken ctx)
+    {
+        await sender.SendAsync(eventName, payload, ctx);
+
+        return payload;
     }
 }

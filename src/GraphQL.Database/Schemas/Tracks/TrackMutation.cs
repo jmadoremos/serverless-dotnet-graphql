@@ -2,9 +2,12 @@ namespace GraphQL.Database.Schemas.Tracks;
 
 using GraphQL.Database.Errors;
 using GraphQL.Database.Repositories.Tracks;
+using HotChocolate.Subscriptions;
 
 [ExtendObjectType("Mutation")]
-public class TrackMutation([Service] ITrackRepository tracks)
+public class TrackMutation(
+    [Service] ITopicEventSender sender,
+    [Service] ITrackRepository tracks)
 {
     [GraphQLDescription("Adds a track resource.")]
     public async Task<AddRemoveTrackPayload> AddTrackAsync(
@@ -17,10 +20,16 @@ public class TrackMutation([Service] ITrackRepository tracks)
 
         if (id.IsError)
         {
-            return AddRemoveTrackPayload.MapFrom(id.Errors);
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(TrackSubscription.TrackAdded),
+                AddRemoveTrackPayload.MapFrom(id.Errors),
+                ctx);
         }
 
-        return AddRemoveTrackPayload.MapFrom(id.Value, track);
+        return await this.PublishAndReturnPayloadAsync(
+            nameof(TrackSubscription.TrackAdded),
+            AddRemoveTrackPayload.MapFrom(id.Value, track),
+            ctx);
     }
 
     [GraphQLDescription("Updates a track resource.")]
@@ -33,7 +42,10 @@ public class TrackMutation([Service] ITrackRepository tracks)
 
         if (entity is null)
         {
-            return UpdateTrackPayload.MapFrom(TrackError.NotFound(id));
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(TrackSubscription.TrackUpdated),
+                UpdateTrackPayload.MapFrom(TrackError.NotFound(id)),
+                ctx);
         }
 
         var track = TrackModelInput.MapFrom(entity, input);
@@ -42,10 +54,16 @@ public class TrackMutation([Service] ITrackRepository tracks)
 
         if (update.IsError)
         {
-            return UpdateTrackPayload.MapFrom(entity, update.Errors);
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(TrackSubscription.TrackUpdated),
+                UpdateTrackPayload.MapFrom(entity, update.Errors),
+                ctx);
         }
 
-        return UpdateTrackPayload.MapFrom(id, entity, track);
+        return await this.PublishAndReturnPayloadAsync(
+            nameof(TrackSubscription.TrackUpdated),
+            UpdateTrackPayload.MapFrom(id, entity, track),
+            ctx);
     }
 
     [GraphQLDescription("Removes a track resource.")]
@@ -57,16 +75,35 @@ public class TrackMutation([Service] ITrackRepository tracks)
 
         if (entity is null)
         {
-            return AddRemoveTrackPayload.MapFrom(AttendeeError.NotFound(id));
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(TrackSubscription.TrackRemoved),
+                AddRemoveTrackPayload.MapFrom(AttendeeError.NotFound(id)),
+                ctx);
         }
 
         var delete = await tracks.DeleteTrackAsync(id, ctx);
 
         if (delete.IsError)
         {
-            return AddRemoveTrackPayload.MapFrom(delete.Errors);
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(TrackSubscription.TrackRemoved),
+                AddRemoveTrackPayload.MapFrom(delete.Errors),
+                ctx);
         }
 
-        return AddRemoveTrackPayload.MapFrom(entity);
+        return await this.PublishAndReturnPayloadAsync(
+            nameof(TrackSubscription.TrackRemoved),
+            AddRemoveTrackPayload.MapFrom(entity),
+            ctx);
+    }
+
+    private async Task<TPayload> PublishAndReturnPayloadAsync<TPayload>(
+        string eventName,
+        TPayload payload,
+        CancellationToken ctx)
+    {
+        await sender.SendAsync(eventName, payload, ctx);
+
+        return payload;
     }
 }

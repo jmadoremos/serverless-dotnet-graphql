@@ -4,9 +4,11 @@ using GraphQL.Database.Errors;
 using GraphQL.Database.Repositories.SessionAttendees;
 using GraphQL.Database.Repositories.Sessions;
 using GraphQL.Database.Repositories.SessionSpeakers;
+using HotChocolate.Subscriptions;
 
 [ExtendObjectType("Mutation")]
 public class SessionMutation(
+    [Service] ITopicEventSender sender,
     [Service] ISessionRepository sessions,
     [Service] ISessionAttendeeRepository sessionAttendees,
     [Service] ISessionSpeakerRepository sessionSpeakers)
@@ -22,10 +24,16 @@ public class SessionMutation(
 
         if (id.IsError)
         {
-            return AddRemoveSessionPayload.MapFrom(id.Errors);
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(SessionSubscription.SessionAdded),
+                AddRemoveSessionPayload.MapFrom(id.Errors),
+                ctx);
         }
 
-        return AddRemoveSessionPayload.MapFrom(id.Value, attendee);
+        return await this.PublishAndReturnPayloadAsync(
+            nameof(SessionSubscription.SessionAdded),
+            AddRemoveSessionPayload.MapFrom(id.Value, attendee),
+            ctx);
     }
 
     [GraphQLDescription("Updates a session resource.")]
@@ -38,7 +46,10 @@ public class SessionMutation(
 
         if (entity is null)
         {
-            return UpdateSessionPayload.MapFrom(SessionError.NotFound(id));
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(SessionSubscription.SessionUpdated),
+                UpdateSessionPayload.MapFrom(SessionError.NotFound(id)),
+                ctx);
         }
 
         var session = SessionModelInput.MapFrom(entity, input);
@@ -47,10 +58,16 @@ public class SessionMutation(
 
         if (update.IsError)
         {
-            return UpdateSessionPayload.MapFrom(entity, update.Errors);
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(SessionSubscription.SessionUpdated),
+                UpdateSessionPayload.MapFrom(entity, update.Errors),
+                ctx);
         }
 
-        return UpdateSessionPayload.MapFrom(id, entity, session);
+        return await this.PublishAndReturnPayloadAsync(
+            nameof(SessionSubscription.SessionUpdated),
+            UpdateSessionPayload.MapFrom(id, entity, session),
+            ctx);
     }
 
     [GraphQLDescription("Removes a session resource.")]
@@ -62,17 +79,26 @@ public class SessionMutation(
 
         if (entity is null)
         {
-            return AddRemoveSessionPayload.MapFrom(SessionError.NotFound(id));
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(SessionSubscription.SessionRemoved),
+                AddRemoveSessionPayload.MapFrom(SessionError.NotFound(id)),
+                ctx);
         }
 
         var delete = await sessions.DeleteSessionAsync(id, ctx);
 
         if (delete.IsError)
         {
-            return AddRemoveSessionPayload.MapFrom(delete.Errors);
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(SessionSubscription.SessionRemoved),
+                AddRemoveSessionPayload.MapFrom(delete.Errors),
+                ctx);
         }
 
-        return AddRemoveSessionPayload.MapFrom(entity);
+        return await this.PublishAndReturnPayloadAsync(
+            nameof(SessionSubscription.SessionRemoved),
+            AddRemoveSessionPayload.MapFrom(entity),
+            ctx);
     }
 
     [GraphQLDescription("Adds a speaker resource to a session.")]
@@ -86,10 +112,16 @@ public class SessionMutation(
 
         if (create.IsError)
         {
-            return AddRemoveSessionSpeakerPayload.MapFrom(create.Errors);
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(SessionSubscription.SessionSpeakerAdded),
+                AddRemoveSessionSpeakerPayload.MapFrom(create.Errors),
+                ctx);
         }
 
-        return new AddRemoveSessionSpeakerPayload();
+        return await this.PublishAndReturnPayloadAsync(
+            nameof(SessionSubscription.SessionSpeakerAdded),
+            new AddRemoveSessionSpeakerPayload(),
+            ctx);
     }
 
     [GraphQLDescription("Adds an attendee resource to a session.")]
@@ -103,10 +135,16 @@ public class SessionMutation(
 
         if (create.IsError)
         {
-            return AddRemoveSessionAttendeePayload.MapFrom(create.Errors);
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(SessionSubscription.SessionAttendeeAdded),
+                AddRemoveSessionAttendeePayload.MapFrom(create.Errors),
+                ctx);
         }
 
-        return new AddRemoveSessionAttendeePayload();
+        return await this.PublishAndReturnPayloadAsync(
+            nameof(SessionSubscription.SessionAttendeeAdded),
+            new AddRemoveSessionAttendeePayload(),
+            ctx);
     }
 
     [GraphQLDescription("Removes a speaker resource from a session.")]
@@ -120,10 +158,16 @@ public class SessionMutation(
 
         if (delete.IsError)
         {
-            return AddRemoveSessionSpeakerPayload.MapFrom(delete.Errors);
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(SessionSubscription.SessionSpeakerRemoved),
+                AddRemoveSessionSpeakerPayload.MapFrom(delete.Errors),
+                ctx);
         }
 
-        return new AddRemoveSessionSpeakerPayload();
+        return await this.PublishAndReturnPayloadAsync(
+            nameof(SessionSubscription.SessionSpeakerRemoved),
+            new AddRemoveSessionSpeakerPayload(),
+            ctx);
     }
 
     [GraphQLDescription("Removes an attendee resource from a session.")]
@@ -137,9 +181,25 @@ public class SessionMutation(
 
         if (delete.IsError)
         {
-            return AddRemoveSessionAttendeePayload.MapFrom(delete.Errors);
+            return await this.PublishAndReturnPayloadAsync(
+                nameof(SessionSubscription.SessionAttendeeRemoved),
+                AddRemoveSessionAttendeePayload.MapFrom(delete.Errors),
+                ctx);
         }
 
-        return new AddRemoveSessionAttendeePayload();
+        return await this.PublishAndReturnPayloadAsync(
+                nameof(SessionSubscription.SessionAttendeeRemoved),
+                new AddRemoveSessionAttendeePayload(),
+                ctx);
+    }
+
+    private async Task<TPayload> PublishAndReturnPayloadAsync<TPayload>(
+        string eventName,
+        TPayload payload,
+        CancellationToken ctx)
+    {
+        await sender.SendAsync(eventName, payload, ctx);
+
+        return payload;
     }
 }
