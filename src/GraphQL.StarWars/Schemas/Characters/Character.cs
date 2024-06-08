@@ -3,11 +3,6 @@ namespace GraphQL.StarWars.Schemas.Characters;
 using GraphQL.StarWars.Extensions;
 using GraphQL.StarWars.Repositories;
 using GraphQL.StarWars.Repositories.Responses;
-using GraphQL.StarWars.Schemas.Films;
-using GraphQL.StarWars.Schemas.Planets;
-using GraphQL.StarWars.Schemas.Species;
-using GraphQL.StarWars.Schemas.Starships;
-using GraphQL.StarWars.Schemas.Vehicles;
 
 [Node]
 [GraphQLDescription("A character resource is an individual person or character within the Star Wars universe.")]
@@ -41,35 +36,20 @@ public class Character
     [GraphQLDescription("The skin color of this person.")]
     public string SkinColor { get; set; } = default!;
 
-    [GraphQLIgnore]
+    [GraphQLDescription("A planet that this person was born on or inhabits.")]
     public int? HomeworldId { get; set; } = default!;
 
-    [GraphQLDescription("A planet that this person was born on or inhabits.")]
-    public Planet? Homeworld { get; set; } = default!;
-
-    [GraphQLIgnore]
+    [GraphQLDescription("A list of films that this person has been in.")]
     public IEnumerable<int> FilmIds { get; set; } = default!;
 
-    [GraphQLDescription("A list of films that this person has been in.")]
-    public IEnumerable<Film> Films { get; set; } = default!;
-
-    [GraphQLIgnore]
+    [GraphQLDescription("A list of species that this person belongs to.")]
     public IEnumerable<int> SpeciesIds { get; set; } = default!;
 
-    [GraphQLDescription("A list of species that this person belongs to.")]
-    public IEnumerable<Species> Species { get; set; } = default!;
-
-    [GraphQLIgnore]
+    [GraphQLDescription("A list of starships that this person has piloted.")]
     public IEnumerable<int> StarshipIds { get; set; } = default!;
 
-    [GraphQLDescription("A list of starships that this person has piloted.")]
-    public IEnumerable<Starship> Starships { get; set; } = default!;
-
-    [GraphQLIgnore]
-    public IEnumerable<int> VehicleIds { get; set; } = default!;
-
     [GraphQLDescription("A list of vehicles that this person has piloted.")]
-    public IEnumerable<Vehicle> Vehicles { get; set; } = default!;
+    public IEnumerable<int> VehicleIds { get; set; } = default!;
 
     [NodeResolver]
     public static async Task<Character?> GetNodeAsync(

@@ -16,6 +16,8 @@ public class CharacterExtension(
     [Service] IStarWarsRepository<StarshipApiResponse> starships,
     [Service] IStarWarsRepository<VehicleApiResponse> vehicles)
 {
+    [BindMember(nameof(Character.HomeworldId))]
+    [GraphQLDescription("A planet that this person was born on or inhabits.")]
     public async Task<Planet?> GetHomeworldAsync(
         [Parent] Character parent,
         CancellationToken ctx)
@@ -35,6 +37,8 @@ public class CharacterExtension(
         return Planet.MapFrom(response);
     }
 
+    [BindMember(nameof(Character.FilmIds))]
+    [GraphQLDescription("A list of films that this person has been in.")]
     public async Task<IEnumerable<Film>> GetFilmsAsync(
         [Parent] Character parent,
         CancellationToken ctx)
@@ -57,6 +61,8 @@ public class CharacterExtension(
         return list;
     }
 
+    [BindMember(nameof(Character.SpeciesIds))]
+    [GraphQLDescription("A list of species that this person belongs to.")]
     public async Task<IEnumerable<Species>> GetSpeciesAsync(
         [Parent] Character parent,
         CancellationToken ctx)
@@ -79,6 +85,8 @@ public class CharacterExtension(
         return list;
     }
 
+    [BindMember(nameof(Character.StarshipIds))]
+    [GraphQLDescription("A list of starships that this person has piloted.")]
     public async Task<IEnumerable<Starship>> GetStarshipsAsync(
         [Parent] Character parent,
         CancellationToken ctx)
@@ -101,6 +109,8 @@ public class CharacterExtension(
         return list;
     }
 
+    [BindMember(nameof(Character.VehicleIds))]
+    [GraphQLDescription("A list of vehicles that this person has piloted.")]
     public async Task<IEnumerable<Vehicle>> GetVehiclesAsync(
         [Parent] Character parent,
         CancellationToken ctx)

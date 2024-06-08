@@ -10,6 +10,8 @@ public class StarshipExtension(
     [Service] IStarWarsRepository<CharacterApiResponse> characters,
     [Service] IStarWarsRepository<FilmApiResponse> films)
 {
+    [BindMember(nameof(Starship.FilmIds))]
+    [GraphQLDescription("A list of films that this starship has appeared in.")]
     public async Task<IEnumerable<Film>> GetFilmsAsync(
         [Parent] Starship parent,
         CancellationToken ctx)
@@ -32,6 +34,8 @@ public class StarshipExtension(
         return filmList;
     }
 
+    [BindMember(nameof(Starship.PilotIds))]
+    [GraphQLDescription("A list of people that this starship has been piloted by.")]
     public async Task<IEnumerable<Character>> GetPilotsAsync(
         [Parent] Starship parent,
         CancellationToken ctx)

@@ -3,9 +3,6 @@ namespace GraphQL.StarWars.Schemas.Species;
 using GraphQL.StarWars.Extensions;
 using GraphQL.StarWars.Repositories;
 using GraphQL.StarWars.Repositories.Responses;
-using GraphQL.StarWars.Schemas.Films;
-using GraphQL.StarWars.Schemas.Characters;
-using GraphQL.StarWars.Schemas.Planets;
 
 [Node]
 [GraphQLDescription("A species resource is a type of person or character within the Star Wars Universe.")]
@@ -42,23 +39,14 @@ public class Species
     [GraphQLDescription("The language commonly spoken by this species.")]
     public string Language { get; set; } = default!;
 
-    [GraphQLIgnore]
+    [GraphQLDescription("A planet that this species originates from.")]
     public int? HomeworldId { get; set; } = default!;
 
-    [GraphQLDescription("A planet that this species originates from.")]
-    public Planet? Homeworld { get; set; } = default!;
-
-    [GraphQLIgnore]
-    public IEnumerable<int> PersonIds { get; set; } = default!;
-
     [GraphQLDescription("A list of people that are a part of this species.")]
-    public IEnumerable<Character> People { get; set; } = default!;
-
-    [GraphQLIgnore]
-    public IEnumerable<int> FilmIds { get; set; } = default!;
+    public IEnumerable<int> PeopleIds { get; set; } = default!;
 
     [GraphQLDescription("A list of films that this species has appeared in.")]
-    public IEnumerable<Film> Films { get; set; } = default!;
+    public IEnumerable<int> FilmIds { get; set; } = default!;
 
     [NodeResolver]
     public static async Task<Species?> GetNodeAsync(
@@ -92,7 +80,7 @@ public class Species
         SkinColors = r.SkinColors,
         Language = r.Language,
         HomeworldId = r.Homeworld?.ExtractSwapiId(),
-        PersonIds = r.People.Select(s => s.ExtractSwapiId()),
+        PeopleIds = r.People.Select(s => s.ExtractSwapiId()),
         FilmIds = r.Films.Select(s => s.ExtractSwapiId())
     };
 }

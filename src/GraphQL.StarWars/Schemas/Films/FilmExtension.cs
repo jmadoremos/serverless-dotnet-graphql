@@ -16,11 +16,13 @@ public class FilmExtension(
     [Service] IStarWarsRepository<StarshipApiResponse> starships,
     [Service] IStarWarsRepository<VehicleApiResponse> vehicles)
 {
+    [BindMember(nameof(Film.CharacterIds))]
+    [GraphQLDescription("A list of characters that are in this film.")]
     public async Task<IEnumerable<Character>> GetCharactersAsync(
         [Parent] Film parent,
         CancellationToken ctx)
     {
-        var queue = parent.PersonIds
+        var queue = parent.CharacterIds
             .Select(id => characters.GetByIdAsync(id, ctx));
 
         var responses = await Task.WhenAll(queue);
@@ -38,6 +40,8 @@ public class FilmExtension(
         return list;
     }
 
+    [BindMember(nameof(Film.PlanetIds))]
+    [GraphQLDescription("A list of planets that are in this film.")]
     public async Task<IEnumerable<Planet>> GetPlanetsAsync(
         [Parent] Film parent,
         CancellationToken ctx)
@@ -60,6 +64,8 @@ public class FilmExtension(
         return list;
     }
 
+    [BindMember(nameof(Film.StarshipIds))]
+    [GraphQLDescription("A list of starships that are in this film.")]
     public async Task<IEnumerable<Starship>> GetStarshipsAsync(
         [Parent] Film parent,
         CancellationToken ctx)
@@ -82,6 +88,8 @@ public class FilmExtension(
         return list;
     }
 
+    [BindMember(nameof(Film.VehicleIds))]
+    [GraphQLDescription("A list of vehicles that are in this film.")]
     public async Task<IEnumerable<Vehicle>> GetVehiclesAsync(
         [Parent] Film parent,
         CancellationToken ctx)
@@ -104,6 +112,8 @@ public class FilmExtension(
         return list;
     }
 
+    [BindMember(nameof(Film.SpeciesIds))]
+    [GraphQLDescription("A list of species that are in this film.")]
     public async Task<IEnumerable<Species>> GetSpeciesAsync(
         [Parent] Film parent,
         CancellationToken ctx)

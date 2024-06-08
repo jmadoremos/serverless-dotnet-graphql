@@ -3,8 +3,6 @@ namespace GraphQL.StarWars.Schemas.Starships;
 using GraphQL.StarWars.Extensions;
 using GraphQL.StarWars.Repositories;
 using GraphQL.StarWars.Repositories.Responses;
-using GraphQL.StarWars.Schemas.Films;
-using GraphQL.StarWars.Schemas.Characters;
 
 [Node]
 [GraphQLDescription("A starship resource is a single transport craft that has hyperdrive capability.")]
@@ -53,17 +51,11 @@ public class Starship
     [GraphQLDescription("The maximum length of time that this starship can provide consumables for its entire crew without having to resupply.")]
     public string Consumables { get; set; } = default!;
 
-    [GraphQLIgnore]
+    [GraphQLDescription("A list of films that this starship has appeared in.")]
     public IEnumerable<int> FilmIds { get; set; } = default!;
 
-    [GraphQLDescription("A list of films that this starship has appeared in.")]
-    public IEnumerable<Film> Films { get; set; } = default!;
-
-    [GraphQLIgnore]
+    [GraphQLDescription("A list of people that this starship has been piloted by.")]
     public IEnumerable<int> PilotIds { get; set; } = default!;
-
-    [GraphQLDescription("A list of films that this starship has been piloted by.")]
-    public IEnumerable<Character> Pilots { get; set; } = default!;
 
     [NodeResolver]
     public static async Task<Starship?> GetNodeAsync(

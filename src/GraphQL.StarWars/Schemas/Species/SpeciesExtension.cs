@@ -12,6 +12,8 @@ public class SpeciesExtension(
     [Service] IStarWarsRepository<FilmApiResponse> films,
     [Service] IStarWarsRepository<PlanetApiResponse> planets)
 {
+    [BindMember(nameof(Species.HomeworldId))]
+    [GraphQLDescription("A planet that this species originates from.")]
     public async Task<Planet?> GetHomeworldAsync(
         [Parent] Species parent,
         CancellationToken ctx)
@@ -31,11 +33,13 @@ public class SpeciesExtension(
         return Planet.MapFrom(response);
     }
 
+    [BindMember(nameof(Species.PeopleIds))]
+    [GraphQLDescription("A list of people that are a part of this species.")]
     public async Task<IEnumerable<Character>> GetPeopleAsync(
         [Parent] Species parent,
         CancellationToken ctx)
     {
-        var queue = parent.PersonIds
+        var queue = parent.PeopleIds
             .Select(id => characters.GetByIdAsync(id, ctx));
 
         var responses = await Task.WhenAll(queue);
@@ -53,6 +57,8 @@ public class SpeciesExtension(
         return list;
     }
 
+    [BindMember(nameof(Species.FilmIds))]
+    [GraphQLDescription("A list of films that this species has appeared in.")]
     public async Task<IEnumerable<Film>> GetFilmsAsync(
         [Parent] Species parent,
         CancellationToken ctx)

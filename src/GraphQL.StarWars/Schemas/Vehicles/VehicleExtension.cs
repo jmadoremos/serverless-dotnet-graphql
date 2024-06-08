@@ -10,6 +10,8 @@ public class VehicleExtension(
     [Service] IStarWarsRepository<CharacterApiResponse> characters,
     [Service] IStarWarsRepository<FilmApiResponse> films)
 {
+    [BindMember(nameof(Vehicle.FilmIds))]
+    [GraphQLDescription("A list of films that this vehicle has appeared in.")]
     public async Task<IEnumerable<Film>> GetFilmsAsync(
         [Parent] Vehicle parent,
         CancellationToken ctx)
@@ -32,6 +34,8 @@ public class VehicleExtension(
         return filmList;
     }
 
+    [BindMember(nameof(Vehicle.PilotIds))]
+    [GraphQLDescription("A list of pilots that this vehicle has been piloted by.")]
     public async Task<IEnumerable<Character>> GetPilotsAsync(
         [Parent] Vehicle parent,
         CancellationToken ctx)

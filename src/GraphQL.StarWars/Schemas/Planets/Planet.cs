@@ -3,8 +3,6 @@ namespace GraphQL.StarWars.Schemas.Planets;
 using GraphQL.StarWars.Extensions;
 using GraphQL.StarWars.Repositories;
 using GraphQL.StarWars.Repositories.Responses;
-using GraphQL.StarWars.Schemas.Films;
-using GraphQL.StarWars.Schemas.Characters;
 
 [Node]
 [GraphQLDescription("A planet resource is a large mass, planet or planetoid in the Star Wars Universe, at the time of 0 ABY.")]
@@ -41,17 +39,11 @@ public class Planet
     [GraphQLDescription("The percentage of the planet surface that is naturally occurring water or bodies of water.")]
     public string SurfaceWater { get; set; } = default!;
 
-    [GraphQLIgnore]
-    public IEnumerable<int> PersonIds { get; set; } = default!;
-
     [GraphQLDescription("A list of residents that live on this planet.")]
-    public IEnumerable<Character> Residents { get; set; } = default!;
-
-    [GraphQLIgnore]
-    public IEnumerable<int> FilmIds { get; set; } = default!;
+    public IEnumerable<int> ResidentIds { get; set; } = default!;
 
     [GraphQLDescription("A list of films that this planet has appeared in.")]
-    public IEnumerable<Film> Films { get; set; } = default!;
+    public IEnumerable<int> FilmIds { get; set; } = default!;
 
     [NodeResolver]
     public static async Task<Planet?> GetNodeAsync(
@@ -84,7 +76,7 @@ public class Planet
         Terrain = r.Terrain,
         SurfaceWater = r.SurfaceWater,
         Population = r.Population,
-        PersonIds = r.Residents.Select(s => s.ExtractSwapiId()),
+        ResidentIds = r.Residents.Select(s => s.ExtractSwapiId()),
         FilmIds = r.Films.Select(s => s.ExtractSwapiId())
     };
 }

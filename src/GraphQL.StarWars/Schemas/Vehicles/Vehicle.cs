@@ -3,8 +3,6 @@ namespace GraphQL.StarWars.Schemas.Vehicles;
 using GraphQL.StarWars.Extensions;
 using GraphQL.StarWars.Repositories;
 using GraphQL.StarWars.Repositories.Responses;
-using GraphQL.StarWars.Schemas.Films;
-using GraphQL.StarWars.Schemas.Characters;
 
 [Node]
 [GraphQLDescription("A vehicle resource is a single transport craft that does not have hyperdrive capability.")]
@@ -47,17 +45,11 @@ public class Vehicle
     [GraphQLDescription("The maximum length of time that this vehicle can provide consumables for its entire crew without having to resupply.")]
     public string Consumables { get; set; } = default!;
 
-    [GraphQLIgnore]
+    [GraphQLDescription("A list of films that this vehicle has appeared in.")]
     public IEnumerable<int> FilmIds { get; set; } = default!;
 
-    [GraphQLDescription("A list of films that this vehicle has appeared in.")]
-    public IEnumerable<Film> Films { get; set; } = default!;
-
-    [GraphQLIgnore]
-    public IEnumerable<int> PilotIds { get; set; } = default!;
-
     [GraphQLDescription("A list of pilots that this vehicle has been piloted by.")]
-    public IEnumerable<Character> Pilots { get; set; } = default!;
+    public IEnumerable<int> PilotIds { get; set; } = default!;
 
     [NodeResolver]
     public static async Task<Vehicle?> GetNodeAsync(

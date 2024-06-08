@@ -10,11 +10,13 @@ public class PlanetExtension(
     [Service] IStarWarsRepository<CharacterApiResponse> characters,
     [Service] IStarWarsRepository<FilmApiResponse> films)
 {
+    [BindMember(nameof(Planet.ResidentIds))]
+    [GraphQLDescription("A list of residents that live on this planet.")]
     public async Task<IEnumerable<Character>> GetResidentsAsync(
         [Parent] Planet parent,
         CancellationToken ctx)
     {
-        var queue = parent.PersonIds
+        var queue = parent.ResidentIds
             .Select(id => characters.GetByIdAsync(id, ctx));
 
         var responses = await Task.WhenAll(queue);
@@ -32,6 +34,8 @@ public class PlanetExtension(
         return list;
     }
 
+    [BindMember(nameof(Planet.FilmIds))]
+    [GraphQLDescription("A list of films that this planet has appeared in.")]
     public async Task<IEnumerable<Film>> GetFilmsAsync(
         [Parent] Planet parent,
         CancellationToken ctx)
