@@ -1,4 +1,16 @@
-POST http://localhost:5000/graphql HTTP/1.1
+@protocol = http
+@host = localhost
+@port = 5000
+@graphql_edp = {{protocol}}://{{host}}:{{port}}/graphql
+@schema_edp = {{protocol}}://{{host}}:{{port}}/graphql/schema
+
+###
+
+GET {{schema_edp}} HTTP/1.1
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
 X-Request-Type: GraphQL
 Content-Type: application/json
 

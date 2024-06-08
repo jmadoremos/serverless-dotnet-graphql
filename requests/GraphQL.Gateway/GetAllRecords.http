@@ -1,9 +1,16 @@
-POST http://localhost:5000/graphql HTTP/1.1
+@protocol = http
+@host = localhost
+@port = 5000
+@graphql_edp = {{protocol}}://{{host}}:{{port}}/graphql
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
 X-Request-Type: GraphQL
 Content-Type: application/json
 
-query GetAllRecords {
-    attendees {
+query GetAllTopics {
+    tracks {
         totalCount
         pageInfo {
             hasNextPage
@@ -11,16 +18,22 @@ query GetAllRecords {
         }
         nodes {
             id
-            username
-            lastname
-            firstname
-            email
+            name
             sessions {
                 id
                 title
             }
         }
     }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetAllSessions {
     sessions {
         totalCount
         pageInfo {
@@ -48,6 +61,15 @@ query GetAllRecords {
             }
         }
     }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetAllSpeakers {
     speakers {
         totalCount
         pageInfo {
@@ -65,7 +87,16 @@ query GetAllRecords {
             }
         }
     }
-    tracks {
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetAllAttendees {
+    attendees {
         totalCount
         pageInfo {
             hasNextPage
@@ -73,24 +104,25 @@ query GetAllRecords {
         }
         nodes {
             id
-            name
+            username
+            lastname
+            firstname
+            email
             sessions {
                 id
                 title
             }
         }
     }
-    characters {
-        totalCount
-        pageInfo {
-            hasNextPage
-            hasPreviousPage
-        }
-        nodes {
-            id
-            name
-        }
-    }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetAllFilms {
     films {
         totalCount
         pageInfo {
@@ -102,6 +134,15 @@ query GetAllRecords {
             title
         }
     }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetAllPlanets {
     planets {
         totalCount
         pageInfo {
@@ -113,6 +154,15 @@ query GetAllRecords {
             name
         }
     }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetAllSpecies {
     species {
         totalCount
         pageInfo {
@@ -124,6 +174,35 @@ query GetAllRecords {
             name
         }
     }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetAllCharacters {
+    characters {
+        totalCount
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+        }
+        nodes {
+            id
+            name
+        }
+    }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetAllStarships {
     starships {
         totalCount
         pageInfo {
@@ -135,6 +214,15 @@ query GetAllRecords {
             name
         }
     }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetAllVehicles {
     vehicles {
         totalCount
         pageInfo {

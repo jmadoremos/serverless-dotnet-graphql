@@ -1,9 +1,16 @@
-POST http://localhost:5004/graphql HTTP/1.1
+@protocol = http
+@host = localhost
+@port = 5004
+@graphql_edp = {{protocol}}://{{host}}:{{port}}/graphql
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
 X-Request-Type: GraphQL
 Content-Type: application/json
 
-query GetAllRecords {
-    attendees {
+query GetAllTopics {
+    tracks {
         totalCount
         pageInfo {
             hasNextPage
@@ -11,16 +18,22 @@ query GetAllRecords {
         }
         nodes {
             id
-            username
-            lastname
-            firstname
-            email
+            name
             sessions {
                 id
                 title
             }
         }
     }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetAllSessions {
     sessions {
         totalCount
         pageInfo {
@@ -48,6 +61,15 @@ query GetAllRecords {
             }
         }
     }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetAllSpeakers {
     speakers {
         totalCount
         pageInfo {
@@ -65,7 +87,16 @@ query GetAllRecords {
             }
         }
     }
-    tracks {
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetAllAttendees {
+    attendees {
         totalCount
         pageInfo {
             hasNextPage
@@ -73,7 +104,10 @@ query GetAllRecords {
         }
         nodes {
             id
-            name
+            username
+            lastname
+            firstname
+            email
             sessions {
                 id
                 title

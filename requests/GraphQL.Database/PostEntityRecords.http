@@ -1,11 +1,35 @@
-POST http://localhost:5004/graphql HTTP/1.1
+@protocol = http
+@host = localhost
+@port = 5004
+@graphql_edp = {{protocol}}://{{host}}:{{port}}/graphql
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
 X-Request-Type: GraphQL
 Content-Type: application/json
 
-mutation PostEntityRecords {
+mutation PostTrack {
     addTrack(input: { name: "GraphQL" }) {
-        id
+        track {
+            id
+            name
+        }
+        trackErrors {
+            type
+            code
+            description
+        }
     }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+mutation PostSession {
     addSession(
         input: {
             title: "Welcome to GraphQL"
@@ -15,8 +39,25 @@ mutation PostEntityRecords {
             trackId: 1
         }
     ) {
-        id
+        session {
+            id
+            title
+        }
+        sessionErrors {
+            type
+            code
+            description
+        }
     }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+mutation PostSpeaker {
     addSpeaker(
         input: {
             bio: "Biography",
@@ -24,8 +65,25 @@ mutation PostEntityRecords {
             website: null
         }
     ) {
-        id
+        speaker {
+            id
+            name
+        }
+        speakerErrors {
+            type
+            code
+            description
+        }
     }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+mutation PostAttendee {
     addAttendee(
         input: {
             firstname: "John"
@@ -34,6 +92,14 @@ mutation PostEntityRecords {
             email: "john.doe@email.com"
         }
     ) {
-        id
+        attendee {
+            id
+            username
+        }
+        attendeeErrors {
+            type
+            code
+            description
+        }
     }
 }

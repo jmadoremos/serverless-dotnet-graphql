@@ -1,24 +1,46 @@
-POST http://localhost:5004/graphql HTTP/1.1
+@protocol = http
+@host = localhost
+@port = 5004
+@graphql_edp = {{protocol}}://{{host}}:{{port}}/graphql
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
 X-Request-Type: GraphQL
 Content-Type: application/json
 
-mutation PostRelationshipRecords {
+mutation PostSessionSpeaker {
     addSessionSpeaker(
         input: {
             sessionId: "U2Vzc2lvbgppMQ==",
             speakerId: "U3BlYWtlcgppMQ=="
         }
     ) {
-        sessionId
-        speakerId
+        sessionSpeakerErrors {
+            type
+            code
+            description
+        }
     }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+mutation PostSessionAttendee {
     addSessionAttendee(
         input: {
             sessionId: "U2Vzc2lvbgppMQ==",
             attendeeId: "QXR0ZW5kZWUKaTE="
         }
     ) {
-        sessionId
-        attendeeId
+        sessionAttendeeErrors {
+            type
+            code
+            description
+        }
     }
 }

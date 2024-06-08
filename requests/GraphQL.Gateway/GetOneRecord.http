@@ -1,19 +1,32 @@
-POST http://localhost:5000/graphql HTTP/1.1
+@protocol = http
+@host = localhost
+@port = 5000
+@graphql_edp = {{protocol}}://{{host}}:{{port}}/graphql
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
 X-Request-Type: GraphQL
 Content-Type: application/json
 
-query GetOneRecord {
-    attendee(id: "QXR0ZW5kZWUKaTE=") {
+query GetTrack {
+    track(id: "VHJhY2sKaTE=") {
         id
-        username
-        lastname
-        firstname
-        email
+        name
         sessions {
             id
             title
         }
     }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetSession {
     session(id: "U2Vzc2lvbgppMQ==") {
         id
         title
@@ -34,6 +47,15 @@ query GetOneRecord {
             username
         }
     }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetSpeaker {
     speaker(id: "U3BlYWtlcgppMQ==") {
         id
         name
@@ -44,14 +66,86 @@ query GetOneRecord {
             title
         }
     }
-    track(id: "VHJhY2sKaTE=") {
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetAttendee {
+    attendee(id: "QXR0ZW5kZWUKaTE=") {
         id
-        name
+        username
+        lastname
+        firstname
+        email
         sessions {
             id
             title
         }
     }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetFilm {
+    filmById(id: "RmlsbQppMg==") {
+        id
+        title
+        characters {
+            id
+            name
+        }
+    }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetPlanet {
+    planetById(id: "UGxhbmV0Cmk4") {
+        id
+        name
+        residents {
+            id
+            name
+        }
+    }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetSpecies {
+    speciesById(id: "U3BlY2llcwppOQ==") {
+        id
+        name
+        people {
+            id
+            name
+        }
+    }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetCharacter {
     characterById(id: "Q2hhcmFjdGVyCmkx") {
         id
         name
@@ -64,30 +158,15 @@ query GetOneRecord {
             title
         }
     }
-    filmById(id: "RmlsbQppMg==") {
-        id
-        title
-        characters {
-            id
-            name
-        }
-    }
-    planetById(id: "UGxhbmV0Cmk4") {
-        id
-        name
-        residents {
-            id
-            name
-        }
-    }
-    speciesById(id: "U3BlY2llcwppOQ==") {
-        id
-        name
-        people {
-            id
-            name
-        }
-    }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetStarship {
     starshipById(id: "U3RhcnNoaXAKaTEy") {
         id
         name
@@ -96,6 +175,15 @@ query GetOneRecord {
             name
         }
     }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetVehicle {
     vehicleById(id: "VmVoaWNsZQppMTQ=") {
         id
         name

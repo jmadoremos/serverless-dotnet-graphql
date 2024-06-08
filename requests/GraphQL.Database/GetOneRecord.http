@@ -1,19 +1,32 @@
-POST http://localhost:5004/graphql HTTP/1.1
+@protocol = http
+@host = localhost
+@port = 5004
+@graphql_edp = {{protocol}}://{{host}}:{{port}}/graphql
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
 X-Request-Type: GraphQL
 Content-Type: application/json
 
-query GetOneRecord {
-    attendee(id: "QXR0ZW5kZWUKaTE=") {
+query GetTrack {
+    track(id: "VHJhY2sKaTE=") {
         id
-        username
-        lastname
-        firstname
-        email
+        name
         sessions {
             id
             title
         }
     }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetSession {
     session(id: "U2Vzc2lvbgppMQ==") {
         id
         title
@@ -34,6 +47,15 @@ query GetOneRecord {
             username
         }
     }
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetSpeaker {
     speaker(id: "U3BlYWtlcgppMQ==") {
         id
         name
@@ -44,9 +66,21 @@ query GetOneRecord {
             title
         }
     }
-    track(id: "VHJhY2sKaTE=") {
+}
+
+###
+
+POST {{graphql_edp}} HTTP/1.1
+X-Request-Type: GraphQL
+Content-Type: application/json
+
+query GetAttendee {
+    attendee(id: "QXR0ZW5kZWUKaTE=") {
         id
-        name
+        username
+        lastname
+        firstname
+        email
         sessions {
             id
             title
