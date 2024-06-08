@@ -33,6 +33,13 @@ public class Startup(IConfiguration configuration)
 
         // app.UseAuthorization();
 
-        app.UseEndpoints(endpoints => endpoints.MapGraphQL());
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapGraphQL("/graphql");
+
+            endpoints.MapGraphQLSchema("/graphql/schema");
+
+            endpoints.MapGraphQLWebSocket("/graphql/ws");
+        });
     }
 }
