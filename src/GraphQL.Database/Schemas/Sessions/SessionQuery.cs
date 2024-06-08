@@ -7,7 +7,6 @@ using System.Linq;
 public class SessionQuery([Service] ISessionRepository sessions)
 {
     [UsePaging]
-    [UseProjection]
     [UseFiltering]
     [UseSorting]
     [GraphQLDescription("A list of sessions of all tracks.")]

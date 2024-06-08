@@ -52,7 +52,7 @@ public class Startup(IConfiguration configuration)
                 IncludeTotalCount = true
             })
             // Enable projections
-            .AddProjections()
+            //.AddProjections()
             // Enable filtering
             .AddFiltering()
             // Enable sorting

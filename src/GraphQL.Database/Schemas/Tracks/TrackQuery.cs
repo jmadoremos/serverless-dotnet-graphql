@@ -7,7 +7,6 @@ using System.Linq;
 public class TrackQuery([Service] ITrackRepository tracks)
 {
     [UsePaging]
-    [UseProjection]
     [UseFiltering]
     [UseSorting]
     [GraphQLDescription("A list of tracks.")]
