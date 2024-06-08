@@ -1,6 +1,5 @@
 namespace GraphQL.Database.Schemas.Sessions;
 
-using GraphQL.Database.Errors;
 using GraphQL.Database.Repositories.SessionAttendees;
 using GraphQL.Database.Repositories.SessionSpeakers;
 using GraphQL.Database.Repositories.Tracks;

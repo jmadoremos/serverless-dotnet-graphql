@@ -26,11 +26,8 @@ public class LambdaEntryPoint :
     /// needs to be configured in this method using the UseStartup<>() method.
     /// </summary>
     /// <param name="builder">The IWebHostBuilder to configure.</param>
-    protected override void Init(IWebHostBuilder builder)
-    {
-        builder
-            .UseStartup<Startup>();
-    }
+    protected override void Init(IWebHostBuilder builder) =>
+        builder.UseStartup<Startup>();
 
     /// <summary>
     /// Use this override to customize the services registered with the IHostBuilder.
