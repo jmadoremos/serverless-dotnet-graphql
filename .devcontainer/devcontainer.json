@@ -39,13 +39,29 @@
   "customizations": {
     "vscode": {
       "extensions": [
+        // EditorConfig Support for Visual Studio Code
         "EditorConfig.EditorConfig",
+        // Supercharge Git within VS Code — Visualize code authorship at a glance via Git blame annotations and CodeLens, seamlessly navigate and explore Git repositories, gain valuable insights...// Supercharge Git within VS Code — Visualize code authorship at a glance via Git blame annotations and CodeLens, seamlessly navigate and explore Git repositories, gain valuable insights...
         "eamodio.gitlens",
+        // REST Client for Visual Studio Code
         "humao.rest-client",
+        // Official C# extension from Microsoft
         "ms-dotnettools.csdevkit",
+        // Connecting users to many of the most commonly used databases. Welcome to database management done right.
         "mtxr.sqltools",
+        // SQLTools PostgreSQL/Cockroach Driver
         "mtxr.sqltools-driver-pg"
-      ]
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "zsh": {
+          "path": "/usr/bin/zsh"
+        },
+        "pwsh": {
+          "path": "pwsh",
+          "icon": "terminal-powershell"
+        }
+      }
     }
   },
   // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
